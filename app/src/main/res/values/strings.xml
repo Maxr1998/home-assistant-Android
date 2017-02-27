@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">HomeAssistant</string>
+    <string name="button_scene_activate">activate</string>
+
+    <string name="hint_ip">Enter your HomeAssistant IP</string>
+    <string name="hint_password">Enter password</string>
+</resources>

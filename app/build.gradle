@@ -1,0 +1,64 @@
+apply plugin: 'com.android.application'
+
+ext.supportLibraryVersion = "25.2.0";
+
+android {
+    signingConfigs {
+        main
+    }
+    compileSdkVersion 25
+    buildToolsVersion "25.0.2"
+    defaultConfig {
+        applicationId "io.homeassistant.android"
+        minSdkVersion 21
+        targetSdkVersion 25
+        versionCode 1
+        versionName "0.1"
+    }
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-conf.txt'
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.main
+        }
+        debug {
+            debuggable true
+            versionNameSuffix "-beta"
+            //noinspection GroovyAssignabilityCheck
+            signingConfig signingConfigs.main
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+    lintOptions {
+        abortOnError false
+    }
+}
+
+def propFile = project.file("keyStore.properties")
+if (propFile.exists()) {
+    def props = new Properties()
+    props.load(new FileInputStream(propFile))
+    android.signingConfigs.main.storeFile project.file(props.keyStore)
+    android.signingConfigs.main.storePassword props.keyStorePassword
+    android.signingConfigs.main.keyAlias props.keyAlias
+    android.signingConfigs.main.keyPassword props.keyPassword
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile "com.android.support:appcompat-v7:$supportLibraryVersion"
+    compile "com.android.support:design:$supportLibraryVersion"
+    compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
+    compile 'com.afollestad:ason:1.4.4'
+}
