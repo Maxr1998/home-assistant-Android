@@ -22,12 +22,10 @@ import io.homeassistant.android.viewholders.BaseViewHolder;
 public class ViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
     private final Context context;
-    private final Map<String, Entity> entityMap;
     private final List<Entity> entities;
 
-    public ViewAdapter(Context c, Map<String, Entity> e) {
+    public ViewAdapter(Context c) {
         context = c;
-        entityMap = e;
         entities = new ArrayList<>();
     }
 
@@ -53,7 +51,7 @@ public class ViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
         holder.setEntity(entity);
     }
 
-    public void mapUpdated() {
+    public void updateEntities(Map<String, Entity> entityMap) {
         HassUtils.extractGroups(entityMap, entities);
         notifyDataSetChanged();
     }

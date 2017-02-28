@@ -47,7 +47,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
     @Override
     public void onClick(View v) {
         HassActivity activity = (HassActivity) v.getContext();
-        activity.getHassSocket().send(new ToggleRequest(activity.getNewID(), entity, stateSwitch.isChecked()).toString());
+        activity.send(new ToggleRequest(activity.getNewID(), entity, stateSwitch.isChecked()).toString());
     }
 
     @Override
@@ -74,8 +74,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
                 if (brightnessSlider.getProgress() != sliderRunnable.previousProgress) { // Changed
                     HassActivity activity = (HassActivity) brightnessSlider.getContext();
-                    String t = new ToggleRequest(activity.getNewID(), entity, brightnessSlider.getProgress()).toString();
-                    activity.getHassSocket().send(t);
+                    activity.send(new ToggleRequest(activity.getNewID(), entity, brightnessSlider.getProgress()).toString());
                     stateSwitch.setChecked(brightnessSlider.getProgress() > 0);
                 }
 
