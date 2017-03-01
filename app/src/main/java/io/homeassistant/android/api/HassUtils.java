@@ -55,7 +55,11 @@ public final class HassUtils {
                 for (int i = 0; i < children.length; i++) {
                     Entity child = entityMap.get(children[i]);
                     child.type = extractTypeFromEntity(child);
-                    entities.add(child);
+                    if ((child.attributes == null) ||
+                            ((child.attributes != null) && (!child.attributes.hidden)))
+                    {
+                        entities.add(child);
+                    }
                 }
 
                 // Add spacer
@@ -77,8 +81,10 @@ public final class HassUtils {
             case "automation":
             case "light":
             case "switch":
+            case "input_boolean":
                 return EntityType.SWITCH;
             case "sensor":
+            case "binary_sensor":
                 return EntityType.SENSOR;
             case "scene":
                 return EntityType.SCENE;
