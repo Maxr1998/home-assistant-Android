@@ -7,4 +7,7 @@
         android:icon="@drawable/ic_refresh_24dp"
         android:title="@string/menu_refresh"
         app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_custom_tab"
+        android:title="@string/menu_custom_tab" />
 </menu>

@@ -88,6 +88,8 @@ public final class HassUtils {
                 return EntityType.SENSOR;
             case "scene":
                 return EntityType.SCENE;
+            case "input_select":
+                return EntityType.INPUT_SELECT;
             default:
                 if (entity.attributes != null && entity.attributes.friendly_name != null) {
                     return EntityType.TEXT;

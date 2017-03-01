@@ -6,6 +6,7 @@ import android.support.transition.Scene;
 import io.homeassistant.android.R;
 import io.homeassistant.android.viewholders.BaseViewHolder;
 import io.homeassistant.android.viewholders.GroupViewHolder;
+import io.homeassistant.android.viewholders.InputSelectViewHolder;
 import io.homeassistant.android.viewholders.SceneViewHolder;
 import io.homeassistant.android.viewholders.SensorViewHolder;
 import io.homeassistant.android.viewholders.SwitchViewHolder;
@@ -18,6 +19,7 @@ public enum EntityType {
     SWITCH(R.layout.view_switch, SwitchViewHolder.class),
     SENSOR(R.layout.view_sensor, SensorViewHolder.class),
     SCENE(R.layout.view_scene, SceneViewHolder.class),
+    INPUT_SELECT(R.layout.view_input_select, InputSelectViewHolder.class),
     SPACER(R.layout.view_spacer, BaseViewHolder.class);
 
     public final int layoutRes;
