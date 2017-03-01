@@ -5,12 +5,18 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsCallback;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -47,6 +53,29 @@ public class HassActivity extends AppCompatActivity {
     private SharedPreferences prefs;
 
     private ViewAdapter viewAdapter = new ViewAdapter(this);
+    private CustomTabsSession customTabsSession;
+    private final CustomTabsServiceConnection chromeConnection = new CustomTabsServiceConnection() {
+        @Override
+        public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
+            client.warmup(0);
+            customTabsSession = client.newSession(new CustomTabsCallback());
+            if (customTabsSession == null) {
+                return;
+            }
+            // Delay to not slow down native app loading
+            communicationHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    customTabsSession.mayLaunchUrl(Uri.parse(prefs.getString(PREF_HASS_URL_KEY, "")), null, null);
+                }
+            }, 1500);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -77,11 +106,13 @@ public class HassActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         unbindService(hassConnection);
+        unbindService(chromeConnection);
         super.onDestroy();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        CustomTabsClient.bindCustomTabsService(this, CustomTabsClient.getPackageName(this, null), chromeConnection);
         getMenuInflater().inflate(R.menu.hass, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -92,6 +123,16 @@ public class HassActivity extends AppCompatActivity {
             case R.id.menu_refresh:
                 if (service != null) {
                     service.loadStates();
+                }
+                return true;
+            case R.id.menu_custom_tab:
+                if (customTabsSession != null) {
+                    @SuppressWarnings("deprecation") CustomTabsIntent intent = new CustomTabsIntent.Builder(customTabsSession)
+                            .setShowTitle(true)
+                            .enableUrlBarHiding()
+                            .setToolbarColor(getResources().getColor(R.color.primary))
+                            .build();
+                    intent.launchUrl(this, Uri.parse(prefs.getString(Common.PREF_HASS_URL_KEY, "")));
                 }
                 return true;
             default:

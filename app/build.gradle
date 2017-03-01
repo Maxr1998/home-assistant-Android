@@ -58,6 +58,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:$supportLibraryVersion"
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
+    compile "com.android.support:customtabs:$supportLibraryVersion"
 
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.afollestad:ason:1.4.4'

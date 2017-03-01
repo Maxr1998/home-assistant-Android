@@ -6,4 +6,5 @@
     <string name="hint_password">Enter password</string>
 
     <string name="menu_refresh">Refresh</string>
+    <string name="menu_custom_tab">Load Web UI</string>
 </resources>
