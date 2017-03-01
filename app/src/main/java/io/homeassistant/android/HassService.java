@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.net.ssl.SSLException;
+
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.requests.AuthRequest;
 import io.homeassistant.android.api.requests.StatesRequest;
@@ -31,9 +33,12 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-import static io.homeassistant.android.Common.PREF_HASS_URL_KEY;
+import static io.homeassistant.android.HassActivity.CommunicationHandler.MESSAGE_LOGIN_FAILED;
+import static io.homeassistant.android.HassActivity.CommunicationHandler.MESSAGE_LOGIN_SUCCESS;
 
 public class HassService extends Service {
+
+    private static final String TAG = HassService.class.getSimpleName();
 
     private static final int TYPE_ERROR = -1;
     private static final int TYPE_STATES = 1;
@@ -44,6 +49,7 @@ public class HassService extends Service {
     private SharedPreferences prefs;
     private WebSocket hassSocket;
     private WebSocketListener socketListener = new HassSocketListener();
+    private boolean connected = false;
     private boolean authenticated = false;
     private AtomicInteger lastId = new AtomicInteger(0);
 
@@ -63,51 +69,61 @@ public class HassService extends Service {
 
     @Override
     public void onDestroy() {
-        hassSocket.close(1001, "Application closed");
+        if (hassSocket != null)
+            hassSocket.close(1001, "Application closed");
     }
 
     public void setActivityHandler(Handler handler) {
         activityHandler = handler;
-        loadStates();
     }
 
     public void connect() {
-        // Check if already connected
-        if (hassSocket != null) {
-            if (!hassSocket.send("")) {
-                hassSocket.cancel();
-            } else return;
-        }
-        // Connect to WebSocket
-        OkHttpClient client = new OkHttpClient();
-        String url = prefs.getString(PREF_HASS_URL_KEY, "");
-        if (url.length() > 0) {
-            if (url.charAt(url.length() - 1) == '/') {
-                url = url.substring(0, url.length() - 1);
+        synchronized (this) {
+            // Check if already connected
+            if (hassSocket != null) {
+                if (connected) {
+                    // Still connected, reload states
+                    if (activityHandler != null) {
+                        loadStates();
+                    }
+                    return;
+                } else hassSocket.close(1001, "Application reconnect");
             }
-            HttpUrl httpUrl = HttpUrl.parse(url = url.concat("/api/websocket"));
-            Log.d("Home Assistant URL", url);
-            if (httpUrl != null) {
-                hassSocket = client.newWebSocket(new Request.Builder().url(httpUrl).build(), socketListener);
-            } else askForURL();
-        } else askForURL();
-    }
-
-    public void authenticate() {
-        send(new AuthRequest(prefs.getString(Common.PREF_HASS_PASSWORD_KEY, "")).toString());
-    }
-
-    private void askForURL() {
-        // Ask Activity to obtain Hass URL if bound to one
-        if (activityHandler != null) {
-            activityHandler.obtainMessage(HassActivity.CommunicationHandler.MESSAGE_OBTAIN_URL).sendToTarget();
+            // Connect to WebSocket
+            String url = Utils.getUrl(this);
+            if (!url.isEmpty()) {
+                if (url.charAt(url.length() - 1) == '/') {
+                    url = url.substring(0, url.length() - 1);
+                }
+                HttpUrl httpUrl = HttpUrl.parse(url = url.concat("/api/websocket"));
+                Log.d("Home Assistant URL", url);
+                if (httpUrl != null) {
+                    OkHttpClient client = new OkHttpClient();
+                    hassSocket = client.newWebSocket(new Request.Builder().url(httpUrl).build(), socketListener);
+                    connected = true;
+                } else {
+                    loginMessage(false);
+                }
+            }
         }
     }
 
-    private void askForPassword() {
-        // Ask Activity to obtain password if bound to one
+    private void authenticate() {
+        synchronized (this) {
+            if (authenticated) {
+                return;
+            }
+            authenticated = true;
+            String password = Utils.getPassword(this);
+            if (password.length() > 0)
+                send(new AuthRequest(password).toString());
+        }
+    }
+
+    private void loginMessage(boolean success) {
+        authenticated = success;
         if (activityHandler != null) {
-            activityHandler.obtainMessage(HassActivity.CommunicationHandler.MESSAGE_OBTAIN_PASSWORD).sendToTarget();
+            activityHandler.obtainMessage(success ? MESSAGE_LOGIN_SUCCESS : MESSAGE_LOGIN_FAILED).sendToTarget();
         }
     }
 
@@ -117,6 +133,7 @@ public class HassService extends Service {
 
     public void loadStates() {
         if (!authenticated) {
+            authenticate();
             return;
         }
         final int rid = getNewID();
@@ -140,46 +157,66 @@ public class HassService extends Service {
 
     private class HassSocketListener extends WebSocketListener {
 
-        private static final String TAG = "Server";
+        @Override
+        public void onOpen(WebSocket webSocket, Response response) {
+            connected = true;
+        }
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
-            Ason message = new Ason(text);
-            //noinspection ConstantConditions
-            switch (message.getString("type", "")) {
-                case "auth_required":
-                    authenticate();
-                    break;
-                case "auth_failed":
-                    askForPassword();
-                    break;
-                case "auth_ok":
-                    authenticated = true;
-                    // Automatically load current states if bound to Activity
-                    if (activityHandler != null) {
-                        loadStates();
-                    }
-                    break;
-                case "result":
-                    Log.d(TAG, message.toString());
-                    RequestResult res = Ason.deserialize(message, RequestResult.class);
-                    switch (requests.get(res.id, TYPE_ERROR)) {
-                        case TYPE_STATES:
-                            if (HassUtils.extractEntitiesFromStateResult(res, entityMap)) {
-                                activityHandler.obtainMessage(HassActivity.CommunicationHandler.MESSAGE_STATES_AVAILABLE).sendToTarget();
-                            }
-                            break;
-                    }
+            try {
+                Log.d(TAG, text);
+                Ason message = new Ason(text);
+                //noinspection ConstantConditions
+                switch (message.getString("type", "")) {
+                    case "auth_required":
+                        authenticate();
+                        break;
+                    case "auth_failed":
+                        connected = false;
+                        loginMessage(false);
+                        break;
+                    case "auth_ok":
+                        loginMessage(true);
+                        // Automatically load current states if bound to Activity
+                        if (activityHandler != null) {
+                            loadStates();
+                        }
+                        break;
+                    case "result":
+                        Log.d(TAG, message.toString());
+                        RequestResult res = Ason.deserialize(message, RequestResult.class);
+                        switch (requests.get(res.id, TYPE_ERROR)) {
+                            case TYPE_STATES:
+                                if (HassUtils.extractEntitiesFromStateResult(res, entityMap)) {
+                                    activityHandler.obtainMessage(HassActivity.CommunicationHandler.MESSAGE_STATES_AVAILABLE).sendToTarget();
+                                }
+                                break;
+                        }
+                }
+            } catch (Throwable t) { // Catch everything that it doesn't get passed to onFailure
+                Log.e(TAG, "Error in onMessage()", t);
             }
         }
 
         @Override
+        public void onClosed(WebSocket webSocket, int code, String reason) {
+            connected = false;
+        }
+
+        @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
-            if (t instanceof ConnectException || t instanceof ProtocolException || t instanceof UnknownHostException) {
-                askForURL();
+            connected = false;
+            if (t instanceof ConnectException || t instanceof ProtocolException || t instanceof SSLException || t instanceof UnknownHostException) {
+                Log.e(TAG, "Error while connecting to Socket, going to try again: " + t.getClass().getSimpleName());
+                if (hassSocket != null) {
+                    hassSocket.close(1001, "Application error");
+                    hassSocket = null;
+                }
+                loginMessage(false);
                 return;
             }
-            Log.e(TAG, "Error: " + t.getClass().getName(), t);
+            Log.e(TAG, "Error in onFailure()", t);
         }
     }
 }

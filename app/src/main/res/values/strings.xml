@@ -2,8 +2,13 @@
     <string name="app_name">Home Assistant</string>
     <string name="button_scene_activate">activate</string>
 
-    <string name="hint_ip">Enter your HomeAssistant IP</string>
-    <string name="hint_password">Enter password</string>
+    <string name="hint_url">Home Assistant URL/IP</string>
+    <string name="hint_password">Password</string>
+
+    <string name="invalid_url_scheme">Invalid URL scheme</string>
+
+    <string name="button_connect">Connect</string>
+    <string name="login_error">Invalid IP or password</string>
 
     <string name="menu_refresh">Refresh</string>
     <string name="menu_custom_tab">Load Web UI</string>
