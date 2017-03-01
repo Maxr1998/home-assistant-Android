@@ -37,12 +37,4 @@ public class ToggleRequest extends Ason {
     public ToggleRequest(int id, Entity entity) {
         this(id, entity, true);
     }
-
-    private static class ServiceData {
-        protected final String entity_id;
-
-        ServiceData(String id) {
-            entity_id = id;
-        }
-    }
 }
