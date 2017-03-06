@@ -110,7 +110,7 @@ public class HassService extends Service {
             authenticated = true;
             String password = Utils.getPassword(this);
             if (password.length() > 0)
-                send(new AuthRequest(password));
+                send(new AuthRequest(password), null);
         }
     }
 
@@ -142,10 +142,6 @@ public class HassService extends Service {
 
     public Map<String, Entity> getEntityMap() {
         return entityMap;
-    }
-
-    public boolean send(Ason message) {
-        return send(message, null);
     }
 
     public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {
