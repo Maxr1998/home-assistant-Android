@@ -40,8 +40,10 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
         super.setEntity(e);
         stateSwitch.setChecked("on".equals(entity.state));
         stateSwitch.setOnClickListener(this);
-        if ((entity.attributes.supported_features & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS)
+        if ((entity.attributes.supported_features & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {
+            brightnessSlider.setProgress(entity.attributes.brightness);
             name.setOnTouchListener(this);
+        }
     }
 
     @Override
@@ -87,7 +89,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
     }
 
     private boolean considerMoved(MotionEvent event) {
-        return event.getHistorySize() >= 1 && Math.abs(event.getX() - event.getHistoricalX(0)) > 5f;
+        return event.getHistorySize() >= 1 && Math.abs(event.getX() - event.getHistoricalX(0)) > 20f;
     }
 
     private class SliderRunnable implements Runnable {
