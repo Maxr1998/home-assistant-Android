@@ -2,16 +2,15 @@ package io.homeassistant.android;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseIntArray;
+import android.util.SparseArray;
 
 import com.afollestad.ason.Ason;
 
+import java.lang.ref.WeakReference;
 import java.net.ConnectException;
 import java.net.ProtocolException;
 import java.net.UnknownHostException;
@@ -40,13 +39,9 @@ public class HassService extends Service {
 
     private static final String TAG = HassService.class.getSimpleName();
 
-    private static final int TYPE_ERROR = -1;
-    private static final int TYPE_STATES = 1;
-
     private final HassBinder binder = new HassBinder();
     private final Map<String, Entity> entityMap = new HashMap<>();
 
-    private SharedPreferences prefs;
     private WebSocket hassSocket;
     private WebSocketListener socketListener = new HassSocketListener();
     private boolean connected = false;
@@ -54,11 +49,10 @@ public class HassService extends Service {
     private AtomicInteger lastId = new AtomicInteger(0);
 
     private Handler activityHandler;
-    private SparseIntArray requests = new SparseIntArray();
+    private SparseArray<WeakReference<RequestResult.OnRequestResultListener>> requests = new SparseArray<>();
 
     @Override
     public void onCreate() {
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         connect();
     }
 
@@ -116,7 +110,7 @@ public class HassService extends Service {
             authenticated = true;
             String password = Utils.getPassword(this);
             if (password.length() > 0)
-                send(new AuthRequest(password).toString());
+                send(new AuthRequest(password));
         }
     }
 
@@ -127,7 +121,7 @@ public class HassService extends Service {
         }
     }
 
-    public int getNewID() {
+    private int getNewID() {
         return lastId.incrementAndGet();
     }
 
@@ -136,17 +130,33 @@ public class HassService extends Service {
             authenticate();
             return;
         }
-        final int rid = getNewID();
-        requests.append(rid, TYPE_STATES);
-        send(new StatesRequest(rid).toString());
+        send(new StatesRequest(), new RequestResult.OnRequestResultListener() {
+            @Override
+            public void onRequestResult(boolean success, Object result) {
+                if (success && HassUtils.extractEntitiesFromStateResult(result, entityMap)) {
+                    activityHandler.obtainMessage(HassActivity.CommunicationHandler.MESSAGE_STATES_AVAILABLE).sendToTarget();
+                }
+            }
+        });
     }
 
     public Map<String, Entity> getEntityMap() {
         return entityMap;
     }
 
-    public boolean send(String message) {
-        return hassSocket != null && hassSocket.send(message);
+    public boolean send(Ason message) {
+        return send(message, null);
+    }
+
+    public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {
+        if (!(message instanceof AuthRequest)) {
+            int rId = getNewID();
+            message.put("id", rId);
+            if (resultListener != null) {
+                requests.append(rId, new WeakReference<>(resultListener));
+            }
+        }
+        return hassSocket != null && hassSocket.send(message.toString());
     }
 
     public class HassBinder extends Binder {
@@ -186,12 +196,9 @@ public class HassService extends Service {
                     case "result":
                         Log.d(TAG, message.toString());
                         RequestResult res = Ason.deserialize(message, RequestResult.class);
-                        switch (requests.get(res.id, TYPE_ERROR)) {
-                            case TYPE_STATES:
-                                if (HassUtils.extractEntitiesFromStateResult(res, entityMap)) {
-                                    activityHandler.obtainMessage(HassActivity.CommunicationHandler.MESSAGE_STATES_AVAILABLE).sendToTarget();
-                                }
-                                break;
+                        RequestResult.OnRequestResultListener resultListener = requests.get(res.id, new WeakReference<RequestResult.OnRequestResultListener>(null)).get();
+                        if (resultListener != null) {
+                            resultListener.onRequestResult(res.success, res.result);
                         }
                 }
             } catch (Throwable t) { // Catch everything that it doesn't get passed to onFailure

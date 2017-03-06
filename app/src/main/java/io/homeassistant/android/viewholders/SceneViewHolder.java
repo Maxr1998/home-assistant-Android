@@ -26,6 +26,6 @@ public class SceneViewHolder extends TextViewHolder implements View.OnClickListe
     @Override
     public void onClick(View v) {
         HassActivity activity = (HassActivity) v.getContext();
-        activity.send(new ToggleRequest(activity.getNewID(), entity).toString());
+        activity.send(new ToggleRequest(entity), null);
     }
 }

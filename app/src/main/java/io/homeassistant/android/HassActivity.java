@@ -27,8 +27,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import com.afollestad.ason.Ason;
+
 import java.lang.ref.WeakReference;
 
+import io.homeassistant.android.api.results.RequestResult;
 import io.homeassistant.android.ui.LoginView;
 
 import static io.homeassistant.android.Common.PREF_HASS_URL_KEY;
@@ -182,12 +185,8 @@ public class HassActivity extends AppCompatActivity {
         viewAdapter.updateEntities(service.getEntityMap());
     }
 
-    public int getNewID() {
-        return service.getNewID();
-    }
-
-    public boolean send(String message) {
-        return service.send(message);
+    public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {
+        return service.send(message, resultListener);
     }
 
     public static class CommunicationHandler extends Handler {

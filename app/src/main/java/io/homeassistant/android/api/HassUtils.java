@@ -1,6 +1,7 @@
 package io.homeassistant.android.api;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.afollestad.ason.Ason;
 
@@ -9,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.homeassistant.android.api.results.Entity;
-import io.homeassistant.android.api.results.RequestResult;
 
 public final class HassUtils {
 
@@ -23,11 +23,11 @@ public final class HassUtils {
      * @param entityMap the Map where entities are store with their id as key
      * @return true if items were added, else false
      */
-    public static boolean extractEntitiesFromStateResult(@NonNull RequestResult result, @NonNull Map<String, Entity> entityMap) {
-        if (result.success && result.result != null && result.result.getClass().isArray()) {
+    public static boolean extractEntitiesFromStateResult(@Nullable Object result, @NonNull Map<String, Entity> entityMap) {
+        if (result != null && result.getClass().isArray()) {
             // Clear map before adding new content
             entityMap.clear();
-            for (Object o : (Object[]) result.result) {
+            for (Object o : (Object[]) result) {
                 Entity entity = Ason.deserialize((Ason) o, Entity.class);
                 entityMap.put(entity.id, entity);
             }

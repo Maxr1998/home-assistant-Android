@@ -5,4 +5,8 @@ public class RequestResult {
     public String type;
     public boolean success;
     public Object result;
+
+    public interface OnRequestResultListener {
+        void onRequestResult(boolean success, Object result);
+    }
 }
