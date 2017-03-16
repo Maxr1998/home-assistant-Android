@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-ext.supportLibraryVersion = "25.2.0";
+ext.supportLibraryVersion = "25.3.0";
 
 android {
     signingConfigs {
