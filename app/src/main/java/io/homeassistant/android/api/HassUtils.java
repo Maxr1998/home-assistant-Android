@@ -54,10 +54,9 @@ public final class HassUtils {
                 String[] children = entity.attributes.children;
                 for (int i = 0; i < children.length; i++) {
                     Entity child = entityMap.get(children[i]);
+                    if (child == null) continue;
                     child.type = extractTypeFromEntity(child);
-                    if ((child.attributes == null) ||
-                            ((child.attributes != null) && (!child.attributes.hidden)))
-                    {
+                    if (child.attributes == null || !child.attributes.hidden) {
                         entities.add(child);
                     }
                 }
