@@ -96,4 +96,9 @@ public final class HassUtils {
                 return EntityType.BASE;
         }
     }
+
+    @NonNull
+    public static String extractEntityName(@NonNull Entity e) {
+        return e.attributes != null && e.attributes.friendly_name != null ? e.attributes.friendly_name : e.id;
+    }
 }
