@@ -98,11 +98,6 @@ public class HassActivity extends AppCompatActivity {
 
         bindService(new Intent(this, HassService.class), hassConnection, BIND_AUTO_CREATE);
 
-        RecyclerView viewRecycler = (RecyclerView) findViewById(R.id.view_recycler);
-        viewRecycler.setLayoutManager(new LinearLayoutManager(this));
-        viewRecycler.setItemAnimator(new DefaultItemAnimator());
-        viewRecycler.setAdapter(viewAdapter);
-
         rootView = (FrameLayout) findViewById(R.id.root);
         mainLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator);
 
@@ -110,6 +105,11 @@ public class HassActivity extends AppCompatActivity {
             mainLayout.setVisibility(View.GONE);
             addLoginLayout();
         }
+
+        RecyclerView viewRecycler = (RecyclerView) mainLayout.findViewById(R.id.view_recycler);
+        viewRecycler.setLayoutManager(new LinearLayoutManager(this));
+        viewRecycler.setItemAnimator(new DefaultItemAnimator());
+        viewRecycler.setAdapter(viewAdapter);
     }
 
     private void addLoginLayout() {
