@@ -12,6 +12,7 @@ public class Attributes {
     public boolean hidden = false;
     public String icon;
     public List<String> options;
+    public int order = -1;
     public int supported_features;
     public String unit_of_measurement;
 }
