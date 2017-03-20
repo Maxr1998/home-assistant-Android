@@ -22,6 +22,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -133,7 +134,8 @@ public class HassActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        CustomTabsClient.bindCustomTabsService(this, CustomTabsClient.getPackageName(this, null), chromeConnection);
+        String packageName = CustomTabsClient.getPackageName(this, null);
+        CustomTabsClient.bindCustomTabsService(this, !TextUtils.isEmpty(packageName) ? packageName : "com.android.chrome", chromeConnection);
         getMenuInflater().inflate(R.menu.hass, menu);
         return super.onCreateOptionsMenu(menu);
     }
