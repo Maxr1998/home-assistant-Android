@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsCallback;
@@ -30,15 +29,13 @@ import android.widget.FrameLayout;
 
 import com.afollestad.ason.Ason;
 
-import java.lang.ref.WeakReference;
-
 import io.homeassistant.android.api.results.RequestResult;
 import io.homeassistant.android.ui.LoginView;
 
 import static io.homeassistant.android.Common.PREF_HASS_URL_KEY;
 
 
-public class HassActivity extends AppCompatActivity {
+public class HassActivity extends AppCompatActivity implements CommunicationHandler.ServiceCommunicator {
 
     private final Handler communicationHandler = new CommunicationHandler(this);
     private HassService service;
@@ -167,6 +164,7 @@ public class HassActivity extends AppCompatActivity {
         service.connect();
     }
 
+    @Override
     public void loginSuccess() {
         if (loginLayout != null) {
             rootView.removeView(loginLayout);
@@ -175,6 +173,7 @@ public class HassActivity extends AppCompatActivity {
         }
     }
 
+    @Override
     public void loginFailed() {
         if (loginLayout != null) {
             loginLayout.showLoginError();
@@ -183,42 +182,12 @@ public class HassActivity extends AppCompatActivity {
         }
     }
 
-    private void updateStates() {
+    @Override
+    public void updateStates() {
         viewAdapter.updateEntities(service.getEntityMap());
     }
 
     public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {
         return service.send(message, resultListener);
-    }
-
-    public static class CommunicationHandler extends Handler {
-
-        public static final int MESSAGE_LOGIN_SUCCESS = 0x04;
-        public static final int MESSAGE_LOGIN_FAILED = 0x08;
-        public static final int MESSAGE_STATES_AVAILABLE = 0x10;
-
-        private final WeakReference<HassActivity> activity;
-
-        private CommunicationHandler(HassActivity a) {
-            activity = new WeakReference<>(a);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (activity.get() == null) {
-                return;
-            }
-            switch (msg.what) {
-                case MESSAGE_LOGIN_SUCCESS:
-                    activity.get().loginSuccess();
-                    break;
-                case MESSAGE_LOGIN_FAILED:
-                    activity.get().loginFailed();
-                    break;
-                case MESSAGE_STATES_AVAILABLE:
-                    activity.get().updateStates();
-                    break;
-            }
-        }
     }
 }

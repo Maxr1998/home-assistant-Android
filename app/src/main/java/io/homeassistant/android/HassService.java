@@ -15,7 +15,9 @@ import java.net.ConnectException;
 import java.net.ProtocolException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.SSLException;
@@ -32,13 +34,15 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-import static io.homeassistant.android.HassActivity.CommunicationHandler.MESSAGE_LOGIN_FAILED;
-import static io.homeassistant.android.HassActivity.CommunicationHandler.MESSAGE_LOGIN_SUCCESS;
+import static io.homeassistant.android.CommunicationHandler.MESSAGE_LOGIN_FAILED;
+import static io.homeassistant.android.CommunicationHandler.MESSAGE_LOGIN_SUCCESS;
+import static io.homeassistant.android.CommunicationHandler.MESSAGE_STATES_AVAILABLE;
 
 public class HassService extends Service {
 
-    private static final String TAG = HassService.class.getSimpleName();
+    public static final String EXTRA_ACTION_COMMAND = "extra_action_command";
 
+    private static final String TAG = HassService.class.getSimpleName();
     private final HassBinder binder = new HassBinder();
     private final Map<String, Entity> entityMap = new HashMap<>();
 
@@ -51,9 +55,20 @@ public class HassService extends Service {
     private Handler activityHandler;
     private SparseArray<WeakReference<RequestResult.OnRequestResultListener>> requests = new SparseArray<>();
 
+    private Queue<String> actionsQueue = new LinkedList<>();
+
     @Override
     public void onCreate() {
         connect();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String command = intent.getStringExtra(EXTRA_ACTION_COMMAND);
+        if (command != null) {
+            actionsQueue.add(command);
+        }
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -134,7 +149,7 @@ public class HassService extends Service {
             @Override
             public void onRequestResult(boolean success, Object result) {
                 if (success && HassUtils.extractEntitiesFromStateResult(result, entityMap)) {
-                    activityHandler.obtainMessage(HassActivity.CommunicationHandler.MESSAGE_STATES_AVAILABLE).sendToTarget();
+                    activityHandler.obtainMessage(MESSAGE_STATES_AVAILABLE).sendToTarget();
                 }
             }
         });
@@ -187,6 +202,8 @@ public class HassService extends Service {
                         // Automatically load current states if bound to Activity
                         if (activityHandler != null) {
                             loadStates();
+                        } else if (actionsQueue.peek() != null) {
+                            send(new Ason(actionsQueue.remove()), null);
                         }
                         break;
                     case "result":
