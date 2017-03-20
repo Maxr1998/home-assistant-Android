@@ -111,7 +111,7 @@ public class LoginView extends LinearLayout {
     private void updateConnectButton() {
         connectButton.setEnabled(!urlInput.getText().toString().isEmpty()
                 && !passwordInput.getText().toString().isEmpty()
-                && TextUtils.isEmpty(passwordInputLayout.getError()));
+                && TextUtils.isEmpty(urlInputLayout.getError()));
     }
 
     public void showLoginError() {
