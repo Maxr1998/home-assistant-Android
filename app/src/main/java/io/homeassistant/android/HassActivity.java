@@ -8,7 +8,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsCallback;
@@ -22,19 +21,21 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import java.lang.ref.WeakReference;
+import com.afollestad.ason.Ason;
 
+import io.homeassistant.android.api.results.RequestResult;
 import io.homeassistant.android.ui.LoginView;
 
 import static io.homeassistant.android.Common.PREF_HASS_URL_KEY;
 
 
-public class HassActivity extends AppCompatActivity {
+public class HassActivity extends AppCompatActivity implements CommunicationHandler.ServiceCommunicator {
 
     private final Handler communicationHandler = new CommunicationHandler(this);
     private HassService service;
@@ -94,11 +95,6 @@ public class HassActivity extends AppCompatActivity {
 
         bindService(new Intent(this, HassService.class), hassConnection, BIND_AUTO_CREATE);
 
-        RecyclerView viewRecycler = (RecyclerView) findViewById(R.id.view_recycler);
-        viewRecycler.setLayoutManager(new LinearLayoutManager(this));
-        viewRecycler.setItemAnimator(new DefaultItemAnimator());
-        viewRecycler.setAdapter(viewAdapter);
-
         rootView = (FrameLayout) findViewById(R.id.root);
         mainLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator);
 
@@ -106,6 +102,11 @@ public class HassActivity extends AppCompatActivity {
             mainLayout.setVisibility(View.GONE);
             addLoginLayout();
         }
+
+        RecyclerView viewRecycler = (RecyclerView) mainLayout.findViewById(R.id.view_recycler);
+        viewRecycler.setLayoutManager(new LinearLayoutManager(this));
+        viewRecycler.setItemAnimator(new DefaultItemAnimator());
+        viewRecycler.setAdapter(viewAdapter);
     }
 
     private void addLoginLayout() {
@@ -130,7 +131,8 @@ public class HassActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        CustomTabsClient.bindCustomTabsService(this, CustomTabsClient.getPackageName(this, null), chromeConnection);
+        String packageName = CustomTabsClient.getPackageName(this, null);
+        CustomTabsClient.bindCustomTabsService(this, !TextUtils.isEmpty(packageName) ? packageName : "com.android.chrome", chromeConnection);
         getMenuInflater().inflate(R.menu.hass, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -162,6 +164,7 @@ public class HassActivity extends AppCompatActivity {
         service.connect();
     }
 
+    @Override
     public void loginSuccess() {
         if (loginLayout != null) {
             rootView.removeView(loginLayout);
@@ -170,6 +173,7 @@ public class HassActivity extends AppCompatActivity {
         }
     }
 
+    @Override
     public void loginFailed() {
         if (loginLayout != null) {
             loginLayout.showLoginError();
@@ -178,46 +182,12 @@ public class HassActivity extends AppCompatActivity {
         }
     }
 
-    private void updateStates() {
+    @Override
+    public void updateStates() {
         viewAdapter.updateEntities(service.getEntityMap());
     }
 
-    public int getNewID() {
-        return service.getNewID();
-    }
-
-    public boolean send(String message) {
-        return service.send(message);
-    }
-
-    public static class CommunicationHandler extends Handler {
-
-        public static final int MESSAGE_LOGIN_SUCCESS = 0x04;
-        public static final int MESSAGE_LOGIN_FAILED = 0x08;
-        public static final int MESSAGE_STATES_AVAILABLE = 0x10;
-
-        private final WeakReference<HassActivity> activity;
-
-        private CommunicationHandler(HassActivity a) {
-            activity = new WeakReference<>(a);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (activity.get() == null) {
-                return;
-            }
-            switch (msg.what) {
-                case MESSAGE_LOGIN_SUCCESS:
-                    activity.get().loginSuccess();
-                    break;
-                case MESSAGE_LOGIN_FAILED:
-                    activity.get().loginFailed();
-                    break;
-                case MESSAGE_STATES_AVAILABLE:
-                    activity.get().updateStates();
-                    break;
-            }
-        }
+    public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {
+        return service.send(message, resultListener);
     }
 }

@@ -1,15 +1,16 @@
 package io.homeassistant.android.api;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.afollestad.ason.Ason;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import io.homeassistant.android.api.results.Entity;
-import io.homeassistant.android.api.results.RequestResult;
 
 public final class HassUtils {
 
@@ -23,11 +24,11 @@ public final class HassUtils {
      * @param entityMap the Map where entities are store with their id as key
      * @return true if items were added, else false
      */
-    public static boolean extractEntitiesFromStateResult(@NonNull RequestResult result, @NonNull Map<String, Entity> entityMap) {
-        if (result.success && result.result != null && result.result.getClass().isArray()) {
+    public static boolean extractEntitiesFromStateResult(@Nullable Object result, @NonNull Map<String, Entity> entityMap) {
+        if (result != null && result.getClass().isArray()) {
             // Clear map before adding new content
             entityMap.clear();
-            for (Object o : (Object[]) result.result) {
+            for (Object o : (Object[]) result) {
                 Entity entity = Ason.deserialize((Ason) o, Entity.class);
                 entityMap.put(entity.id, entity);
             }
@@ -36,11 +37,10 @@ public final class HassUtils {
         return false;
     }
 
-    public static boolean extractGroups(@NonNull Map<String, Entity> entityMap, List<Entity> entities) {
+    public static void extractGroups(@NonNull Map<String, Entity> entityMap, List<Entity> entities) {
         entities.clear();
-        Iterator<String> iterator = entityMap.keySet().iterator();
-        while (iterator.hasNext()) {
-            String entityId = iterator.next();
+        List<Entity> groups = new ArrayList<>();
+        for (String entityId : entityMap.keySet()) {
             if (extractDomainFromEntityId(entityId).equals("group")) {
                 Entity entity = entityMap.get(entityId);
                 if (entity.attributes.hidden) {
@@ -48,27 +48,32 @@ public final class HassUtils {
                 }
                 // Add visible group item
                 entity.type = EntityType.GROUP;
-                entities.add(entity);
-
-                // Search and add items from group
-                String[] children = entity.attributes.children;
-                for (int i = 0; i < children.length; i++) {
-                    Entity child = entityMap.get(children[i]);
-                    child.type = extractTypeFromEntity(child);
-                    if ((child.attributes == null) ||
-                            ((child.attributes != null) && (!child.attributes.hidden)))
-                    {
-                        entities.add(child);
-                    }
-                }
-
-                // Add spacer
-                Entity spacer = new Entity();
-                spacer.type = EntityType.SPACER;
-                entities.add(spacer);
+                groups.add(entity);
             }
         }
-        return false;
+
+        // Sort groups according to their order number
+        Collections.sort(groups);
+
+        // Add group children
+        for (Entity group : groups) {
+            entities.add(group);
+            // Search and add items from group
+            String[] children = group.attributes.children;
+            for (int i = 0; i < children.length; i++) {
+                Entity child = entityMap.get(children[i]);
+                if (child == null) continue;
+                child.type = extractTypeFromEntity(child);
+                if (child.attributes == null || !child.attributes.hidden) {
+                    entities.add(child);
+                }
+            }
+
+            // Add spacer
+            Entity spacer = new Entity();
+            spacer.type = EntityType.SPACER;
+            entities.add(spacer);
+        }
     }
 
     public static String extractDomainFromEntityId(String entityId) {
@@ -96,5 +101,10 @@ public final class HassUtils {
                 }
                 return EntityType.BASE;
         }
+    }
+
+    @NonNull
+    public static String extractEntityName(@NonNull Entity e) {
+        return e.attributes != null && e.attributes.friendly_name != null ? e.attributes.friendly_name : e.id;
     }
 }

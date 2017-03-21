@@ -1,6 +1,7 @@
 package io.homeassistant.android.ui;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -93,12 +94,17 @@ public class LoginView extends LinearLayout {
             }
         });
 
+        if (!Utils.getPassword(getContext()).isEmpty())
+            passwordInputLayout.setHint(getResources().getString(R.string.hint_password_existing));
+
         connectButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Utils.getPrefs(getContext()).edit()
-                        .putString(Common.PREF_HASS_URL_KEY, urlInput.getText().toString())
-                        .putString(Common.PREF_HASS_PASSWORD_KEY, passwordInput.getText().toString()).apply();
+                SharedPreferences.Editor prefs = Utils.getPrefs(getContext()).edit()
+                        .putString(Common.PREF_HASS_URL_KEY, urlInput.getText().toString());
+                if (!passwordInput.getText().toString().isEmpty())
+                    prefs.putString(Common.PREF_HASS_PASSWORD_KEY, passwordInput.getText().toString());
+                prefs.apply();
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getWindowToken(), 0);
                 connectButton.setVisibility(INVISIBLE);
@@ -106,12 +112,14 @@ public class LoginView extends LinearLayout {
                 ((HassActivity) getContext()).attemptLogin();
             }
         });
+
+        updateConnectButton();
     }
 
     private void updateConnectButton() {
         connectButton.setEnabled(!urlInput.getText().toString().isEmpty()
-                && !passwordInput.getText().toString().isEmpty()
-                && TextUtils.isEmpty(passwordInputLayout.getError()));
+                && (!passwordInput.getText().toString().isEmpty() || !Utils.getPassword(getContext()).isEmpty())
+                && TextUtils.isEmpty(urlInputLayout.getError()));
     }
 
     public void showLoginError() {

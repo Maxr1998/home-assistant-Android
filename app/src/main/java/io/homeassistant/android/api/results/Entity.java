@@ -1,11 +1,13 @@
 package io.homeassistant.android.api.results;
 
+import android.support.annotation.NonNull;
+
 import com.afollestad.ason.AsonIgnore;
 import com.afollestad.ason.AsonName;
 
 import io.homeassistant.android.api.EntityType;
 
-public class Entity {
+public class Entity implements Comparable<Entity> {
     @AsonIgnore
     public EntityType type = EntityType.BASE;
 
@@ -18,6 +20,18 @@ public class Entity {
 
     @Override
     public String toString() {
-        return String.format("%1$s, %2$s", type, id);
+        return String.format("%1$s[%2$s]", type, id);
+    }
+
+    @Override
+    public int compareTo(@NonNull Entity e) {
+        if (attributes != null && e.attributes != null) {
+            if (attributes.order != -1 && e.attributes.order != -1) {
+                return attributes.order - e.attributes.order;
+            } else if (attributes.friendly_name != null && e.attributes.friendly_name != null) {
+                return attributes.friendly_name.compareToIgnoreCase(e.attributes.friendly_name);
+            }
+        }
+        return id.compareToIgnoreCase(e.id);
     }
 }

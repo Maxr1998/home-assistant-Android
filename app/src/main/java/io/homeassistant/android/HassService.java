@@ -2,21 +2,22 @@ package io.homeassistant.android;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseIntArray;
+import android.util.SparseArray;
 
 import com.afollestad.ason.Ason;
 
+import java.lang.ref.WeakReference;
 import java.net.ConnectException;
 import java.net.ProtocolException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.net.ssl.SSLException;
@@ -33,20 +34,18 @@ import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 
-import static io.homeassistant.android.HassActivity.CommunicationHandler.MESSAGE_LOGIN_FAILED;
-import static io.homeassistant.android.HassActivity.CommunicationHandler.MESSAGE_LOGIN_SUCCESS;
+import static io.homeassistant.android.CommunicationHandler.MESSAGE_LOGIN_FAILED;
+import static io.homeassistant.android.CommunicationHandler.MESSAGE_LOGIN_SUCCESS;
+import static io.homeassistant.android.CommunicationHandler.MESSAGE_STATES_AVAILABLE;
 
 public class HassService extends Service {
 
+    public static final String EXTRA_ACTION_COMMAND = "extra_action_command";
+
     private static final String TAG = HassService.class.getSimpleName();
-
-    private static final int TYPE_ERROR = -1;
-    private static final int TYPE_STATES = 1;
-
     private final HassBinder binder = new HassBinder();
     private final Map<String, Entity> entityMap = new HashMap<>();
 
-    private SharedPreferences prefs;
     private WebSocket hassSocket;
     private WebSocketListener socketListener = new HassSocketListener();
     private boolean connected = false;
@@ -54,12 +53,22 @@ public class HassService extends Service {
     private AtomicInteger lastId = new AtomicInteger(0);
 
     private Handler activityHandler;
-    private SparseIntArray requests = new SparseIntArray();
+    private SparseArray<WeakReference<RequestResult.OnRequestResultListener>> requests = new SparseArray<>();
+
+    private Queue<String> actionsQueue = new LinkedList<>();
 
     @Override
     public void onCreate() {
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
         connect();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        String command = intent.getStringExtra(EXTRA_ACTION_COMMAND);
+        if (command != null) {
+            actionsQueue.add(command);
+        }
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -116,7 +125,7 @@ public class HassService extends Service {
             authenticated = true;
             String password = Utils.getPassword(this);
             if (password.length() > 0)
-                send(new AuthRequest(password).toString());
+                send(new AuthRequest(password), null);
         }
     }
 
@@ -127,7 +136,7 @@ public class HassService extends Service {
         }
     }
 
-    public int getNewID() {
+    private int getNewID() {
         return lastId.incrementAndGet();
     }
 
@@ -136,17 +145,29 @@ public class HassService extends Service {
             authenticate();
             return;
         }
-        final int rid = getNewID();
-        requests.append(rid, TYPE_STATES);
-        send(new StatesRequest(rid).toString());
+        send(new StatesRequest(), new RequestResult.OnRequestResultListener() {
+            @Override
+            public void onRequestResult(boolean success, Object result) {
+                if (success && HassUtils.extractEntitiesFromStateResult(result, entityMap)) {
+                    activityHandler.obtainMessage(MESSAGE_STATES_AVAILABLE).sendToTarget();
+                }
+            }
+        });
     }
 
     public Map<String, Entity> getEntityMap() {
         return entityMap;
     }
 
-    public boolean send(String message) {
-        return hassSocket != null && hassSocket.send(message);
+    public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {
+        if (!(message instanceof AuthRequest)) {
+            int rId = getNewID();
+            message.put("id", rId);
+            if (resultListener != null) {
+                requests.append(rId, new WeakReference<>(resultListener));
+            }
+        }
+        return hassSocket != null && hassSocket.send(message.toString());
     }
 
     public class HassBinder extends Binder {
@@ -181,17 +202,16 @@ public class HassService extends Service {
                         // Automatically load current states if bound to Activity
                         if (activityHandler != null) {
                             loadStates();
+                        } else if (actionsQueue.peek() != null) {
+                            send(new Ason(actionsQueue.remove()), null);
                         }
                         break;
                     case "result":
                         Log.d(TAG, message.toString());
                         RequestResult res = Ason.deserialize(message, RequestResult.class);
-                        switch (requests.get(res.id, TYPE_ERROR)) {
-                            case TYPE_STATES:
-                                if (HassUtils.extractEntitiesFromStateResult(res, entityMap)) {
-                                    activityHandler.obtainMessage(HassActivity.CommunicationHandler.MESSAGE_STATES_AVAILABLE).sendToTarget();
-                                }
-                                break;
+                        RequestResult.OnRequestResultListener resultListener = requests.get(res.id, new WeakReference<RequestResult.OnRequestResultListener>(null)).get();
+                        if (resultListener != null) {
+                            resultListener.onRequestResult(res.success, res.result);
                         }
                 }
             } catch (Throwable t) { // Catch everything that it doesn't get passed to onFailure

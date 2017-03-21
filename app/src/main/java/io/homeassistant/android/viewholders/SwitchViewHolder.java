@@ -12,6 +12,7 @@ import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.ToggleRequest;
 import io.homeassistant.android.api.results.Entity;
+import io.homeassistant.android.api.results.RequestResult;
 
 public class SwitchViewHolder extends TextViewHolder implements View.OnTouchListener, View.OnClickListener {
 
@@ -40,14 +41,21 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
         super.setEntity(e);
         stateSwitch.setChecked("on".equals(entity.state));
         stateSwitch.setOnClickListener(this);
-        if ((entity.attributes.supported_features & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS)
+        if ((entity.attributes.supported_features & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {
+            brightnessSlider.setProgress(entity.attributes.brightness);
             name.setOnTouchListener(this);
+        }
     }
 
     @Override
     public void onClick(View v) {
         HassActivity activity = (HassActivity) v.getContext();
-        activity.send(new ToggleRequest(activity.getNewID(), entity, stateSwitch.isChecked()).toString());
+        activity.send(new ToggleRequest(entity, stateSwitch.isChecked()), new RequestResult.OnRequestResultListener() {
+            @Override
+            public void onRequestResult(boolean success, Object result) {
+
+            }
+        });
     }
 
     @Override
@@ -74,7 +82,12 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
                 if (brightnessSlider.getProgress() != sliderRunnable.previousProgress) { // Changed
                     HassActivity activity = (HassActivity) brightnessSlider.getContext();
-                    activity.send(new ToggleRequest(activity.getNewID(), entity, brightnessSlider.getProgress()).toString());
+                    activity.send(new ToggleRequest(entity, brightnessSlider.getProgress()), new RequestResult.OnRequestResultListener() {
+                        @Override
+                        public void onRequestResult(boolean success, Object result) {
+
+                        }
+                    });
                     stateSwitch.setChecked(brightnessSlider.getProgress() > 0);
                 }
 
@@ -87,7 +100,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
     }
 
     private boolean considerMoved(MotionEvent event) {
-        return event.getHistorySize() >= 1 && Math.abs(event.getX() - event.getHistoricalX(0)) > 5f;
+        return event.getHistorySize() >= 1 && Math.abs(event.getX() - event.getHistoricalX(0)) > 20f;
     }
 
     private class SliderRunnable implements Runnable {
