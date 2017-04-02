@@ -9,7 +9,8 @@
     <string name="invalid_url_scheme">Invalid URL scheme</string>
 
     <string name="button_connect">Connect</string>
-    <string name="login_error">Invalid IP or password</string>
+    <string name="button_connect_no_network">No network available</string>
+    <string name="login_error">Invalid IP or password. Is the server running?</string>
 
     <!-- Main screen -->
     <string name="menu_refresh">Refresh</string>
