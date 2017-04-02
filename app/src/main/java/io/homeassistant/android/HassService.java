@@ -10,7 +10,7 @@ import android.util.SparseArray;
 
 import com.afollestad.ason.Ason;
 
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.net.ConnectException;
 import java.net.ProtocolException;
 import java.net.UnknownHostException;
@@ -53,7 +53,7 @@ public class HassService extends Service {
     private AtomicInteger lastId = new AtomicInteger(0);
 
     private Handler activityHandler;
-    private SparseArray<WeakReference<RequestResult.OnRequestResultListener>> requests = new SparseArray<>();
+    private SparseArray<SoftReference<RequestResult.OnRequestResultListener>> requests = new SparseArray<>(3);
 
     private Queue<String> actionsQueue = new LinkedList<>();
 
@@ -164,10 +164,21 @@ public class HassService extends Service {
             int rId = getNewID();
             message.put("id", rId);
             if (resultListener != null) {
-                requests.append(rId, new WeakReference<>(resultListener));
+                requests.append(rId, new SoftReference<>(resultListener));
             }
         }
         return hassSocket != null && hassSocket.send(message.toString());
+    }
+
+    private void handleActionsQueue() {
+        if (actionsQueue.peek() != null) {
+            send(new Ason(actionsQueue.remove()), new RequestResult.OnRequestResultListener() {
+                @Override
+                public void onRequestResult(boolean success, Object result) {
+                    handleActionsQueue();
+                }
+            });
+        }
     }
 
     public class HassBinder extends Binder {
@@ -186,33 +197,35 @@ public class HassService extends Service {
         @Override
         public void onMessage(WebSocket webSocket, String text) {
             try {
-                Log.d(TAG, text);
                 Ason message = new Ason(text);
-                //noinspection ConstantConditions
-                switch (message.getString("type", "")) {
+                String type = message.getString("type", "");
+                switch (type != null ? type : "") {
                     case "auth_required":
+                        Log.d(TAG, "Authenticating..");
                         authenticate();
                         break;
                     case "auth_failed":
+                        Log.d(TAG, "Authentication failed!");
                         connected = false;
                         loginMessage(false);
                         break;
                     case "auth_ok":
+                        Log.d(TAG, "Authenticated.");
                         loginMessage(true);
                         // Automatically load current states if bound to Activity
                         if (activityHandler != null) {
                             loadStates();
-                        } else if (actionsQueue.peek() != null) {
-                            send(new Ason(actionsQueue.remove()), null);
-                        }
+                        } else handleActionsQueue();
                         break;
                     case "result":
-                        Log.d(TAG, message.toString());
                         RequestResult res = Ason.deserialize(message, RequestResult.class);
-                        RequestResult.OnRequestResultListener resultListener = requests.get(res.id, new WeakReference<RequestResult.OnRequestResultListener>(null)).get();
+                        Log.d(TAG, res.id + ": " + message.toString());
+                        RequestResult.OnRequestResultListener resultListener = requests.get(res.id, new SoftReference<RequestResult.OnRequestResultListener>(null)).get();
                         if (resultListener != null) {
                             resultListener.onRequestResult(res.success, res.result);
+                            requests.remove(res.id);
                         }
+                        break;
                 }
             } catch (Throwable t) { // Catch everything that it doesn't get passed to onFailure
                 Log.e(TAG, "Error in onMessage()", t);
