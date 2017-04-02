@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-ext.supportLibraryVersion = "25.3.0";
+ext.supportLibraryVersion = "25.3.1"
 
 android {
     signingConfigs {
@@ -12,8 +12,8 @@ android {
         applicationId "io.homeassistant.android"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 1
-        versionName "0.1"
+        versionCode 2
+        versionName "0.2"
     }
     buildTypes {
         release {
@@ -59,6 +59,7 @@ dependencies {
     compile "com.android.support:design:$supportLibraryVersion"
     compile "com.android.support:recyclerview-v7:$supportLibraryVersion"
     compile "com.android.support:customtabs:$supportLibraryVersion"
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.afollestad:ason:1.4.4'

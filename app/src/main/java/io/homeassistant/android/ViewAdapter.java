@@ -6,16 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.afollestad.ason.Ason;
-
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.homeassistant.android.api.EntityType;
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.results.Entity;
-import io.homeassistant.android.api.EntityType;
 import io.homeassistant.android.viewholders.BaseViewHolder;
 
 
@@ -30,14 +27,14 @@ public class ViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     }
 
     private <T extends BaseViewHolder> T createViewHolder(EntityType type, LayoutInflater inflater) {
-        T viewHolder;
+        BaseViewHolder viewHolder;
         View itemView = inflater.inflate(type.layoutRes, null);
         try {
-            viewHolder = (T) type.viewHolderClass.getConstructors()[0].newInstance(itemView);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
+            viewHolder = type.viewHolderClass.getConstructor(View.class).newInstance(itemView);
+        } catch (ReflectiveOperationException e) {
             viewHolder = null;
         }
-        return viewHolder;
+        return (T) viewHolder;
     }
 
     @Override

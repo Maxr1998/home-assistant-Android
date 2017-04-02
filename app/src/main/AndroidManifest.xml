@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.homeassistant.android">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -17,6 +18,15 @@
         </activity>
 
         <service android:name=".HassService" />
-    </application>
 
+        <activity
+            android:name=".shortcuts.ShortcutActivity"
+            android:autoRemoveFromRecents="true"
+            android:excludeFromRecents="true"
+            android:taskAffinity="">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE_SHORTCUT" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>

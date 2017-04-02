@@ -1,7 +1,12 @@
 package io.homeassistant.android.ui;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -31,6 +36,14 @@ public class LoginView extends LinearLayout {
     private TextInputEditText passwordInput;
     private Button connectButton;
     private ProgressBar progress;
+
+    private ConnectivityManager connectivityManager;
+    private BroadcastReceiver networkReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateConnectButton();
+        }
+    };
 
     public LoginView(Context context) {
         super(context);
@@ -112,19 +125,40 @@ public class LoginView extends LinearLayout {
                 ((HassActivity) getContext()).attemptLogin();
             }
         });
+        connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         updateConnectButton();
     }
 
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        getContext().registerReceiver(networkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        getContext().unregisterReceiver(networkReceiver);
+    }
+
+    private boolean isConnected() {
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        return info != null && info.isConnected();
+    }
+
     private void updateConnectButton() {
-        connectButton.setEnabled(!urlInput.getText().toString().isEmpty()
+        connectButton.setEnabled(isConnected() &&
+                !urlInput.getText().toString().isEmpty()
                 && (!passwordInput.getText().toString().isEmpty() || !Utils.getPassword(getContext()).isEmpty())
                 && TextUtils.isEmpty(urlInputLayout.getError()));
+
+        connectButton.setText(isConnected() ? R.string.button_connect : R.string.button_connect_no_network);
     }
 
     public void showLoginError() {
         progress.setVisibility(INVISIBLE);
         connectButton.setVisibility(VISIBLE);
-        Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_LONG).show();
     }
 }

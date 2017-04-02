@@ -1,7 +1,7 @@
 home-assistant-Android
 ======================
 
-[![Platform Android](https://img.shields.io/badge/Platforms-Android-lightgray.svg?style=flat)](https://developer.apple.com/swift/)
+[![Platform Android](https://img.shields.io/badge/Platform-Android-6ab344.svg?style=flat)](https://developer.android.com/)
 [![GitHub issues](https://img.shields.io/github/issues/Maxr1998/home-assistant-Android.svg)](https://github.com/Maxr1998/home-assistant-Android/issues)
 [![License MIT](https://img.shields.io/badge/license-GPLv3-red.svg?style=flat)](https://github.com/Maxr1998/home-assistant-Android/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/home_assistant.svg?style=social)](https://twitter.com/home_assistant)

@@ -9,11 +9,15 @@
     <string name="invalid_url_scheme">Invalid URL scheme</string>
 
     <string name="button_connect">Connect</string>
-    <string name="login_error">Invalid IP or password</string>
+    <string name="button_connect_no_network">No network available</string>
+    <string name="login_error">Connection failure: Invalid IP/password, or is the server off?</string>
 
     <!-- Main screen -->
     <string name="menu_refresh">Refresh</string>
     <string name="menu_custom_tab">Load Web UI</string>
 
     <string name="button_scene_activate">activate</string>
+
+    <!-- Shortcut activity -->
+    <string name="button_add_shortcut">Add shortcut</string>
 </resources>
