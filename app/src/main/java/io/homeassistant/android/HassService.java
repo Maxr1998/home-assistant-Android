@@ -67,6 +67,8 @@ public class HassService extends Service {
         String command = intent.getStringExtra(EXTRA_ACTION_COMMAND);
         if (command != null) {
             actionsQueue.add(command);
+            if (authenticated)
+                handleActionsQueue();
         }
         return START_NOT_STICKY;
     }
