@@ -1,5 +1,6 @@
 # Generated files
 *build/
+captures/
 
 # Local configuration file (sdk path, etc)
 local.properties
@@ -25,7 +26,7 @@ lint.xml
 *.*~
 
 # Private files
-app/src/main/res/values-v16/private.xml
+app/src/main/res/values-v21/private.xml
 # KeyStore + Passwords
 sMaxr1998_key.jks
 keyStore.properties
