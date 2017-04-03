@@ -122,6 +122,11 @@ public class MaterialDesignIconsUtils {
         final File icon = new File(c.getFilesDir(), name.concat(".png"));
         if (icon.exists()) {
             final Drawable drawable = Drawable.createFromPath(icon.getAbsolutePath());
+            if (drawable == null) {
+                //noinspection ResultOfMethodCallIgnored
+                icon.delete();
+                return null;
+            }
             drawableCache.put(name, new WeakReference<>(drawable));
             return drawable;
         } else {
