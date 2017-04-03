@@ -3,12 +3,10 @@ package io.homeassistant.android;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
@@ -32,8 +30,6 @@ import com.afollestad.ason.Ason;
 import io.homeassistant.android.api.results.RequestResult;
 import io.homeassistant.android.ui.LoginView;
 
-import static io.homeassistant.android.Common.PREF_HASS_URL_KEY;
-
 
 public class HassActivity extends AppCompatActivity implements CommunicationHandler.ServiceCommunicator {
 
@@ -54,7 +50,6 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
             service = null;
         }
     };
-    private SharedPreferences prefs;
     private CustomTabsSession customTabsSession;
     private final CustomTabsServiceConnection chromeConnection = new CustomTabsServiceConnection() {
         @Override
@@ -68,7 +63,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
             communicationHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    customTabsSession.mayLaunchUrl(Uri.parse(prefs.getString(PREF_HASS_URL_KEY, "")), null, null);
+                    customTabsSession.mayLaunchUrl(Uri.parse(Utils.getUrl(HassActivity.this)), null, null);
                 }
             }, 1500);
         }
@@ -90,8 +85,6 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
         setContentView(R.layout.activity_hass);
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(t);
-
-        prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         bindService(new Intent(this, HassService.class), hassConnection, BIND_AUTO_CREATE);
 
@@ -152,7 +145,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
                             .enableUrlBarHiding()
                             .setToolbarColor(getResources().getColor(R.color.primary))
                             .build();
-                    intent.launchUrl(this, Uri.parse(prefs.getString(Common.PREF_HASS_URL_KEY, "")));
+                    intent.launchUrl(this, Uri.parse(Utils.getUrl(this)));
                 }
                 return true;
             default:
