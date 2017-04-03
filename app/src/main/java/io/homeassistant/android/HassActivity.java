@@ -92,7 +92,6 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
         mainLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator);
 
         if (Utils.getUrl(this).isEmpty() || Utils.getPassword(this).isEmpty()) {
-            mainLayout.setVisibility(View.GONE);
             addLoginLayout();
         }
 
@@ -103,6 +102,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
     }
 
     private void addLoginLayout() {
+        mainLayout.setVisibility(View.GONE);
         loginLayout = (LoginView) getLayoutInflater().inflate(R.layout.custom_login, rootView, true).findViewById(R.id.login_layout);
     }
 
@@ -146,6 +146,12 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
                             .setToolbarColor(getResources().getColor(R.color.primary))
                             .build();
                     intent.launchUrl(this, Uri.parse(Utils.getUrl(this)));
+                }
+                return true;
+            case R.id.menu_logout:
+                if (loginLayout == null) {
+                    Utils.getPrefs(this).edit().remove(Common.PREF_HASS_PASSWORD_KEY).apply();
+                    addLoginLayout();
                 }
                 return true;
             default:

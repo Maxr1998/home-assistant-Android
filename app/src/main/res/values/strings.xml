@@ -22,6 +22,7 @@
     <!-- Main screen -->
     <string name="menu_refresh">Refresh</string>
     <string name="menu_custom_tab">Load Web UI</string>
+    <string name="menu_logout">Logout</string>
 
     <string name="button_scene_activate">activate</string>
 
