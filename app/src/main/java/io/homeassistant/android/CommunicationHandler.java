@@ -11,6 +11,10 @@ public class CommunicationHandler extends Handler {
     public static final int MESSAGE_LOGIN_FAILED = 0x08;
     public static final int MESSAGE_STATES_AVAILABLE = 0x10;
 
+    public static final int FAILURE_REASON_GENERIC = 0x1;
+    public static final int FAILURE_REASON_WRONG_PASSWORD = 0x2;
+    public static final int FAILURE_REASON_SSL_MISMATCH = 0x4;
+
     private final WeakReference<ServiceCommunicator> activity;
 
     public CommunicationHandler(ServiceCommunicator a) {
@@ -27,7 +31,7 @@ public class CommunicationHandler extends Handler {
                 activity.get().loginSuccess();
                 break;
             case MESSAGE_LOGIN_FAILED:
-                activity.get().loginFailed();
+                activity.get().loginFailed(msg.arg1);
                 break;
             case MESSAGE_STATES_AVAILABLE:
                 activity.get().updateStates();
@@ -38,7 +42,7 @@ public class CommunicationHandler extends Handler {
     public interface ServiceCommunicator {
         void loginSuccess();
 
-        void loginFailed();
+        void loginFailed(int reason);
 
         void updateStates();
     }

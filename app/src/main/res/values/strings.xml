@@ -10,7 +10,14 @@
 
     <string name="button_connect">Connect</string>
     <string name="button_connect_no_network">No network available</string>
-    <string name="login_error">Connection failure: Invalid IP/password, or is the server off?</string>
+    <string name="login_error">Connection failure: Invalid IP/password, SSL mismatch, or is the server off?</string>
+    <string name="login_error_generic">Connection failure: Invalid IP, or is the server off?</string>
+    <string name="login_error_wrong_password">Connection failure: Invalid password!</string>
+    <string name="dialog_login_error_ssl_mismatch_title">SSL hostname mismatch error!</string>
+    <string name="dialog_login_error_ssl_mismatch_message">The current IP doesn\'t match the hostname specified in the SSL certificate.
+        That means that you either typed in an alias to your hostname or an attacker may have tried to intercept your connection.
+        Only tap ignore if you really know what you do!</string>
+    <string name="dialog_login_error_ssl_mismatch_ignore">Ignore</string>
 
     <!-- Main screen -->
     <string name="menu_refresh">Refresh</string>

@@ -20,7 +20,10 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.requests.AuthRequest;
@@ -33,7 +36,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
+import okhttp3.internal.tls.OkHostnameVerifier;
 
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_GENERIC;
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_SSL_MISMATCH;
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_WRONG_PASSWORD;
 import static io.homeassistant.android.CommunicationHandler.MESSAGE_LOGIN_FAILED;
 import static io.homeassistant.android.CommunicationHandler.MESSAGE_LOGIN_SUCCESS;
 import static io.homeassistant.android.CommunicationHandler.MESSAGE_STATES_AVAILABLE;
@@ -103,17 +110,26 @@ public class HassService extends Service {
             // Connect to WebSocket
             String url = Utils.getUrl(this);
             if (!url.isEmpty()) {
-                if (url.charAt(url.length() - 1) == '/') {
-                    url = url.substring(0, url.length() - 1);
-                }
                 HttpUrl httpUrl = HttpUrl.parse(url = url.concat("/api/websocket"));
                 Log.d("Home Assistant URL", url);
                 if (httpUrl != null) {
-                    OkHttpClient client = new OkHttpClient();
+                    OkHttpClient client = new OkHttpClient.Builder()
+                            .hostnameVerifier(new HostnameVerifier() {
+                                @Override
+                                public boolean verify(String hostname, SSLSession session) {
+                                    Log.d(TAG, hostname);
+                                    if (OkHostnameVerifier.INSTANCE.verify(hostname, session) || Utils.getAllowedHostMismatches(HassService.this).contains(hostname)) {
+                                        return true;
+                                    }
+                                    loginMessage(false, FAILURE_REASON_SSL_MISMATCH);
+                                    return false;
+                                }
+                            })
+                            .build();
                     hassSocket = client.newWebSocket(new Request.Builder().url(httpUrl).build(), socketListener);
                     connected = true;
                 } else {
-                    loginMessage(false);
+                    loginMessage(false, FAILURE_REASON_GENERIC);
                 }
             }
         }
@@ -131,10 +147,10 @@ public class HassService extends Service {
         }
     }
 
-    private void loginMessage(boolean success) {
+    private void loginMessage(boolean success, int reason) {
         authenticated = success;
         if (activityHandler != null) {
-            activityHandler.obtainMessage(success ? MESSAGE_LOGIN_SUCCESS : MESSAGE_LOGIN_FAILED).sendToTarget();
+            activityHandler.obtainMessage(success ? MESSAGE_LOGIN_SUCCESS : MESSAGE_LOGIN_FAILED, reason, 0).sendToTarget();
         }
     }
 
@@ -207,13 +223,14 @@ public class HassService extends Service {
                         authenticate();
                         break;
                     case "auth_failed":
+                    case "auth_invalid":
                         Log.d(TAG, "Authentication failed!");
                         connected = false;
-                        loginMessage(false);
+                        loginMessage(false, FAILURE_REASON_WRONG_PASSWORD);
                         break;
                     case "auth_ok":
                         Log.d(TAG, "Authenticated.");
-                        loginMessage(true);
+                        loginMessage(true, 0);
                         // Automatically load current states if bound to Activity
                         if (activityHandler != null) {
                             loadStates();
@@ -248,7 +265,8 @@ public class HassService extends Service {
                     hassSocket.close(1001, "Application error");
                     hassSocket = null;
                 }
-                loginMessage(false);
+                if (!(t instanceof SSLPeerUnverifiedException))
+                    loginMessage(false, FAILURE_REASON_GENERIC);
                 return;
             }
             Log.e(TAG, "Error in onFailure()", t);

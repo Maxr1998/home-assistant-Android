@@ -124,7 +124,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
     }
 
     @Override
-    public void loginFailed() {
+    public void loginFailed(int reason) {
         finish();
         Toast.makeText(this, R.string.login_error, Toast.LENGTH_LONG).show();
     }

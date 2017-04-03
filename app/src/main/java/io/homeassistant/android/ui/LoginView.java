@@ -1,13 +1,16 @@
 package io.homeassistant.android.ui;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
@@ -26,6 +29,10 @@ import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.Utils;
 import okhttp3.HttpUrl;
+
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_GENERIC;
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_SSL_MISMATCH;
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_WRONG_PASSWORD;
 
 
 public class LoginView extends LinearLayout {
@@ -113,10 +120,20 @@ public class LoginView extends LinearLayout {
         connectButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                SharedPreferences.Editor prefs = Utils.getPrefs(getContext()).edit()
-                        .putString(Common.PREF_HASS_URL_KEY, urlInput.getText().toString());
-                if (!passwordInput.getText().toString().isEmpty())
-                    prefs.putString(Common.PREF_HASS_PASSWORD_KEY, passwordInput.getText().toString());
+                SharedPreferences.Editor prefs = Utils.getPrefs(getContext()).edit();
+                // Tidying up the URL format
+                String url = urlInput.getText().toString();
+                if (!url.matches("http(s)?://[\\s\\S]*")) {
+                    url = "http://".concat(url);
+                }
+                if (url.charAt(url.length() - 1) == '/') {
+                    url = url.substring(0, url.length() - 1);
+                }
+                prefs.putString(Common.PREF_HASS_URL_KEY, url);
+                String password = passwordInput.getText().toString();
+                if (!password.isEmpty()) {
+                    prefs.putString(Common.PREF_HASS_PASSWORD_KEY, password);
+                }
                 prefs.apply();
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(getWindowToken(), 0);
@@ -156,9 +173,35 @@ public class LoginView extends LinearLayout {
         connectButton.setText(isConnected() ? R.string.button_connect : R.string.button_connect_no_network);
     }
 
-    public void showLoginError() {
+    public void showLoginError(int reason) {
         progress.setVisibility(INVISIBLE);
         connectButton.setVisibility(VISIBLE);
-        Toast.makeText(getContext(), R.string.login_error, Toast.LENGTH_LONG).show();
+
+        @StringRes int message;
+        switch (reason) {
+            default:
+            case FAILURE_REASON_GENERIC:
+                message = R.string.login_error_generic;
+                break;
+            case FAILURE_REASON_WRONG_PASSWORD:
+                message = R.string.login_error_wrong_password;
+                break;
+            case FAILURE_REASON_SSL_MISMATCH:
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.dialog_login_error_ssl_mismatch_title)
+                        .setMessage(R.string.dialog_login_error_ssl_mismatch_message)
+                        .setPositiveButton(android.R.string.cancel, null)
+                        .setNeutralButton(R.string.dialog_login_error_ssl_mismatch_ignore, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Utils.addAllowedHostMismatch(getContext(), HttpUrl.parse(Utils.getUrl(getContext())).host());
+                                connectButton.callOnClick();
+                            }
+                        })
+                        .setCancelable(false)
+                        .create().show();
+                return;
+        }
+        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
 }

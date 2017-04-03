@@ -167,12 +167,11 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
     }
 
     @Override
-    public void loginFailed() {
-        if (loginLayout != null) {
-            loginLayout.showLoginError();
-        } else {
+    public void loginFailed(int reason) {
+        if (loginLayout == null) {
             addLoginLayout();
         }
+        loginLayout.showLoginError(reason);
     }
 
     @Override
