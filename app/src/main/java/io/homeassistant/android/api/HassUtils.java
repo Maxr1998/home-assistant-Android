@@ -12,6 +12,17 @@ import java.util.Map;
 
 import io.homeassistant.android.api.results.Entity;
 
+import static io.homeassistant.android.api.Domain.AUTOMATION;
+import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
+import static io.homeassistant.android.api.Domain.GROUP;
+import static io.homeassistant.android.api.Domain.INPUT_BOOLEAN;
+import static io.homeassistant.android.api.Domain.INPUT_SELECT;
+import static io.homeassistant.android.api.Domain.LIGHT;
+import static io.homeassistant.android.api.Domain.SCENE;
+import static io.homeassistant.android.api.Domain.SENSOR;
+import static io.homeassistant.android.api.Domain.SUN;
+import static io.homeassistant.android.api.Domain.SWITCH;
+
 public final class HassUtils {
 
     private HassUtils() {
@@ -41,7 +52,7 @@ public final class HassUtils {
         entities.clear();
         List<Entity> groups = new ArrayList<>();
         for (String entityId : entityMap.keySet()) {
-            if (extractDomainFromEntityId(entityId).equals("group")) {
+            if (extractDomainFromEntityId(entityId).equals(GROUP)) {
                 Entity entity = entityMap.get(entityId);
                 if (entity.attributes.hidden) {
                     continue;
@@ -83,18 +94,19 @@ public final class HassUtils {
     public static EntityType extractTypeFromEntity(Entity entity) {
         String domain = extractDomainFromEntityId(entity.id);
         switch (domain) {
-            case "automation":
-            case "light":
-            case "switch":
-            case "input_boolean":
+            case AUTOMATION:
+            case INPUT_BOOLEAN:
+            case LIGHT:
+            case SWITCH:
                 return EntityType.SWITCH;
-            case "sensor":
-            case "binary_sensor":
+            case BINARY_SENSOR:
+            case SENSOR:
+            case SUN:
                 return EntityType.SENSOR;
-            case "scene":
-                return EntityType.SCENE;
-            case "input_select":
+            case INPUT_SELECT:
                 return EntityType.INPUT_SELECT;
+            case SCENE:
+                return EntityType.SCENE;
             default:
                 if (entity.attributes != null && entity.attributes.friendly_name != null) {
                     return EntityType.TEXT;
