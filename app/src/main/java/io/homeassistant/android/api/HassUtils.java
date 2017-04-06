@@ -2,11 +2,13 @@ package io.homeassistant.android.api;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Pair;
 
 import com.afollestad.ason.Ason;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -48,9 +50,8 @@ public final class HassUtils {
         return false;
     }
 
-    public static void extractGroups(@NonNull Map<String, Entity> entityMap, List<Entity> entities) {
+    public static void extractGroups(@NonNull Map<String, Entity> entityMap, List<Pair<Entity, List<Entity>>> entities) {
         entities.clear();
-        List<Entity> groups = new ArrayList<>();
         for (String entityId : entityMap.keySet()) {
             if (extractDomainFromEntityId(entityId).equals(GROUP)) {
                 Entity entity = entityMap.get(entityId);
@@ -59,32 +60,30 @@ public final class HassUtils {
                 }
                 // Add visible group item
                 entity.type = EntityType.GROUP;
-                groups.add(entity);
+
+                // Add group children
+                List<Entity> children = new ArrayList<>();
+                String[] childrenKeys = entity.attributes.children;
+                for (int i = 0; i < childrenKeys.length; i++) {
+                    Entity child = entityMap.get(childrenKeys[i]);
+                    if (child == null) continue;
+                    child.type = extractTypeFromEntity(child);
+                    if (child.attributes == null || !child.attributes.hidden) {
+                        children.add(child);
+                    }
+                }
+
+                entities.add(new Pair<>(entity, children));
             }
         }
 
         // Sort groups according to their order number
-        Collections.sort(groups);
-
-        // Add group children
-        for (Entity group : groups) {
-            entities.add(group);
-            // Search and add items from group
-            String[] children = group.attributes.children;
-            for (int i = 0; i < children.length; i++) {
-                Entity child = entityMap.get(children[i]);
-                if (child == null) continue;
-                child.type = extractTypeFromEntity(child);
-                if (child.attributes == null || !child.attributes.hidden) {
-                    entities.add(child);
-                }
+        Collections.sort(entities, new Comparator<Pair<Entity, List<Entity>>>() {
+            @Override
+            public int compare(Pair<Entity, List<Entity>> o1, Pair<Entity, List<Entity>> o2) {
+                return o1.first.compareTo(o2.first);
             }
-
-            // Add spacer
-            Entity spacer = new Entity();
-            spacer.type = EntityType.SPACER;
-            entities.add(spacer);
-        }
+        });
     }
 
     public static String extractDomainFromEntityId(String entityId) {

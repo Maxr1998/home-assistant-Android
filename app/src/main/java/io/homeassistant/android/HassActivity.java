@@ -15,9 +15,8 @@ import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.Menu;
@@ -96,9 +95,9 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
         }
 
         RecyclerView viewRecycler = (RecyclerView) mainLayout.findViewById(R.id.view_recycler);
-        viewRecycler.setLayoutManager(new LinearLayoutManager(this));
-        viewRecycler.setItemAnimator(new DefaultItemAnimator());
+        viewRecycler.setLayoutManager(new StaggeredGridLayoutManager(getResources().getInteger(R.integer.view_columns), StaggeredGridLayoutManager.VERTICAL));
         viewRecycler.setAdapter(viewAdapter);
+        viewRecycler.setRecycledViewPool(viewAdapter.recycledViewPool);
     }
 
     private void addLoginLayout() {
