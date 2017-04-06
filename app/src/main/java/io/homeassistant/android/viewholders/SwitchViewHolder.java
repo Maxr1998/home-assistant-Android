@@ -66,6 +66,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
             case MotionEvent.ACTION_DOWN:
                 sliderRunnable.previousProgress = brightnessSlider.getProgress();
                 sliderRunnable.lastEvent = event;
+                sliderRunnable.moved = false;
                 handler.postDelayed(touchDisallowRunnable, 200);
                 handler.postDelayed(sliderRunnable, 800);
                 return true;
@@ -100,13 +101,14 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
     }
 
     private boolean considerMoved(MotionEvent event) {
-        return event.getHistorySize() >= 1 && Math.abs(event.getX() - event.getHistoricalX(0)) > 20f;
+        return (sliderRunnable.moved = sliderRunnable.moved || event.getHistorySize() >= 1 && Math.abs(event.getX() - event.getHistoricalX(0)) > 30f);
     }
 
     private class SliderRunnable implements Runnable {
 
         int previousProgress;
         MotionEvent lastEvent;
+        boolean moved;
 
         @Override
         public void run() {
