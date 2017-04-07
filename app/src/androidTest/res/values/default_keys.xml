@@ -1,0 +1,9 @@
+<!--
+    These are the default values for testing, and likely won't work with your hass-setup.
+    To customize, copy this file to values-21/keys.xml and modify according to your configuration.
+-->
+<resources>
+    <string name="test_hass_url">localhost:8123</string>
+    <string name="test_hass_password"></string>
+    <string name="test_unprotected_hass_url">localhost:8123</string>
+</resources>

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
@@ -33,7 +34,8 @@ import io.homeassistant.android.ui.LoginView;
 public class HassActivity extends AppCompatActivity implements CommunicationHandler.ServiceCommunicator {
 
     private final Handler communicationHandler = new CommunicationHandler(this);
-    private HassService service;
+    @VisibleForTesting()
+    public HassService service;
     private final ServiceConnection hassConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
@@ -85,7 +87,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(t);
 
-        bindService(new Intent(this, HassService.class), hassConnection, BIND_AUTO_CREATE);
+        getApplicationContext().bindService(new Intent(this, HassService.class), hassConnection, BIND_AUTO_CREATE);
 
         rootView = (FrameLayout) findViewById(R.id.root);
         mainLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator);
@@ -116,7 +118,10 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
 
     @Override
     protected void onDestroy() {
-        unbindService(hassConnection);
+        // Keep service alive for configuration changes. No connection will be leaked as it's bound to application context
+        if (!isChangingConfigurations()) {
+            getApplicationContext().unbindService(hassConnection);
+        }
         unbindService(chromeConnection);
         super.onDestroy();
     }
@@ -150,6 +155,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
             case R.id.menu_logout:
                 if (loginLayout == null) {
                     Utils.getPrefs(this).edit().remove(Common.PREF_HASS_PASSWORD_KEY).apply();
+                    service.disconnect();
                     addLoginLayout();
                 }
                 return true;
@@ -159,6 +165,8 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
     }
 
     public void attemptLogin() {
+        // Force reconnect, this call is safe if not connected
+        service.disconnect();
         service.connect();
     }
 

@@ -114,7 +114,9 @@ public class LoginView extends LinearLayout {
             }
         });
 
-        if (!Utils.getPassword(getContext()).isEmpty())
+        // Hint that existing password is used when there is one available (and it isn't a fake one for open instances)
+        String savedPassword = Utils.getPassword(getContext());
+        if (!savedPassword.isEmpty() && !savedPassword.equals(Common.NO_PASSWORD))
             passwordInputLayout.setHint(getResources().getString(R.string.hint_password_existing));
 
         connectButton.setOnClickListener(new OnClickListener() {
@@ -133,6 +135,9 @@ public class LoginView extends LinearLayout {
                 String password = passwordInput.getText().toString();
                 if (!password.isEmpty()) {
                     prefs.putString(Common.PREF_HASS_PASSWORD_KEY, password);
+                } else if (Utils.getPassword(getContext()).isEmpty()) {
+                    // Set fake password to support open instances if none was provided
+                    prefs.putString(Common.PREF_HASS_PASSWORD_KEY, Common.NO_PASSWORD);
                 }
                 prefs.apply();
                 InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -164,10 +169,12 @@ public class LoginView extends LinearLayout {
         return info != null && info.isConnected();
     }
 
+    /**
+     * Update the state of the connect button: require a valid URL and network access to allow clicking
+     */
     private void updateConnectButton() {
         connectButton.setEnabled(isConnected() &&
                 !urlInput.getText().toString().isEmpty()
-                && (!passwordInput.getText().toString().isEmpty() || !Utils.getPassword(getContext()).isEmpty())
                 && TextUtils.isEmpty(urlInputLayout.getError()));
 
         connectButton.setText(isConnected() ? R.string.button_connect : R.string.button_connect_no_network);
