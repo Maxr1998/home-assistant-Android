@@ -6,7 +6,7 @@
     <string name="hint_password">Password</string>
     <string name="hint_password_existing">Password (leave empty for current)</string>
 
-    <string name="invalid_url_scheme">Invalid URL scheme</string>
+    <string name="invalid_url_scheme">Invalid URL scheme, enter like: [https://]example.com[:8123]/</string>
 
     <string name="button_connect">Connect</string>
     <string name="button_connect_no_network">No network available</string>
