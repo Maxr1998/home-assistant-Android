@@ -139,23 +139,23 @@ public class LoginTest {
         assertTrue(service.connected.get());
         assertEquals(service.authenticationState.get(), HassService.AUTH_STATE_AUTHENTICATED);
 
-        // Rotate and re-assert
+        // Rotate and re-assert still connected
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        sleep(100);
+        sleep(500);
 
         assertFalse(service.connecting.get());
         assertTrue(service.connected.get());
         assertEquals(service.authenticationState.get(), HassService.AUTH_STATE_AUTHENTICATED);
 
         activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
-        sleep(100);
+        sleep(500);
 
         // Logout
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
         ViewInteraction logoutButton = onView(allOf(withId(R.id.title), withText(R.string.menu_logout), isDisplayed()));
         logoutButton.perform(click());
 
-        sleep(500);
+        sleep(100);
 
         onView(withId(R.id.login_layout)).check(ViewAssertions.matches(isDisplayed()));
 
