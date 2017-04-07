@@ -1,21 +1,15 @@
 package io.homeassistant.android.api.icons;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.afollestad.ason.Ason;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,31 +21,21 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-public class MaterialDesignIconsUtils {
+final class MaterialDesignIconsUtils {
 
-    private static final String MANIFEST_FILE = "manifest.json";
-    private static MaterialDesignIconsUtils sInstance;
-
-    private final OkHttpClient client = new OkHttpClient();
+    private final OkHttpClient httpClient;
     private final File manifestFile;
     private final Map<String, String> manifest = new HashMap<>();
-    private final Map<String, WeakReference<Drawable>> drawableCache = new HashMap<>();
 
-    private MaterialDesignIconsUtils(Context c) {
-        manifestFile = new File(c.getFilesDir(), MANIFEST_FILE);
+    MaterialDesignIconsUtils(File iconDir, OkHttpClient client) {
+        manifestFile = new File(iconDir, "manifest.json");
+        httpClient = client;
         updateMap(null);
-    }
-
-    public static MaterialDesignIconsUtils getInstance(Context c) {
-        if (sInstance == null) {
-            sInstance = new MaterialDesignIconsUtils(c);
-        }
-        return sInstance;
     }
 
     private void downloadManifest() {
         Request request = new Request.Builder().url("https://materialdesignicons.com/api/package/38EF63D0-4744-11E4-B3CF-842B2B6CFE1B").build();
-        client.newCall(request).enqueue(new Callback() {
+        httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 ResponseBody manifestBody = response.body();
@@ -106,56 +90,13 @@ public class MaterialDesignIconsUtils {
         }
     }
 
-    public Drawable getDrawableFromName(Context c, String name) throws Exception {
-        if (TextUtils.isEmpty(name)) {
+    @Nullable
+    public String getUrlFromName(String name) {
+        if (manifest.isEmpty() || !manifest.containsKey(name)) {
+            updateMap(null);
             return null;
         }
-        name = name.substring(4);
-
-        // Try to read from cache
-        final Drawable cached = drawableCache.get(name) != null ? drawableCache.get(name).get() : null;
-        if (cached != null) {
-            return cached;
-        }
-
-        // Check whether icon file is available
-        final File icon = new File(c.getFilesDir(), name.concat(".png"));
-        if (icon.exists()) {
-            final Drawable drawable = Drawable.createFromPath(icon.getAbsolutePath());
-            if (drawable == null) {
-                //noinspection ResultOfMethodCallIgnored
-                icon.delete();
-                return null;
-            }
-            drawableCache.put(name, new WeakReference<>(drawable));
-            return drawable;
-        } else {
-            if (manifest.isEmpty()) {
-                updateMap(null);
-            }
-            // Download from server
-            Request request = new Request.Builder().url("https://materialdesignicons.com/api/download/icon/png/" + manifest.get(name) + "/192/000000/0.54").build();
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    byte[] buffer = new byte[1024];
-                    InputStream input = response.body().byteStream();
-                    FileOutputStream output = new FileOutputStream(icon);
-                    int n;
-                    while ((n = input.read(buffer)) != -1) {
-                        output.write(buffer, 0, n);
-                    }
-                    input.close();
-                    output.close();
-                }
-
-                @Override
-                public void onFailure(Call call, IOException e) {
-
-                }
-            });
-            return null;
-        }
+        return "https://materialdesignicons.com/api/download/icon/png/" + manifest.get(name) + "/192/000000/0.54";
     }
 
     private static class ManifestItem {
