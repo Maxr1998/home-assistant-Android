@@ -100,6 +100,9 @@ public class HassService extends Service {
     }
 
     public void connect() {
+        if (connecting.get()) {
+            return;
+        }
         // Check if already connected
         if (hassSocket != null) {
             if (connected.get()) {
