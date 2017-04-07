@@ -11,8 +11,8 @@ import android.util.SparseArray;
 import com.afollestad.ason.Ason;
 
 import java.lang.ref.SoftReference;
-import java.net.ConnectException;
 import java.net.ProtocolException;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -100,12 +100,15 @@ public class HassService extends Service {
     }
 
     public void connect() {
-        if (connecting.get()) {
+        // Don't try to connect if already connecting
+        if (connecting.get())
             return;
-        }
+        connecting.set(true);
+
         // Check if already connected
         if (hassSocket != null) {
             if (connected.get()) {
+                connecting.set(false);
                 // Still connected, reload states
                 if (activityHandler != null) {
                     loadStates();
@@ -114,32 +117,23 @@ public class HassService extends Service {
             } else disconnect();
         }
         // Connect to WebSocket
-        connecting.set(true);
         String url = Utils.getUrl(this);
         // Don't connect if no url or password is set - instances without password have their password set to Common.NO_PASSWORD
         if (!url.isEmpty() && !Utils.getPassword(this).isEmpty()) {
-            HttpUrl httpUrl = HttpUrl.parse(url = url.concat("/api/websocket"));
-            Log.d("Home Assistant URL", url);
-            if (httpUrl != null) {
-                OkHttpClient client = new OkHttpClient.Builder()
-                        .hostnameVerifier(new HostnameVerifier() {
-                            @Override
-                            public boolean verify(String hostname, SSLSession session) {
-                                Log.d(TAG, hostname);
-                                if (OkHostnameVerifier.INSTANCE.verify(hostname, session) || Utils.getAllowedHostMismatches(HassService.this).contains(hostname)) {
-                                    return true;
-                                }
-                                loginMessage(false, FAILURE_REASON_SSL_MISMATCH);
-                                return false;
+            Log.d("Home Assistant URL", url = url.concat("/api/websocket"));
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .hostnameVerifier(new HostnameVerifier() {
+                        @Override
+                        public boolean verify(String hostname, SSLSession session) {
+                            if (OkHostnameVerifier.INSTANCE.verify(hostname, session) || Utils.getAllowedHostMismatches(HassService.this).contains(hostname)) {
+                                return true;
                             }
-                        })
-                        .build();
-                hassSocket = client.newWebSocket(new Request.Builder().url(httpUrl).build(), socketListener);
-            } else {
-                connecting.set(false);
-                loginMessage(false, FAILURE_REASON_GENERIC);
-            }
-        }
+                            loginMessage(false, FAILURE_REASON_SSL_MISMATCH);
+                            return false;
+                        }
+                    }).build();
+            hassSocket = client.newWebSocket(new Request.Builder().url(HttpUrl.parse(url)).build(), socketListener);
+        } else connecting.set(false);
     }
 
     private void authenticate() {
@@ -269,8 +263,9 @@ public class HassService extends Service {
 
         @Override
         public void onFailure(WebSocket webSocket, Throwable t, Response response) {
+            connecting.set(false);
             connected.set(false);
-            if (t instanceof ConnectException || t instanceof ProtocolException || t instanceof SSLException || t instanceof UnknownHostException) {
+            if (t instanceof SocketException || t instanceof ProtocolException || t instanceof SSLException || t instanceof UnknownHostException) {
                 Log.e(TAG, "Error while connecting to Socket, going to try again: " + t.getClass().getSimpleName());
                 disconnect();
                 if (!(t instanceof SSLPeerUnverifiedException))
