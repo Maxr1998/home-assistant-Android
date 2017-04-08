@@ -123,7 +123,7 @@ public final class HassUtils {
     }
 
     public static void applyDefaultIcon(@NotNull Entity e) {
-        if (e.attributes == null || e.attributes.icon != null)
+        if (e.attributes == null || e.attributes.icon != null || e.attributes.entity_picture != null)
             return;
         String icon;
         // For now, include all domains from https://github.com/home-assistant/home-assistant-polymer/blob/master/src/util/hass-util.html#L219,
