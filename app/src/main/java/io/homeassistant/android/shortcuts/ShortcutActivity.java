@@ -139,7 +139,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
                 case "scene":
                 case "switch":
                     Entity e = s.getValue();
-                    if (e.attributes == null || !e.attributes.hidden)
+                    if (!e.attributes.hidden)
                         viewAdapter.entities.add(e);
                     break;
             }

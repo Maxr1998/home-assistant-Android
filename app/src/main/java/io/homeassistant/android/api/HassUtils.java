@@ -70,7 +70,7 @@ public final class HassUtils {
                     Entity child = entityMap.get(childrenKeys[i]);
                     if (child == null) continue;
                     child.type = extractTypeFromEntity(child);
-                    if (child.attributes == null || !child.attributes.hidden) {
+                    if (!child.attributes.hidden) {
                         children.add(child);
                     }
                 }
@@ -110,7 +110,7 @@ public final class HassUtils {
             case SCENE:
                 return EntityType.SCENE;
             default:
-                if (e.attributes != null && e.attributes.friendly_name != null) {
+                if (e.attributes.friendly_name != null) {
                     return EntityType.TEXT;
                 }
                 return EntityType.BASE;
@@ -119,11 +119,11 @@ public final class HassUtils {
 
     @NonNull
     public static String extractEntityName(@NonNull Entity e) {
-        return e.attributes != null && e.attributes.friendly_name != null ? e.attributes.friendly_name : e.id;
+        return e.attributes.friendly_name != null ? e.attributes.friendly_name : e.id;
     }
 
     public static void applyDefaultIcon(@NotNull Entity e) {
-        if (e.attributes == null || e.attributes.icon != null || e.attributes.entity_picture != null)
+        if (e.attributes.icon != null || e.attributes.entity_picture != null)
             return;
         String icon;
         // For now, include all domains from https://github.com/home-assistant/home-assistant-polymer/blob/master/src/util/hass-util.html#L219,
@@ -227,8 +227,6 @@ public final class HassUtils {
                 icon = null;
                 break;
         }
-        if (icon != null) {
-            e.attributes.icon = icon;
-        }
+        e.attributes.icon = icon;
     }
 }
