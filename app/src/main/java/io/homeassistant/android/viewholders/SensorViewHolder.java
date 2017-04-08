@@ -4,10 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import io.homeassistant.android.R;
-import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.results.Entity;
-
-import static io.homeassistant.android.api.Domain.SUN;
 
 public class SensorViewHolder extends TextViewHolder {
 
@@ -20,10 +17,6 @@ public class SensorViewHolder extends TextViewHolder {
 
     @Override
     public void setEntity(Entity e) {
-        if (HassUtils.extractDomainFromEntityId(e.id).equals(SUN)) {
-            e.attributes.icon = "mdi:white-balance-sunny";
-            e.state = e.state.replace('_', ' ');
-        }
         super.setEntity(e);
         String unit = entity.attributes.unit_of_measurement;
         value.setText(entity.state.concat(unit != null ? " " + unit : ""));
