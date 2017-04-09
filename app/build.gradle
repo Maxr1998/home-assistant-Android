@@ -65,7 +65,7 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
-    compile 'com.afollestad:ason:1.4.4'
+    compile 'com.afollestad:ason:1.4.13'
 
 
     testCompile 'junit:junit:4.12'
