@@ -16,6 +16,7 @@ import io.homeassistant.android.api.results.RequestResult;
 public class InputSelectViewHolder extends TextViewHolder implements AdapterView.OnItemSelectedListener {
 
     private final Spinner inputSpinner;
+    private int lastSelected;
 
     public InputSelectViewHolder(View itemView) {
         super(itemView);
@@ -30,7 +31,7 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
         if (options != null) {
             ArrayAdapter adapter = new ArrayAdapter<>(inputSpinner.getContext(), android.support.design.R.layout.support_simple_spinner_dropdown_item, options.toArray());
             inputSpinner.setAdapter(adapter);
-            inputSpinner.setSelection(options.indexOf(entity.state));
+            inputSpinner.setSelection(lastSelected = options.indexOf(entity.state));
             inputSpinner.setOnItemSelectedListener(this);
         } else {
             inputSpinner.setVisibility(View.GONE);
@@ -43,7 +44,11 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
         activity.send(new SelectRequest(entity, (String) parent.getAdapter().getItem(position)), new RequestResult.OnRequestResultListener() {
             @Override
             public void onRequestResult(boolean success, Object result) {
-
+                if (success) {
+                    lastSelected = inputSpinner.getSelectedItemPosition();
+                } else {
+                    inputSpinner.setSelection(lastSelected);
+                }
             }
         });
     }
