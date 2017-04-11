@@ -68,6 +68,8 @@ public class HassService extends Service {
     private SparseArray<SoftReference<RequestResult.OnRequestResultListener>> requests = new SparseArray<>(3);
 
     private Queue<String> actionsQueue = new LinkedList<>();
+    private AtomicBoolean handlingQueue = new AtomicBoolean(false);
+    private Handler stopServiceHandler = new Handler();
 
     @Override
     public void onCreate() {
@@ -81,7 +83,9 @@ public class HassService extends Service {
             actionsQueue.add(command);
             if (authenticationState.get() == AUTH_STATE_AUTHENTICATED)
                 handleActionsQueue();
+            return START_NOT_STICKY;
         }
+        stopSelf();
         return START_NOT_STICKY;
     }
 
@@ -101,9 +105,8 @@ public class HassService extends Service {
 
     public void connect() {
         // Don't try to connect if already connecting
-        if (connecting.get())
+        if (!connecting.compareAndSet(false, true))
             return;
-        connecting.set(true);
 
         // Check if already connected
         if (hassSocket != null) {
@@ -137,10 +140,9 @@ public class HassService extends Service {
     }
 
     private void authenticate() {
-        if (authenticationState.get() != AUTH_STATE_NOT_AUTHENTICATED) {
+        if (!authenticationState.compareAndSet(AUTH_STATE_NOT_AUTHENTICATED, AUTH_STATE_AUTHENTICATING)) {
             return;
         }
-        authenticationState.set(AUTH_STATE_AUTHENTICATING);
         String password = Utils.getPassword(this);
         if (password.length() > 0)
             send(new AuthRequest(password), null);
@@ -184,14 +186,27 @@ public class HassService extends Service {
     }
 
     private void handleActionsQueue() {
+        if (handlingQueue.compareAndSet(false, true)) {
+            // Automatically stop the service after 30 seconds, queue should be empty by then and service not needed anymore
+            stopServiceHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    stopSelf();
+                }
+            }, 30 * 1000);
+            runNextAction();
+        }
+    }
+
+    private void runNextAction() {
         if (actionsQueue.peek() != null) {
             send(new Ason(actionsQueue.remove()), new RequestResult.OnRequestResultListener() {
                 @Override
                 public void onRequestResult(boolean success, Object result) {
-                    handleActionsQueue();
+                    runNextAction();
                 }
             });
-        }
+        } else handlingQueue.set(false);
     }
 
     public void disconnect() {
