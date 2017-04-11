@@ -11,7 +11,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -110,7 +109,6 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
                 break;
             case ACTION_SHORTCUT_LAUNCHED:
                 String action = getIntent().getStringExtra(EXTRA_ACTION_COMMAND);
-                Log.d(TAG, "Running shortcut with action " + action);
                 serviceIntent.putExtra(EXTRA_ACTION_COMMAND, action);
                 startService(serviceIntent);
                 finish();

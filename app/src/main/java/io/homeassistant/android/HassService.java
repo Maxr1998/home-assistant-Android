@@ -14,9 +14,11 @@ import java.lang.ref.SoftReference;
 import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -200,6 +202,7 @@ public class HassService extends Service {
 
     private void runNextAction() {
         if (actionsQueue.peek() != null) {
+            Log.d(TAG, "Sending action command " + actionsQueue.peek());
             send(new Ason(actionsQueue.remove()), new RequestResult.OnRequestResultListener() {
                 @Override
                 public void onRequestResult(boolean success, Object result) {
@@ -258,7 +261,11 @@ public class HassService extends Service {
                         break;
                     case "result":
                         RequestResult res = Ason.deserialize(message, RequestResult.class);
-                        Log.d(TAG, res.id + ": " + message.toString());
+                        Log.d(TAG, String.format(
+                                "Request %1$d %2$s\nResult: %3$s\nError : %4$s", res.id, res.success ? "successful" : "failed",
+                                res.result != null && res.result.getClass().isArray() ? Arrays.toString((Object[]) res.result) : Objects.toString(res.result),
+                                String.valueOf(res.error)
+                        ));
                         RequestResult.OnRequestResultListener resultListener = requests.get(res.id, new SoftReference<RequestResult.OnRequestResultListener>(null)).get();
                         if (resultListener != null) {
                             resultListener.onRequestResult(res.success, res.result);
