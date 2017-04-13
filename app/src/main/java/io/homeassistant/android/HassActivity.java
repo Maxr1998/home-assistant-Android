@@ -15,6 +15,7 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -78,6 +79,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
     private ViewAdapter viewAdapter = new ViewAdapter(this);
     private FrameLayout rootView;
     private CoordinatorLayout mainLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private LoginView loginLayout;
 
     @Override
@@ -95,6 +97,18 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
         if (Utils.getUrl(this).isEmpty() || Utils.getPassword(this).isEmpty()) {
             addLoginLayout();
         }
+
+        swipeRefreshLayout = (SwipeRefreshLayout) mainLayout.findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout.setColorSchemeResources(R.color.accent);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (service != null) {
+                    service.loadStates();
+                }
+            }
+        });
+        swipeRefreshLayout.setRefreshing(true);
 
         RecyclerView viewRecycler = (RecyclerView) mainLayout.findViewById(R.id.view_recycler);
         viewRecycler.setLayoutManager(new StaggeredGridLayoutManager(getResources().getInteger(R.integer.view_columns), StaggeredGridLayoutManager.VERTICAL));
@@ -137,11 +151,6 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_refresh:
-                if (service != null) {
-                    service.loadStates();
-                }
-                return true;
             case R.id.menu_custom_tab:
                 if (customTabsSession != null) {
                     @SuppressWarnings("deprecation") CustomTabsIntent intent = new CustomTabsIntent.Builder(customTabsSession)
@@ -190,6 +199,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
     @Override
     public void updateStates() {
         viewAdapter.updateEntities(service.getEntityMap());
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {

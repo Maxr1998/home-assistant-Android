@@ -20,7 +20,6 @@
     <string name="dialog_login_error_ssl_mismatch_ignore">Ignore</string>
 
     <!-- Main screen -->
-    <string name="menu_refresh">Refresh</string>
     <string name="menu_custom_tab">Load Web UI</string>
     <string name="menu_logout">Logout</string>
 
