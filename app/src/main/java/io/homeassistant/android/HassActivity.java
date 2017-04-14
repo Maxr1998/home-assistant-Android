@@ -175,6 +175,10 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
                     addLoginLayout();
                 }
                 return true;
+            case R.id.menu_settings:
+                Intent settings = new Intent(this, SettingsActivity.class);
+                startActivity(settings);
+                return true;
             default:
                 return false;
         }

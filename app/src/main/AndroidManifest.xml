@@ -20,6 +20,10 @@
         <service android:name=".HassService" />
 
         <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings_name" />
+
+        <activity
             android:name=".shortcuts.ShortcutActivity"
             android:autoRemoveFromRecents="true"
             android:excludeFromRecents="true"
