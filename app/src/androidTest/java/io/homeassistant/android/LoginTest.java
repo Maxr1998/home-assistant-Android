@@ -2,8 +2,8 @@ package io.homeassistant.android;
 
 import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
-import android.content.pm.ActivityInfo;
 import android.content.res.Resources;
+import android.os.Handler;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.ViewInteraction;
 import android.support.test.espresso.assertion.ViewAssertions;
@@ -90,7 +90,7 @@ public class LoginTest {
 
     private void hassActivityTest(String url, String password) {
         sleep(1000);
-        HassActivity activity = mActivityTestRule.getActivity();
+        final HassActivity activity = mActivityTestRule.getActivity();
         // Check prefs
         PREFS = Utils.getPrefs(activity);
 
@@ -139,16 +139,19 @@ public class LoginTest {
         assertTrue(service.connected.get());
         assertEquals(service.authenticationState.get(), HassService.AUTH_STATE_AUTHENTICATED);
 
-        // Rotate and re-assert still connected
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        sleep(500);
+        // Recreate and re-assert that still connected
+        Handler handler = new Handler(activity.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                activity.recreate();
+            }
+        });
+        sleep(20);
 
         assertFalse(service.connecting.get());
         assertTrue(service.connected.get());
         assertEquals(service.authenticationState.get(), HassService.AUTH_STATE_AUTHENTICATED);
-
-        activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
-        sleep(500);
 
         // Logout
         openActionBarOverflowOrOptionsMenu(getInstrumentation().getTargetContext());
