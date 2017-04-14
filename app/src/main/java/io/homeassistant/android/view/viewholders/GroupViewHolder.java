@@ -1,10 +1,10 @@
-package io.homeassistant.android.viewholders;
+package io.homeassistant.android.view.viewholders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import io.homeassistant.android.R;
-import io.homeassistant.android.ViewAdapter;
+import io.homeassistant.android.view.ViewAdapter;
 
 public class GroupViewHolder extends TextViewHolder {
 

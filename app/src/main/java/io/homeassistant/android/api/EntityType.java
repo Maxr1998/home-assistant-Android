@@ -3,13 +3,13 @@ package io.homeassistant.android.api;
 import android.support.annotation.LayoutRes;
 
 import io.homeassistant.android.R;
-import io.homeassistant.android.viewholders.BaseViewHolder;
-import io.homeassistant.android.viewholders.GroupViewHolder;
-import io.homeassistant.android.viewholders.InputSelectViewHolder;
-import io.homeassistant.android.viewholders.SceneViewHolder;
-import io.homeassistant.android.viewholders.SensorViewHolder;
-import io.homeassistant.android.viewholders.SwitchViewHolder;
-import io.homeassistant.android.viewholders.TextViewHolder;
+import io.homeassistant.android.view.viewholders.BaseViewHolder;
+import io.homeassistant.android.view.viewholders.GroupViewHolder;
+import io.homeassistant.android.view.viewholders.InputSelectViewHolder;
+import io.homeassistant.android.view.viewholders.SceneViewHolder;
+import io.homeassistant.android.view.viewholders.SensorViewHolder;
+import io.homeassistant.android.view.viewholders.SwitchViewHolder;
+import io.homeassistant.android.view.viewholders.TextViewHolder;
 
 public enum EntityType {
     BASE(R.layout.view_base, BaseViewHolder.class),

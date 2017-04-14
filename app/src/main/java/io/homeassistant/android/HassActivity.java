@@ -31,7 +31,8 @@ import android.widget.FrameLayout;
 import com.afollestad.ason.Ason;
 
 import io.homeassistant.android.api.results.RequestResult;
-import io.homeassistant.android.ui.LoginView;
+import io.homeassistant.android.view.LoginView;
+import io.homeassistant.android.view.ViewAdapter;
 
 
 public class HassActivity extends AppCompatActivity implements CommunicationHandler.ServiceCommunicator {

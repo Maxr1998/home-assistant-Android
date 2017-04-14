@@ -1,4 +1,4 @@
-package io.homeassistant.android;
+package io.homeassistant.android.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,16 +12,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import io.homeassistant.android.R;
 import io.homeassistant.android.api.EntityType;
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.results.Entity;
-import io.homeassistant.android.viewholders.BaseViewHolder;
-import io.homeassistant.android.viewholders.GroupViewHolder;
+import io.homeassistant.android.view.viewholders.BaseViewHolder;
+import io.homeassistant.android.view.viewholders.GroupViewHolder;
 
 
 public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
-    final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
+    public final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
     private final Context context;
     private final List<Pair<Entity, List<Entity>>> entities;
 
@@ -41,7 +42,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         return (T) viewHolder;
     }
 
-    void updateEntities(Map<String, Entity> entityMap) {
+    public void updateEntities(Map<String, Entity> entityMap) {
         HassUtils.extractGroups(entityMap, entities);
         notifyDataSetChanged();
     }

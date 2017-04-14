@@ -1,4 +1,4 @@
-package io.homeassistant.android.ui;
+package io.homeassistant.android.view;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;

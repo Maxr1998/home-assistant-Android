@@ -1,4 +1,4 @@
-package io.homeassistant.android.viewholders;
+package io.homeassistant.android.view.viewholders;
 
 import android.content.res.ColorStateList;
 import android.graphics.drawable.BitmapDrawable;
