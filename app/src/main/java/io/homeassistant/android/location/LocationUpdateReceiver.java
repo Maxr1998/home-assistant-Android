@@ -69,8 +69,8 @@ public class LocationUpdateReceiver extends BroadcastReceiver implements GoogleA
         if (ActivityCompat.checkSelfPermission(apiClient.getContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (prefs.getBoolean(Common.PREF_ENABLE_LOCATION_TRACKING, false) && !TextUtils.isEmpty(prefs.getString(Common.PREF_LOCATION_DEVICE_NAME, null))) {
                 LocationRequest locationRequest = new LocationRequest();
-                locationRequest.setInterval(Utils.getPrefs(apiClient.getContext()).getInt(Common.PREF_LOCATION_UPDATE_INTERVAL, 10) * 60 * 1000);
-                locationRequest.setFastestInterval(60 * 1000);
+                locationRequest.setInterval(prefs.getInt(Common.PREF_LOCATION_UPDATE_INTERVAL, 10) * 60 * 1000);
+                locationRequest.setFastestInterval(5 * 60 * 1000);
                 locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
                 LocationServices.FusedLocationApi.requestLocationUpdates(apiClient, locationRequest, getPendingIntent(apiClient.getContext()));
                 Log.d(TAG, "Started requesting location updates");
