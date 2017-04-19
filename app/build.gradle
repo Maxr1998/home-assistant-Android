@@ -9,8 +9,8 @@ android {
         applicationId "io.homeassistant.android"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 2
-        versionName "0.2"
+        versionCode 3
+        versionName "1.0-RC1"
         setProperty("archivesBaseName", "hass-$versionName")
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
