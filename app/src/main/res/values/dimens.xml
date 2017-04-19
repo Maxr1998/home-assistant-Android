@@ -7,4 +7,6 @@
     <dimen name="icon_padding">8dp</dimen>
 
     <dimen name="item_padding">16dp</dimen>
+
+    <dimen name="popup_window_width">244dp</dimen>
 </resources>

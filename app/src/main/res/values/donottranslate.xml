@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="location_update_interval_values">
+        <item>5</item>
+        <item>10</item>
+        <item>30</item>
+        <item>60</item>
+    </integer-array>
+</resources>

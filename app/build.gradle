@@ -68,6 +68,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'com.afollestad:ason:1.4.13'
 
+    compile "com.google.android.gms:play-services-location:10.2.1"
 
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2') {

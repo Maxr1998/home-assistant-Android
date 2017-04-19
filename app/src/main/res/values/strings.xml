@@ -28,6 +28,23 @@
 
     <!-- Settings screen -->
     <string name="settings_name">Settings</string>
+    <string name="preference_category_location_tracking">Location tracking</string>
+    <string name="preference_enable_location_tracking">Enable location tracking</string>
+    <string name="preference_location_device_name">Device name</string>
+    <string name="preference_location_device_name_summary">Enter the name of your device as listed in known-devices.yaml, or choose your own.
+        Feature is disabled if empty.\nCurrently set to: %s</string>
+    <string name="preference_location_update_interval">Update interval</string>
+    <string-array name="location_update_interval_summaries">
+        <item>Every 5 minutes (higher drain)</item>
+        <item>Every 10 minutes (default)</item>
+        <item>Every 30 minutes</item>
+        <item>Every hour</item>
+    </string-array>
+    <string name="preference_category_miscellaneous">Miscellaneous</string>
+    <string name="preference_reset_host_mismatches">Reset host mismatches</string>
+    <string name="preference_reset_host_mismatches_summary">Clear the list of ignored SSL host mismatches</string>
+    <string name="preference_reset_host_mismatches_summary_empty">List is empty, nothing to do</string>
+    <string name="toast_ignored_ssl_mismatches_cleared">Cleared list.</string>
 
     <!-- Shortcut activity -->
     <string name="button_add_shortcut">Add shortcut</string>
