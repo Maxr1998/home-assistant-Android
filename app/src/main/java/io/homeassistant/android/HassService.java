@@ -23,10 +23,8 @@ import java.util.Queue;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.net.ssl.SSLSession;
 
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.requests.AuthRequest;
@@ -127,15 +125,12 @@ public class HassService extends Service {
         if (!url.isEmpty() && !Utils.getPassword(this).isEmpty()) {
             Log.d("Home Assistant URL", url = url.concat("/api/websocket"));
             OkHttpClient client = new OkHttpClient.Builder()
-                    .hostnameVerifier(new HostnameVerifier() {
-                        @Override
-                        public boolean verify(String hostname, SSLSession session) {
-                            if (OkHostnameVerifier.INSTANCE.verify(hostname, session) || Utils.getAllowedHostMismatches(HassService.this).contains(hostname)) {
-                                return true;
-                            }
-                            loginMessage(false, FAILURE_REASON_SSL_MISMATCH);
-                            return false;
+                    .hostnameVerifier((hostname, session) -> {
+                        if (OkHostnameVerifier.INSTANCE.verify(hostname, session) || Utils.getAllowedHostMismatches(HassService.this).contains(hostname)) {
+                            return true;
                         }
+                        loginMessage(false, FAILURE_REASON_SSL_MISMATCH);
+                        return false;
                     }).build();
             hassSocket = client.newWebSocket(new Request.Builder().url(HttpUrl.parse(url)).build(), socketListener);
         } else connecting.set(false);
@@ -162,12 +157,9 @@ public class HassService extends Service {
             authenticate();
             return;
         }
-        send(new StatesRequest(), new RequestResult.OnRequestResultListener() {
-            @Override
-            public void onRequestResult(boolean success, Object result) {
-                if (success && HassUtils.extractEntitiesFromStateResult(result, entityMap)) {
-                    activityHandler.obtainMessage(MESSAGE_STATES_AVAILABLE).sendToTarget();
-                }
+        send(new StatesRequest(), (success, result) -> {
+            if (success && HassUtils.extractEntitiesFromStateResult(result, entityMap)) {
+                activityHandler.obtainMessage(MESSAGE_STATES_AVAILABLE).sendToTarget();
             }
         });
     }
@@ -190,12 +182,7 @@ public class HassService extends Service {
     private void handleActionsQueue() {
         if (handlingQueue.compareAndSet(false, true)) {
             // Automatically stop the service after 30 seconds, queue should be empty by then and service not needed anymore
-            stopServiceHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    stopSelf();
-                }
-            }, 30 * 1000);
+            stopServiceHandler.postDelayed(this::stopSelf, 30 * 1000);
             runNextAction();
         }
     }
@@ -203,12 +190,7 @@ public class HassService extends Service {
     private void runNextAction() {
         if (actionsQueue.peek() != null) {
             Log.d(TAG, "Sending action command " + actionsQueue.peek());
-            send(new Ason(actionsQueue.remove()), new RequestResult.OnRequestResultListener() {
-                @Override
-                public void onRequestResult(boolean success, Object result) {
-                    runNextAction();
-                }
-            });
+            send(new Ason(actionsQueue.remove()), (success, result) -> runNextAction());
         } else handlingQueue.set(false);
     }
 
@@ -266,7 +248,7 @@ public class HassService extends Service {
                                 res.result != null && res.result.getClass().isArray() ? Arrays.toString((Object[]) res.result) : Objects.toString(res.result),
                                 String.valueOf(res.error)
                         ));
-                        RequestResult.OnRequestResultListener resultListener = requests.get(res.id, new SoftReference<RequestResult.OnRequestResultListener>(null)).get();
+                        RequestResult.OnRequestResultListener resultListener = requests.get(res.id, new SoftReference<>(null)).get();
                         if (resultListener != null) {
                             resultListener.onRequestResult(res.success, res.result);
                             requests.remove(res.id);

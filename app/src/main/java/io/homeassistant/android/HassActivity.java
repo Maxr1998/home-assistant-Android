@@ -103,12 +103,9 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
 
         swipeRefreshLayout = (SwipeRefreshLayout) mainLayout.findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.accent);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (service != null) {
-                    service.loadStates();
-                }
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            if (service != null) {
+                service.loadStates();
             }
         });
         swipeRefreshLayout.setRefreshing(true);

@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -80,12 +79,7 @@ public final class HassUtils {
         }
 
         // Sort groups according to their order number
-        Collections.sort(entities, new Comparator<Pair<Entity, List<Entity>>>() {
-            @Override
-            public int compare(Pair<Entity, List<Entity>> o1, Pair<Entity, List<Entity>> o2) {
-                return o1.first.compareTo(o2.first);
-            }
-        });
+        Collections.sort(entities, (o1, o2) -> o1.first.compareTo(o2.first));
     }
 
     @NotNull

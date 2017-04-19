@@ -11,7 +11,6 @@ import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.SelectRequest;
 import io.homeassistant.android.api.results.Entity;
-import io.homeassistant.android.api.results.RequestResult;
 
 public class InputSelectViewHolder extends TextViewHolder implements AdapterView.OnItemSelectedListener {
 
@@ -41,14 +40,11 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         HassActivity activity = (HassActivity) inputSpinner.getContext();
-        activity.send(new SelectRequest(entity, (String) parent.getAdapter().getItem(position)), new RequestResult.OnRequestResultListener() {
-            @Override
-            public void onRequestResult(boolean success, Object result) {
-                if (success) {
-                    lastSelected = inputSpinner.getSelectedItemPosition();
-                } else {
-                    inputSpinner.setSelection(lastSelected);
-                }
+        activity.send(new SelectRequest(entity, (String) parent.getAdapter().getItem(position)), (success, result) -> {
+            if (success) {
+                lastSelected = inputSpinner.getSelectedItemPosition();
+            } else {
+                inputSpinner.setSelection(lastSelected);
             }
         });
     }

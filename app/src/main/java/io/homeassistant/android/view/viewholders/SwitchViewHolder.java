@@ -114,16 +114,13 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
                 if (brightnessSlider.getProgress() != sliderRunnable.previousProgress) { // Changed
                     HassActivity activity = (HassActivity) brightnessSlider.getContext();
-                    activity.send(new ToggleRequest(entity, brightnessSlider.getProgress()), new RequestResult.OnRequestResultListener() {
-                        @Override
-                        public void onRequestResult(boolean success, Object result) {
-                            if (success) {
-                                stateSwitch.setChecked(brightnessSlider.getProgress() > 0);
-                                entity.state = brightnessSlider.getProgress() > 0 ? "on" : "off";
-                                updateColor();
-                            } else {
-                                brightnessSlider.setProgress(sliderRunnable.previousProgress);
-                            }
+                    activity.send(new ToggleRequest(entity, brightnessSlider.getProgress()), (success, result) -> {
+                        if (success) {
+                            stateSwitch.setChecked(brightnessSlider.getProgress() > 0);
+                            entity.state = brightnessSlider.getProgress() > 0 ? "on" : "off";
+                            updateColor();
+                        } else {
+                            brightnessSlider.setProgress(sliderRunnable.previousProgress);
                         }
                     });
                 }
