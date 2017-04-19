@@ -46,7 +46,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
         stateSwitch.setChecked(entity.state.equals("on"));
         stateSwitch.setOnClickListener(this);
         if ((entity.attributes.supported_features & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {
-            brightnessSlider.setProgress(entity.attributes.brightness);
+            brightnessSlider.setProgress((int) entity.attributes.brightness);
             name.setOnTouchListener(this);
         }
         updateColor();
