@@ -5,6 +5,9 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import java.lang.ref.WeakReference;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public final class Utils {
 
@@ -26,5 +29,15 @@ public final class Utils {
 
     public static String getPassword(Context context) {
         return getPrefs(context).getString(Common.PREF_HASS_PASSWORD_KEY, "");
+    }
+
+    public static Set<String> getAllowedHostMismatches(Context context) {
+        return getPrefs(context).getStringSet(Common.PREF_ALLOWED_HOST_MISMATCHES_KEY, Collections.<String>emptySet());
+    }
+
+    public static void addAllowedHostMismatch(Context context, String allowed) {
+        Set<String> set = new HashSet<>(getAllowedHostMismatches(context));
+        set.add(allowed);
+        getPrefs(context).edit().putStringSet(Common.PREF_ALLOWED_HOST_MISMATCHES_KEY, set).apply();
     }
 }

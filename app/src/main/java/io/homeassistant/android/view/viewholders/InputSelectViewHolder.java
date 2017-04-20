@@ -1,4 +1,4 @@
-package io.homeassistant.android.viewholders;
+package io.homeassistant.android.view.viewholders;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -11,11 +11,11 @@ import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.SelectRequest;
 import io.homeassistant.android.api.results.Entity;
-import io.homeassistant.android.api.results.RequestResult;
 
 public class InputSelectViewHolder extends TextViewHolder implements AdapterView.OnItemSelectedListener {
 
     private final Spinner inputSpinner;
+    private int lastSelected;
 
     public InputSelectViewHolder(View itemView) {
         super(itemView);
@@ -30,7 +30,7 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
         if (options != null) {
             ArrayAdapter adapter = new ArrayAdapter<>(inputSpinner.getContext(), android.support.design.R.layout.support_simple_spinner_dropdown_item, options.toArray());
             inputSpinner.setAdapter(adapter);
-            inputSpinner.setSelection(options.indexOf(entity.state));
+            inputSpinner.setSelection(lastSelected = options.indexOf(entity.state));
             inputSpinner.setOnItemSelectedListener(this);
         } else {
             inputSpinner.setVisibility(View.GONE);
@@ -40,10 +40,11 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         HassActivity activity = (HassActivity) inputSpinner.getContext();
-        activity.send(new SelectRequest(entity, (String) parent.getAdapter().getItem(position)), new RequestResult.OnRequestResultListener() {
-            @Override
-            public void onRequestResult(boolean success, Object result) {
-
+        activity.send(new SelectRequest(entity, (String) parent.getAdapter().getItem(position)), (success, result) -> {
+            if (success) {
+                lastSelected = inputSpinner.getSelectedItemPosition();
+            } else {
+                inputSpinner.setSelection(lastSelected);
             }
         });
     }

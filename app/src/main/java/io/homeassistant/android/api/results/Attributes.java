@@ -5,9 +5,10 @@ import com.afollestad.ason.AsonName;
 import java.util.List;
 
 public class Attributes {
-    public int brightness;
+    public double brightness;
     @AsonName(name = "entity_id")
     public String[] children = null;
+    public String entity_picture;
     public String friendly_name;
     public boolean hidden = false;
     public String icon;

@@ -11,7 +11,6 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,29 +87,25 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
                 ArrayAdapter adapter = new ArrayAdapter<>(this, android.support.design.R.layout.support_simple_spinner_dropdown_item, new String[]{"On", "Off"});
                 selectActionSpinner.setAdapter(adapter);
 
-                findViewById(R.id.button_add_shortcut).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Entity selected = viewAdapter.entities.get(viewAdapter.selected);
+                findViewById(R.id.button_add_shortcut).setOnClickListener(v -> {
+                    Entity selected = viewAdapter.entities.get(viewAdapter.selected);
 
-                        Intent result = new Intent();
-                        Intent shortcut = new Intent(ShortcutActivity.this, ShortcutActivity.class);
-                        shortcut.setAction(ACTION_SHORTCUT_LAUNCHED);
-                        boolean stateOn = selectActionSpinner.getSelectedItem().equals("On");
-                        shortcut.putExtra(EXTRA_ACTION_COMMAND, new ToggleRequest(selected, stateOn).toString());
-                        result.putExtra(Intent.EXTRA_SHORTCUT_NAME, HassUtils.extractEntityName(selected));
-                        result.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getApplicationContext(),
-                                selected.id.startsWith("light") ? stateOn ? R.mipmap.ic_lightbulb_on : R.mipmap.ic_lightbulb_off : stateOn ? R.mipmap.ic_switch_on : R.mipmap.ic_switch_off));
-                        result.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcut);
+                    Intent result = new Intent();
+                    Intent shortcut = new Intent(ShortcutActivity.this, ShortcutActivity.class);
+                    shortcut.setAction(ACTION_SHORTCUT_LAUNCHED);
+                    boolean stateOn = selectActionSpinner.getSelectedItem().equals("On");
+                    shortcut.putExtra(EXTRA_ACTION_COMMAND, new ToggleRequest(selected, stateOn).toString());
+                    result.putExtra(Intent.EXTRA_SHORTCUT_NAME, HassUtils.extractEntityName(selected));
+                    result.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getApplicationContext(),
+                            selected.id.startsWith("light") ? stateOn ? R.mipmap.ic_lightbulb_on : R.mipmap.ic_lightbulb_off : stateOn ? R.mipmap.ic_switch_on : R.mipmap.ic_switch_off));
+                    result.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcut);
 
-                        setResult(RESULT_OK, result);
-                        finish();
-                    }
+                    setResult(RESULT_OK, result);
+                    finish();
                 });
                 break;
             case ACTION_SHORTCUT_LAUNCHED:
                 String action = getIntent().getStringExtra(EXTRA_ACTION_COMMAND);
-                Log.d(TAG, "Running shortcut with action " + action);
                 serviceIntent.putExtra(EXTRA_ACTION_COMMAND, action);
                 startService(serviceIntent);
                 finish();
@@ -124,7 +119,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
     }
 
     @Override
-    public void loginFailed() {
+    public void loginFailed(int reason) {
         finish();
         Toast.makeText(this, R.string.login_error, Toast.LENGTH_LONG).show();
     }
@@ -139,7 +134,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
                 case "scene":
                 case "switch":
                     Entity e = s.getValue();
-                    if (e.attributes == null || !e.attributes.hidden)
+                    if (!e.attributes.hidden)
                         viewAdapter.entities.add(e);
                     break;
             }
@@ -170,14 +165,11 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
             Entity e = entities.get(holder.getAdapterPosition());
             holder.item.setChecked(holder.getAdapterPosition() == selected);
             holder.item.setText(HassUtils.extractEntityName(e));
-            holder.item.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int last = selected;
-                    selected = holder.getAdapterPosition();
-                    notifyItemChanged(last);
-                    notifyItemChanged(selected);
-                }
+            holder.item.setOnClickListener(v -> {
+                int last = selected;
+                selected = holder.getAdapterPosition();
+                notifyItemChanged(last);
+                notifyItemChanged(selected);
             });
         }
 

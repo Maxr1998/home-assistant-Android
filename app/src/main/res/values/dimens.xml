@@ -3,10 +3,10 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
-    <dimen name="toolbar_height">56dp</dimen>
-
     <dimen name="icon_size">24dp</dimen>
     <dimen name="icon_padding">8dp</dimen>
 
     <dimen name="item_padding">16dp</dimen>
+
+    <dimen name="popup_window_width">244dp</dimen>
 </resources>

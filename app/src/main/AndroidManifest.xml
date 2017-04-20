@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:allowBackup="false"
@@ -20,6 +22,11 @@
         <service android:name=".HassService" />
 
         <activity
+            android:name=".SettingsActivity"
+            android:label="@string/settings_name"
+            android:parentActivityName=".HassActivity" />
+
+        <activity
             android:name=".shortcuts.ShortcutActivity"
             android:autoRemoveFromRecents="true"
             android:excludeFromRecents="true"
@@ -28,5 +35,14 @@
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name=".location.LocationUpdateReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

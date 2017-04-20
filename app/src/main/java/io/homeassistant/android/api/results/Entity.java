@@ -25,12 +25,10 @@ public class Entity implements Comparable<Entity> {
 
     @Override
     public int compareTo(@NonNull Entity e) {
-        if (attributes != null && e.attributes != null) {
-            if (attributes.order != -1 && e.attributes.order != -1) {
-                return attributes.order - e.attributes.order;
-            } else if (attributes.friendly_name != null && e.attributes.friendly_name != null) {
-                return attributes.friendly_name.compareToIgnoreCase(e.attributes.friendly_name);
-            }
+        if (attributes.order != -1 && e.attributes.order != -1) {
+            return attributes.order - e.attributes.order;
+        } else if (attributes.friendly_name != null && e.attributes.friendly_name != null) {
+            return attributes.friendly_name.compareToIgnoreCase(e.attributes.friendly_name);
         }
         return id.compareToIgnoreCase(e.id);
     }

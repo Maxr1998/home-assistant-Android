@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/preference_category_location_tracking">
+        <SwitchPreference
+            android:key="enable_location_tracking"
+            android:title="@string/preference_enable_location_tracking" />
+        <EditTextPreference
+            android:dependency="enable_location_tracking"
+            android:key="location_device_name"
+            android:summary="@string/preference_location_device_name_summary"
+            android:title="@string/preference_location_device_name" />
+        <Preference
+            android:dependency="enable_location_tracking"
+            android:key="location_update_interval"
+            android:title="@string/preference_location_update_interval" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/preference_category_miscellaneous">
+        <Preference
+            android:key="reset_host_mismatches"
+            android:summary="@string/preference_reset_host_mismatches_summary"
+            android:title="@string/preference_reset_host_mismatches" />
+    </PreferenceCategory>
+</PreferenceScreen>
