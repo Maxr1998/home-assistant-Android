@@ -4,7 +4,6 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -46,83 +45,88 @@ public final class ImageUtils {
         return sInstance;
     }
 
-    @Nullable
-    public Drawable getEntityDrawable(Context context, Entity entity) throws Exception {
-        IconRecord icon;
+    public void loadEntityDrawable(Context context, Entity entity, boolean useCache, DrawableLoadListener listener) throws Exception {
+        IconRecord tempIcon = null;
 
         String iconName = entity.attributes.icon;
         String pictureUrl = entity.attributes.entity_picture;
         if (iconName != null) {
             iconName = iconName.substring(4);
             String iconUrl = materialDesignIcons.getUrlFromName(iconName);
-            if (iconUrl == null) {
-                return null;
+            if (iconUrl != null) {
+                tempIcon = new IconRecord(iconName, iconUrl);
             }
-            icon = new IconRecord(iconName, iconUrl);
         } else if (pictureUrl != null) {
-            if (pictureUrl.startsWith("/local")) {
+            if (pictureUrl.startsWith("/local") || pictureUrl.startsWith("/api/camera_proxy")) {
                 pictureUrl = Utils.getUrl(context) + pictureUrl;
             }
             String pictureName = new URL(pictureUrl).getFile();
             int extIndex = pictureName.lastIndexOf(".");
             pictureName = pictureName.substring(pictureName.lastIndexOf("/") + 1, extIndex != -1 ? extIndex : pictureName.length());
-            if (pictureName.isEmpty()) {
-                return null;
+            if (!pictureName.isEmpty()) {
+                tempIcon = new IconRecord(pictureName, pictureUrl);
             }
-            icon = new IconRecord(pictureName, pictureUrl);
-        } else icon = null;
-
-        if (icon != null) {
-            return loadDrawableFromCacheOrServer(icon);
-        }
-        return null;
-    }
-
-
-    @Nullable
-    private Drawable loadDrawableFromCacheOrServer(@NotNull IconRecord icon) throws Exception {
-        // Try to read from cache
-        final Drawable cached = drawableCache.get(icon.name) != null ? drawableCache.get(icon.name).get() : null;
-        if (cached != null) {
-            Log.d(getClass().getSimpleName(), "Cached " + icon.name);
-            return cached;
         }
 
-        // Check whether icon file is available
+        if (tempIcon == null) {
+            return;
+        }
+        final IconRecord icon = tempIcon;
+
         final File iconFile = new File(iconDirectory, icon.name.concat(".png"));
-        if (iconFile.exists()) {
-            final Drawable drawable = Drawable.createFromPath(iconFile.getAbsolutePath());
-            if (drawable == null) {
+        if (useCache) {
+            // Try to read from cache
+            final Drawable cached = drawableCache.get(icon.name) != null ? drawableCache.get(icon.name).get() : null;
+            if (cached != null) {
+                Log.d(getClass().getSimpleName(), "Cached " + tempIcon.name);
+                listener.onDrawableLoaded(cached, false);
+                return;
+            }
+
+            // Check whether icon file is available
+            if (iconFile.exists()) {
+                final Drawable drawable = Drawable.createFromPath(iconFile.getAbsolutePath());
+                if (drawable != null) {
+                    drawableCache.put(icon.name, new WeakReference<>(drawable));
+                    listener.onDrawableLoaded(drawable, false);
+                    return;
+                }
                 //noinspection ResultOfMethodCallIgnored
                 iconFile.delete();
-                return null;
             }
-            drawableCache.put(icon.name, new WeakReference<>(drawable));
-            return drawable;
-        } else {
-            // Download from server
-            Log.d(getClass().getSimpleName(), "Loading " + icon.name + " from " + icon.url);
-            Request request = new Request.Builder().url(icon.url).build();
-            httpClient.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    byte[] buffer = new byte[1024];
-                    InputStream input = response.body().byteStream();
-                    FileOutputStream output = new FileOutputStream(iconFile);
-                    int n;
-                    while ((n = input.read(buffer)) != -1) {
-                        output.write(buffer, 0, n);
-                    }
-                    input.close();
-                    output.close();
-                }
-
-                @Override
-                public void onFailure(Call call, IOException e) {
-
-                }
-            });
-            return null;
         }
+
+        // Download from server
+        Log.d(getClass().getSimpleName(), "Loading " + tempIcon.name + " from " + tempIcon.url);
+        Request request = new Request.Builder().url(tempIcon.url).build();
+        httpClient.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                byte[] buffer = new byte[1024];
+                InputStream input = response.body().byteStream();
+                FileOutputStream output = new FileOutputStream(iconFile);
+                int n;
+                while ((n = input.read(buffer)) != -1) {
+                    output.write(buffer, 0, n);
+                }
+                input.close();
+                output.close();
+
+                // Return drawable
+                Drawable drawable = Drawable.createFromPath(iconFile.getAbsolutePath());
+                if (useCache)
+                    drawableCache.put(icon.name, new WeakReference<>(drawable));
+
+                listener.onDrawableLoaded(drawable, true);
+            }
+
+            @Override
+            public void onFailure(Call call, IOException e) {
+            }
+        });
+    }
+
+    public interface DrawableLoadListener {
+        void onDrawableLoaded(@Nullable Drawable drawable, boolean async);
     }
 }

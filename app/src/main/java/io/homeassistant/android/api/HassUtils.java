@@ -17,6 +17,7 @@ import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.api.Domain.AUTOMATION;
 import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
+import static io.homeassistant.android.api.Domain.CAMERA;
 import static io.homeassistant.android.api.Domain.COVER;
 import static io.homeassistant.android.api.Domain.DEVICE_TRACKER;
 import static io.homeassistant.android.api.Domain.GROUP;
@@ -105,6 +106,8 @@ public final class HassUtils {
             case SENSOR:
             case SUN:
                 return EntityType.SENSOR;
+            case CAMERA:
+                return EntityType.CAMERA;
             case COVER:
                 return EntityType.COVER;
             case INPUT_SELECT:
@@ -154,7 +157,7 @@ public final class HassUtils {
             case "calendar":
                 icon = "mdi:calendar";
                 break;
-            case "camera":
+            case CAMERA:
                 icon = "mdi:video";
                 break;
             case "climate":

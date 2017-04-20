@@ -33,6 +33,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
         stateSwitch.setOnClickListener(null);
         brightnessSlider = (SeekBar) itemView.findViewById(R.id.brightness_slider);
         sliderRunnable.lastEvent = null;
+        name.setOnTouchListener(null);
     }
 
     @Override
