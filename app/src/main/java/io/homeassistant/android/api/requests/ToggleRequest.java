@@ -21,6 +21,15 @@ public class ToggleRequest extends Ason {
     }
 
     /**
+     * For use with locks, cover
+     */
+    public ToggleRequest(Entity entity, String operation) {
+        domain = HassUtils.extractDomainFromEntityId(entity.id);
+        service = operation;
+        service_data = new ServiceData(entity.id);
+    }
+
+    /**
      * For use with lights supporting brightness
      */
     public ToggleRequest(Entity entity, int brightness) {

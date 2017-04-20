@@ -30,7 +30,7 @@ public class TextViewHolder extends BaseViewHolder {
         super.setEntity(e);
         name.setText(entity.attributes.friendly_name);
         try {
-            Drawable icon = entity.type != GROUP ? ImageUtils.getInstance(name.getContext()).getEntityDrawable(entity) : null;
+            Drawable icon = entity.type != GROUP ? ImageUtils.getInstance(name.getContext()).getEntityDrawable(name.getContext(),entity) : null;
             if (icon != null) {
                 icon.setBounds(0, 0, name.getResources().getDimensionPixelSize(R.dimen.icon_size), name.getResources().getDimensionPixelSize(R.dimen.icon_size));
             }
