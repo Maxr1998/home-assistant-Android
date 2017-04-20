@@ -17,14 +17,17 @@ import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.api.Domain.AUTOMATION;
 import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
+import static io.homeassistant.android.api.Domain.DEVICE_TRACKER;
 import static io.homeassistant.android.api.Domain.GROUP;
 import static io.homeassistant.android.api.Domain.INPUT_BOOLEAN;
 import static io.homeassistant.android.api.Domain.INPUT_SELECT;
 import static io.homeassistant.android.api.Domain.LIGHT;
+import static io.homeassistant.android.api.Domain.LOCK;
 import static io.homeassistant.android.api.Domain.SCENE;
 import static io.homeassistant.android.api.Domain.SENSOR;
 import static io.homeassistant.android.api.Domain.SUN;
 import static io.homeassistant.android.api.Domain.SWITCH;
+import static io.homeassistant.android.api.EntityType.COVER;
 
 public final class HassUtils {
 
@@ -95,7 +98,12 @@ public final class HassUtils {
             case LIGHT:
             case SWITCH:
                 return EntityType.SWITCH;
+            case LOCK:
+                return EntityType.LOCK;
+            case Domain.COVER:
+                return EntityType.COVER;
             case BINARY_SENSOR:
+            case DEVICE_TRACKER:
             case SENSOR:
             case SUN:
                 return EntityType.SENSOR;
@@ -177,7 +185,7 @@ public final class HassUtils {
             case LIGHT:
                 icon = "mdi:lightbulb";
                 break;
-            case "lock":
+            case LOCK:
                 icon = e.state != null && e.state.equals("unlocked") ? "mdi:lock-open" : "mdi:lock";
                 break;
             case "media_player":
