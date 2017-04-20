@@ -1,29 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="marquee"
-        android:paddingBottom="@dimen/item_padding"
-        android:paddingEnd="@dimen/item_padding"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/item_padding"
-        android:textAppearance="?textAppearanceListItem" />
+    <TextView style="@style/ListItemText" />
 
     <Button
         android:id="@+id/scene_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/name"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="8dp"
+        style="@style/ListItemWidget"
         android:background="?selectableItemBackground"
         android:text="@string/button_scene_activate"
         android:textColor="?colorAccent" />
-</RelativeLayout>
+</LinearLayout>
