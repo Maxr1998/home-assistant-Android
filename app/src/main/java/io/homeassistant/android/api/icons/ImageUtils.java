@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.homeassistant.android.Utils;
 import io.homeassistant.android.api.results.Entity;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -46,7 +47,7 @@ public final class ImageUtils {
     }
 
     @Nullable
-    public Drawable getEntityDrawable(Entity entity) throws Exception {
+    public Drawable getEntityDrawable(Context context, Entity entity) throws Exception {
         IconRecord icon;
 
         String iconName = entity.attributes.icon;
@@ -59,6 +60,9 @@ public final class ImageUtils {
             }
             icon = new IconRecord(iconName, iconUrl);
         } else if (pictureUrl != null) {
+            if (pictureUrl.startsWith("/local")) {
+                pictureUrl = Utils.getUrl(context) + pictureUrl;
+            }
             String pictureName = new URL(pictureUrl).getFile();
             int extIndex = pictureName.lastIndexOf(".");
             pictureName = pictureName.substring(pictureName.lastIndexOf("/") + 1, extIndex != -1 ? extIndex : pictureName.length());
