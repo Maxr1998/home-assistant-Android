@@ -18,6 +18,9 @@ import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.requests.ToggleRequest;
 import io.homeassistant.android.api.results.Entity;
 
+import static io.homeassistant.android.api.Domain.LIGHT;
+import static io.homeassistant.android.api.Domain.SWITCH;
+
 public class SwitchViewHolder extends TextViewHolder implements View.OnTouchListener, View.OnClickListener {
 
     private final SwitchCompat stateSwitch;
@@ -50,7 +53,8 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
     private void updateColor() {
         Drawable leftDrawable = name.getCompoundDrawablesRelative()[0];
-        if (leftDrawable != null) {
+        String domain = HassUtils.extractDomainFromEntityId(entity.id);
+        if (leftDrawable != null && (domain.equals(LIGHT) || domain.equals(SWITCH))) {
             if (!(leftDrawable instanceof LevelListDrawable)) {
                 LevelListDrawable levelListDrawable = new LevelListDrawable();
                 // Add states
