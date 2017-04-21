@@ -5,13 +5,8 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.AppCompatImageButton;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-
-import java.util.List;
-
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.ToggleRequest;
