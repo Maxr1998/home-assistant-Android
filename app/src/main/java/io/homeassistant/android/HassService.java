@@ -30,7 +30,9 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.requests.AuthRequest;
 import io.homeassistant.android.api.requests.StatesRequest;
+import io.homeassistant.android.api.requests.SubscribeEventsRequest;
 import io.homeassistant.android.api.results.Entity;
+import io.homeassistant.android.api.results.EventResult;
 import io.homeassistant.android.api.results.RequestResult;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -153,6 +155,13 @@ public class HassService extends Service {
         }
     }
 
+    public void subscribeEvents() {
+        SubscribeEventsRequest eventSubscribe = new SubscribeEventsRequest("state_changed");
+        send(eventSubscribe, (success, result) -> {
+            Log.i(TAG, "Subscribed to events");
+        });
+    }
+
     public void loadStates() {
         if (authenticationState.get() != AUTH_STATE_AUTHENTICATED) {
             authenticate();
@@ -239,8 +248,15 @@ public class HassService extends Service {
                         loginMessage(true, 0);
                         // Automatically load current states if bound to Activity
                         if (activityHandler != null) {
+                            subscribeEvents();
                             loadStates();
                         } else handleActionsQueue();
+                        break;
+                    case "event":
+                        EventResult eventRequest = Ason.deserialize(message, EventResult.class);
+                        if (HassUtils.updateEntityFromEventResult(eventRequest.event.data, entityMap)) {
+                            activityHandler.obtainMessage(MESSAGE_STATES_AVAILABLE).sendToTarget();
+                        }
                         break;
                     case "result":
                         RequestResult res = Ason.deserialize(message, RequestResult.class);
