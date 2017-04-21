@@ -39,12 +39,15 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        if (position == lastSelected) {
+            return;
+        }
         HassActivity activity = (HassActivity) inputSpinner.getContext();
         activity.send(new SelectRequest(entity, (String) parent.getAdapter().getItem(position)), (success, result) -> {
             if (success) {
                 lastSelected = inputSpinner.getSelectedItemPosition();
             } else {
-                inputSpinner.setSelection(lastSelected);
+                inputSpinner.setSelection(lastSelected, true);
             }
         });
     }
