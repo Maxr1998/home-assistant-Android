@@ -2,12 +2,12 @@ package io.homeassistant.android.view.viewholders;
 
 import android.support.v7.widget.AppCompatImageButton;
 import android.view.View;
+
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.ToggleRequest;
-import io.homeassistant.android.api.results.RequestResult;
 
-public class CoverViewHolder  extends TextViewHolder implements View.OnClickListener {
+public class CoverViewHolder extends TextViewHolder implements View.OnClickListener {
 
     private final AppCompatImageButton buttonCoverUp;
     private final AppCompatImageButton buttonCoverDown;
@@ -21,17 +21,13 @@ public class CoverViewHolder  extends TextViewHolder implements View.OnClickList
         buttonCoverDown.setOnClickListener(this);
         buttonCoverStop = (AppCompatImageButton) itemView.findViewById(R.id.cover_stop);
         buttonCoverStop.setOnClickListener(this);
-
     }
-
 
     @Override
     public void onClick(View v) {
         HassActivity activity = (HassActivity) v.getContext();
-
-        String operation = null;
+        String operation;
         switch (v.getId()) {
-
             case R.id.cover_up:
                 operation = "open_cover";
                 break;
@@ -43,19 +39,10 @@ public class CoverViewHolder  extends TextViewHolder implements View.OnClickList
             case R.id.cover_stop:
                 operation = "stop_cover";
                 break;
-
             default:
+                operation = "";
                 break;
         }
-
-
-        activity.send(new ToggleRequest(entity, operation), new RequestResult.OnRequestResultListener() {
-            @Override
-            public void onRequestResult(boolean success, Object result) {
-               // nothing to do
-            }
-        });
+        activity.send(new ToggleRequest(entity, operation), null);
     }
-
-
 }

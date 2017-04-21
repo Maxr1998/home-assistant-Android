@@ -17,6 +17,8 @@ import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.api.Domain.AUTOMATION;
 import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
+import static io.homeassistant.android.api.Domain.CAMERA;
+import static io.homeassistant.android.api.Domain.COVER;
 import static io.homeassistant.android.api.Domain.DEVICE_TRACKER;
 import static io.homeassistant.android.api.Domain.GROUP;
 import static io.homeassistant.android.api.Domain.INPUT_BOOLEAN;
@@ -27,7 +29,6 @@ import static io.homeassistant.android.api.Domain.SCENE;
 import static io.homeassistant.android.api.Domain.SENSOR;
 import static io.homeassistant.android.api.Domain.SUN;
 import static io.homeassistant.android.api.Domain.SWITCH;
-import static io.homeassistant.android.api.EntityType.COVER;
 
 public final class HassUtils {
 
@@ -90,23 +91,25 @@ public final class HassUtils {
         return entityId.split("\\.")[0];
     }
 
+    @NonNull
     public static EntityType extractTypeFromEntity(@NotNull Entity e) {
         String domain = extractDomainFromEntityId(e.id);
         switch (domain) {
             case AUTOMATION:
             case INPUT_BOOLEAN:
             case LIGHT:
+            case LOCK:
             case SWITCH:
                 return EntityType.SWITCH;
-            case LOCK:
-                return EntityType.LOCK;
-            case Domain.COVER:
-                return EntityType.COVER;
             case BINARY_SENSOR:
             case DEVICE_TRACKER:
             case SENSOR:
             case SUN:
                 return EntityType.SENSOR;
+            case CAMERA:
+                return EntityType.CAMERA;
+            case COVER:
+                return EntityType.COVER;
             case INPUT_SELECT:
                 return EntityType.INPUT_SELECT;
             case SCENE:
@@ -122,6 +125,17 @@ public final class HassUtils {
     @NonNull
     public static String extractEntityName(@NonNull Entity e) {
         return e.attributes.friendly_name != null ? e.attributes.friendly_name : e.id;
+    }
+
+    @Nullable
+    public static String getOnState(@NonNull Entity e, boolean on) {
+        if (extractTypeFromEntity(e) == EntityType.SWITCH) {
+            if (extractDomainFromEntityId(e.id).equals(LOCK)) {
+                return on ? "locked" : "unlocked";
+            } else {
+                return on ? "on" : "off";
+            }
+        } else return null;
     }
 
     public static void applyDefaultIcon(@NotNull Entity e) {
@@ -143,7 +157,7 @@ public final class HassUtils {
             case "calendar":
                 icon = "mdi:calendar";
                 break;
-            case "camera":
+            case CAMERA:
                 icon = "mdi:video";
                 break;
             case "climate":
@@ -155,7 +169,7 @@ public final class HassUtils {
             case "conversation":
                 icon = "mdi:text-to-speech";
                 break;
-            case "cover":
+            case COVER:
                 icon = e.state != null && e.state.equals("open") ? "mdi:window-open" : "mdi:window-closed";
                 break;
             case "device_tracker":

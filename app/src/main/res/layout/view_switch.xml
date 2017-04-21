@@ -1,31 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <android.support.v7.widget.SwitchCompat
         android:id="@+id/state_switch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/ListItemWidget"
         android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:layout_marginStart="8dp" />
+        android:layout_centerVertical="true" />
 
     <TextView
-        android:id="@+id/name"
-        tools:text="Switch Name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/ListItemText"
         android:layout_alignParentStart="true"
-        android:layout_toStartOf="@id/state_switch"
-        android:ellipsize="marquee"
-        android:paddingBottom="@dimen/item_padding"
-        android:paddingEnd="@dimen/item_padding"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/item_padding"
-        android:textAppearance="?textAppearanceListItem" />
+        android:layout_toStartOf="@id/state_switch" />
 
     <SeekBar
         android:id="@+id/brightness_slider"

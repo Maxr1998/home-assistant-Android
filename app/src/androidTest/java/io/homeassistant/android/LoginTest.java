@@ -141,12 +141,7 @@ public class LoginTest {
 
         // Recreate and re-assert that still connected
         Handler handler = new Handler(activity.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                activity.recreate();
-            }
-        });
+        handler.post(activity::recreate);
         sleep(20);
 
         assertFalse(service.connecting.get());

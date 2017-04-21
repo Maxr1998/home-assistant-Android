@@ -10,4 +10,34 @@
 
         <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>
     </style>
+
+    <item name="name" type="id" />
+
+    <style name="ListItemText">
+        <item name="android:id">@id/name</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingBottom">@dimen/item_padding</item>
+        <item name="android:paddingEnd">@dimen/item_padding</item>
+        <item name="android:paddingStart">@dimen/activity_horizontal_margin</item>
+        <item name="android:paddingTop">@dimen/item_padding</item>
+        <item name="android:textAppearance">?textAppearanceListItem</item>
+    </style>
+
+    <style name="ListItemWidget">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginEnd">@dimen/activity_horizontal_margin</item>
+    </style>
+
+    <style name="ListItemWidget.Cover">
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:background">?selectableItemBackground</item>
+        <item name="android:layout_marginEnd">0dp</item>
+    </style>
 </resources>

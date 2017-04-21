@@ -65,12 +65,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
                 return;
             }
             // Delay to not slow down native app loading
-            communicationHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    customTabsSession.mayLaunchUrl(Uri.parse(Utils.getUrl(HassActivity.this)), null, null);
-                }
-            }, 1500);
+            communicationHandler.postDelayed(() -> customTabsSession.mayLaunchUrl(Uri.parse(Utils.getUrl(HassActivity.this)), null, null), 1500);
         }
 
         @Override
@@ -210,7 +205,7 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
         swipeRefreshLayout.setRefreshing(false);
     }
 
-    public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {
+    public boolean send(Ason message, @Nullable RequestResult.OnRequestResultListener resultListener) {
         return service.send(message, resultListener);
     }
 }

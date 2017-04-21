@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -168,7 +169,7 @@ public class HassService extends Service {
         return entityMap;
     }
 
-    public boolean send(Ason message, RequestResult.OnRequestResultListener resultListener) {
+    public boolean send(Ason message, @Nullable RequestResult.OnRequestResultListener resultListener) {
         if (!(message instanceof AuthRequest)) {
             int rId = lastId.incrementAndGet();
             message.put("id", rId);

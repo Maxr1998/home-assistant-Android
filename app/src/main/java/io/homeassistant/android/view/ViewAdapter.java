@@ -31,9 +31,9 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         entities = new ArrayList<>();
     }
 
-    private static <T extends BaseViewHolder> T createViewHolder(EntityType type, LayoutInflater inflater) {
+    private static <T extends BaseViewHolder> T createViewHolder(EntityType type, LayoutInflater inflater, ViewGroup parent) {
         BaseViewHolder viewHolder;
-        View itemView = inflater.inflate(type.layoutRes, null);
+        View itemView = inflater.inflate(type.layoutRes, parent, false);
         try {
             viewHolder = type.viewHolderClass.getConstructor(View.class).newInstance(itemView);
         } catch (ReflectiveOperationException e) {
@@ -50,7 +50,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
     @Override
     public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // Only group items
-        GroupViewHolder holder = createViewHolder(EntityType.GROUP, LayoutInflater.from(context));
+        GroupViewHolder holder = createViewHolder(EntityType.GROUP, LayoutInflater.from(context), parent);
         holder.childRecycler.setRecycledViewPool(recycledViewPool);
         return holder;
     }
@@ -83,7 +83,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
         @Override
         public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return ViewAdapter.createViewHolder(EntityType.values()[viewType], LayoutInflater.from(parent.getContext()));
+            return ViewAdapter.createViewHolder(EntityType.values()[viewType], LayoutInflater.from(parent.getContext()), parent);
         }
 
         @Override

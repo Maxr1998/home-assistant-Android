@@ -5,6 +5,8 @@ import com.afollestad.ason.Ason;
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.results.Entity;
 
+import static io.homeassistant.android.api.Domain.LOCK;
+
 public class ToggleRequest extends Ason {
     protected final String type = "call_service";
     protected final String domain;
@@ -12,11 +14,18 @@ public class ToggleRequest extends Ason {
     protected final Object service_data;
 
     /**
-     * For use with lights (without changing brightness), switches
+     * For use with lights (without changing brightness), locks, switches
      */
     public ToggleRequest(Entity entity, boolean state) {
+        this(entity, HassUtils.extractDomainFromEntityId(entity.id).equals(LOCK) ? (state ? "lock" : "unlock") : (state ? "turn_on" : "turn_off"));
+    }
+
+    /**
+     * For use with cover
+     */
+    public ToggleRequest(Entity entity, String operation) {
         domain = HassUtils.extractDomainFromEntityId(entity.id);
-        service = state ? "turn_on" : "turn_off";
+        service = operation;
         service_data = new ServiceData(entity.id);
     }
 

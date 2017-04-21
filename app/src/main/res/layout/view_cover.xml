@@ -1,57 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:ignore="ContentDescription">
 
     <TextView
-        android:id="@+id/name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_centerVertical="true"
-        tools:text="Cover Name"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:paddingBottom="@dimen/item_padding"
-        android:paddingEnd="8dp"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/item_padding"
-        android:textAppearance="?textAppearanceListItem" />
+        style="@style/ListItemText"
+        tools:text="Cover Name" />
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:paddingBottom="@dimen/item_padding"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingStart="8dp"
-        android:paddingTop="@dimen/item_padding"
-        >
+    <ImageButton
+        android:id="@+id/cover_up"
+        style="@style/ListItemWidget.Cover"
+        android:src="@drawable/ic_arrow_upward_24dp" />
 
-        <android.support.v7.widget.AppCompatImageButton
-            android:id="@+id/cover_up"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            app:srcCompat="@drawable/ic_arrow_upward_24dp" />
+    <ImageButton
+        android:id="@+id/cover_stop"
+        style="@style/ListItemWidget.Cover"
+        android:src="@drawable/ic_stop_24dp" />
 
-        <android.support.v7.widget.AppCompatImageButton
-            android:id="@+id/cover_stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            app:srcCompat="@drawable/ic_stop_24dp" />
-
-        <android.support.v7.widget.AppCompatImageButton
-            android:id="@+id/cover_down"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            app:srcCompat="@drawable/ic_arrow_downward_24dp" />
-    </LinearLayout>
-
-</RelativeLayout>
+    <ImageButton
+        android:id="@+id/cover_down"
+        style="@style/ListItemWidget.Cover"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:src="@drawable/ic_arrow_downward_24dp" />
+</LinearLayout>
