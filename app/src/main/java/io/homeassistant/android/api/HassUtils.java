@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.homeassistant.android.api.results.Entity;
+import io.homeassistant.android.api.results.EventData;
 
 import static io.homeassistant.android.api.Domain.AUTOMATION;
 import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
@@ -50,6 +51,21 @@ public final class HassUtils {
                 Entity entity = Ason.deserialize((Ason) o, Entity.class);
                 entityMap.put(entity.id, entity);
             }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Extract an updated entity from an event and update the entityMap with the new state
+     *
+     * @param result    the EventData to extract from
+     * @param entityMap the Map where entities are store with their id as key
+     * @return true if items were updated, else false
+     */
+    public static boolean updateEntityFromEventResult(@Nullable EventData result, @NonNull Map<String, Entity> entityMap) {
+        if (result != null) {
+            entityMap.put(result.entity_id, result.new_state);
             return true;
         }
         return false;
