@@ -1,0 +1,51 @@
+<resources>
+    <string name="app_name">Home Assistant</string>
+
+    <!-- Login screen -->
+    <string name="hint_url">ホームアシスタント URL/IP</string>
+    <string name="hint_password">パスワード</string>
+    <string name="hint_password_existing">パスワード (現在は空にします)</string>
+
+    <string name="invalid_url_scheme">無効な URL 形式。次のように入力してください: [https://]example.com[:8123]/</string>
+
+    <string name="button_connect">接続</string>
+    <string name="button_connect_no_network">ネットワークが利用できません</string>
+    <string name="login_error">接続に失敗しました: 無効な IP/パスワード、SSL の不一致、またはサーバーがオフ?</string>
+    <string name="login_error_generic">接続に失敗しました: 無効な IP、またはサーバーがオフ?</string>
+    <string name="login_error_wrong_password">接続に失敗しました: 無効なパスワード!</string>
+    <string name="dialog_login_error_ssl_mismatch_title">SSL ホスト名の不一致エラー!</string>
+    <string name="dialog_login_error_ssl_mismatch_message">現在の IP が、SSL 証明書で指定されたホスト名と一致しません。
+        これは、あなたがホスト名の別名を入力したか、攻撃者が接続を盗聴しようとしている可能性があります。
+        何を行うかを理解している場合にのみ無視するをタップしてください!</string>
+    <string name="dialog_login_error_ssl_mismatch_ignore">無視する</string>
+
+    <!-- Main screen -->
+    <string name="menu_custom_tab">Web UI を読み込む</string>
+    <string name="menu_logout">ログアウト</string>
+    <string name="menu_settings">@string/settings_name</string>
+
+    <string name="button_scene_activate">アクティベート</string>
+
+    <!-- Settings screen -->
+    <string name="settings_name">設定</string>
+    <string name="preference_category_location_tracking">位置の追跡</string>
+    <string name="preference_enable_location_tracking">位置の追跡を有効にする</string>
+    <string name="preference_location_device_name">デバイス名</string>
+    <string name="preference_location_device_name_summary">known-devices.yaml でリストされるお使いのデバイス名を入力するか、独自に選択します。
+        空にした場合、機能が無効になります。\n現在の設定: %s</string>
+    <string name="preference_location_update_interval">更新間隔</string>
+    <string-array name="location_update_interval_summaries">
+        <item>5 分ごと (電池を消費します)</item>
+        <item>10 分ごと (デフォルト)</item>
+        <item>30 分ごと</item>
+        <item>1 時間ごと</item>
+    </string-array>
+    <string name="preference_category_miscellaneous">その他</string>
+    <string name="preference_reset_host_mismatches">ホストの不一致をリセット</string>
+    <string name="preference_reset_host_mismatches_summary">無視した SSL ホスト不一致の一覧をクリアします</string>
+    <string name="preference_reset_host_mismatches_summary_empty">リストは空です。何もすることはありません</string>
+    <string name="toast_ignored_ssl_mismatches_cleared">リストをクリアしました。</string>
+
+    <!-- Shortcut activity -->
+    <string name="button_add_shortcut">ショートカットを追加</string>
+</resources>
