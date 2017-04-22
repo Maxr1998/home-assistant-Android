@@ -39,6 +39,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         } catch (ReflectiveOperationException e) {
             viewHolder = null;
         }
+        //noinspection unchecked
         return (T) viewHolder;
     }
 
@@ -64,7 +65,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
     @Override
     public int getItemViewType(int position) {
-        return entities.get(position).first.type.ordinal();
+        return EntityType.GROUP.ordinal();
     }
 
     @Override
