@@ -32,6 +32,11 @@ import io.homeassistant.android.api.requests.ToggleRequest;
 import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.HassService.EXTRA_ACTION_COMMAND;
+import static io.homeassistant.android.api.Domain.AUTOMATION;
+import static io.homeassistant.android.api.Domain.INPUT_BOOLEAN;
+import static io.homeassistant.android.api.Domain.LIGHT;
+import static io.homeassistant.android.api.Domain.SCENE;
+import static io.homeassistant.android.api.Domain.SWITCH;
 
 
 public class ShortcutActivity extends AppCompatActivity implements CommunicationHandler.ServiceCommunicator {
@@ -127,13 +132,13 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
     @Override
     public void updateStates() {
         for (Map.Entry<String, Entity> s : service.getEntityMap().entrySet()) {
-            switch (HassUtils.extractDomainFromEntityId(s.getKey())) {
-                case "automation":
-                case "input_boolean":
-                case "light":
-                case "scene":
-                case "switch":
-                    Entity e = s.getValue();
+            Entity e = s.getValue();
+            switch (e.getDomain()) {
+                case AUTOMATION:
+                case INPUT_BOOLEAN:
+                case LIGHT:
+                case SCENE:
+                case SWITCH:
                     if (!e.attributes.hidden)
                         viewAdapter.entities.add(e);
                     break;

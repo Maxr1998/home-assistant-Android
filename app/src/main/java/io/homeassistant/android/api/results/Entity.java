@@ -18,6 +18,10 @@ public class Entity implements Comparable<Entity> {
     public String state = null;
     public Attributes attributes;
 
+    public static String getDomain(@NonNull String id) {
+        return id.split("\\.")[0];
+    }
+
     @Override
     public String toString() {
         return String.format("%1$s[%2$s]", type, id);
@@ -31,5 +35,9 @@ public class Entity implements Comparable<Entity> {
             return attributes.friendly_name.compareToIgnoreCase(e.attributes.friendly_name);
         }
         return id.compareToIgnoreCase(e.id);
+    }
+
+    public String getDomain() {
+        return id.split("\\.")[0];
     }
 }

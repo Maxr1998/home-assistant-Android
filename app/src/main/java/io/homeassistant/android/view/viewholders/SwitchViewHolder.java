@@ -53,7 +53,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
     private void updateColor() {
         Drawable leftDrawable = name.getCompoundDrawablesRelative()[0];
-        String domain = HassUtils.extractDomainFromEntityId(entity.id);
+        String domain = entity.getDomain();
         if (leftDrawable != null && (domain.equals(LIGHT) || domain.equals(SWITCH))) {
             if (!(leftDrawable instanceof LevelListDrawable)) {
                 LevelListDrawable levelListDrawable = new LevelListDrawable();

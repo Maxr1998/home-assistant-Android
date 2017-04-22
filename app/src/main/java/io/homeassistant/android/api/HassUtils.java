@@ -74,7 +74,7 @@ public final class HassUtils {
     public static void extractGroups(@NonNull Map<String, Entity> entityMap, List<Pair<Entity, List<Entity>>> entities) {
         entities.clear();
         for (String entityId : entityMap.keySet()) {
-            if (extractDomainFromEntityId(entityId).equals(GROUP)) {
+            if (Entity.getDomain(entityId).equals(GROUP)) {
                 Entity entity = entityMap.get(entityId);
                 if (entity.attributes.hidden) {
                     continue;
@@ -99,18 +99,13 @@ public final class HassUtils {
         }
 
         // Sort groups according to their order number
+        //noinspection Java8ListSort,ComparatorCombinators
         Collections.sort(entities, (o1, o2) -> o1.first.compareTo(o2.first));
-    }
-
-    @NotNull
-    public static String extractDomainFromEntityId(@NotNull String entityId) {
-        return entityId.split("\\.")[0];
     }
 
     @NonNull
     public static EntityType extractTypeFromEntity(@NotNull Entity e) {
-        String domain = extractDomainFromEntityId(e.id);
-        switch (domain) {
+        switch (e.getDomain()) {
             case AUTOMATION:
             case INPUT_BOOLEAN:
             case LIGHT:
@@ -146,7 +141,7 @@ public final class HassUtils {
     @Nullable
     public static String getOnState(@NonNull Entity e, boolean on) {
         if (extractTypeFromEntity(e) == EntityType.SWITCH) {
-            if (extractDomainFromEntityId(e.id).equals(LOCK)) {
+            if (e.getDomain().equals(LOCK)) {
                 return on ? "locked" : "unlocked";
             } else {
                 return on ? "on" : "off";
@@ -160,7 +155,7 @@ public final class HassUtils {
         String icon;
         // For now, include all domains from https://github.com/home-assistant/home-assistant-polymer/blob/master/src/util/hass-util.html#L219,
         // even though most are currently not supported by this app.
-        switch (extractDomainFromEntityId(e.id)) {
+        switch (e.getDomain()) {
             case "alarm_control_panel":
                 icon = e.state != null && e.state.equals("disarmed") ? "mdi:bell-outline" : "mdi:bell";
                 break;
