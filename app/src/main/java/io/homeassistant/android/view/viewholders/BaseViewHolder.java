@@ -14,7 +14,17 @@ public class BaseViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    public void setEntity(Entity e) {
+    public final void bind(Entity e) {
         entity = e;
+        entity.registerObserver(this);
+        updateViews();
+    }
+
+    protected void updateViews() {
+        // Empty
+    }
+
+    public final void notifyChanged() {
+        updateViews();
     }
 }

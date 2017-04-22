@@ -10,7 +10,6 @@ import java.util.List;
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.SelectRequest;
-import io.homeassistant.android.api.results.Entity;
 
 public class InputSelectViewHolder extends TextViewHolder implements AdapterView.OnItemSelectedListener {
 
@@ -23,8 +22,8 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
     }
 
     @Override
-    public void setEntity(Entity e) {
-        super.setEntity(e);
+    protected void updateViews() {
+        super.updateViews();
         inputSpinner.setOnItemSelectedListener(null);
         List<String> options = entity.attributes.options;
         if (options != null) {

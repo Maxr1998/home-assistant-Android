@@ -5,7 +5,6 @@ import android.widget.ImageView;
 
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.icons.ImageUtils;
-import io.homeassistant.android.api.results.Entity;
 
 
 public class CameraViewHolder extends TextViewHolder {
@@ -18,8 +17,8 @@ public class CameraViewHolder extends TextViewHolder {
     }
 
     @Override
-    public void setEntity(Entity e) {
-        super.setEntity(e);
+    protected void updateViews() {
+        super.updateViews();
         try {
             ImageUtils.getInstance(name.getContext()).loadEntityDrawable(name.getContext(), entity, false, (drawable, async) -> {
                 if (async) cameraView.post(() -> cameraView.setImageDrawable(drawable));

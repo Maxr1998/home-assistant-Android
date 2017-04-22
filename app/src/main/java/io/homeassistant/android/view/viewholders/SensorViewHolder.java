@@ -4,7 +4,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import io.homeassistant.android.R;
-import io.homeassistant.android.api.results.Entity;
 
 public class SensorViewHolder extends TextViewHolder {
 
@@ -16,8 +15,8 @@ public class SensorViewHolder extends TextViewHolder {
     }
 
     @Override
-    public void setEntity(Entity e) {
-        super.setEntity(e);
+    protected void updateViews() {
+        super.updateViews();
         String unit = entity.attributes.unit_of_measurement;
         value.setText(entity.state.concat(unit != null ? " " + unit : ""));
     }

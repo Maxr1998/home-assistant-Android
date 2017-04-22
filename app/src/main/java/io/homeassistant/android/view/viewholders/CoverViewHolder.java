@@ -6,7 +6,6 @@ import android.widget.ImageButton;
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.ToggleRequest;
-import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.Utils.setStatefulImageButtonIcon;
 
@@ -27,10 +26,10 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
     }
 
     @Override
-    public void setEntity(Entity e) {
-        super.setEntity(e);
-        setStatefulImageButtonIcon(itemView.getContext(), e.state.equalsIgnoreCase("open"), buttonCoverDown, R.drawable.ic_arrow_downward_24dp);
-        setStatefulImageButtonIcon(itemView.getContext(), e.state.equalsIgnoreCase("closed"), buttonCoverUp, R.drawable.ic_arrow_upward_24dp);
+    protected void updateViews() {
+        super.updateViews();
+        setStatefulImageButtonIcon(itemView.getContext(), entity.state.equalsIgnoreCase("open"), buttonCoverDown, R.drawable.ic_arrow_downward_24dp);
+        setStatefulImageButtonIcon(itemView.getContext(), entity.state.equalsIgnoreCase("closed"), buttonCoverUp, R.drawable.ic_arrow_upward_24dp);
     }
 
     @Override

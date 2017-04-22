@@ -7,7 +7,6 @@ import android.widget.TextView;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.icons.ImageUtils;
-import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.api.EntityType.CAMERA;
 import static io.homeassistant.android.api.EntityType.GROUP;
@@ -24,9 +23,8 @@ public class TextViewHolder extends BaseViewHolder {
     }
 
     @Override
-    public void setEntity(Entity e) {
-        HassUtils.applyDefaultIcon(e);
-        super.setEntity(e);
+    protected void updateViews() {
+        HassUtils.applyDefaultIcon(entity);
         name.setText(entity.attributes.friendly_name);
         name.setCompoundDrawablePadding(name.getResources().getDimensionPixelSize(R.dimen.icon_padding));
         name.setCompoundDrawablesRelative(null, null, null, null);

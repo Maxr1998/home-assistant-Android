@@ -16,7 +16,6 @@ import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.requests.ToggleRequest;
-import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.api.Domain.LIGHT;
 import static io.homeassistant.android.api.Domain.SWITCH;
@@ -40,8 +39,8 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
     }
 
     @Override
-    public void setEntity(Entity e) {
-        super.setEntity(e);
+    protected void updateViews() {
+        super.updateViews();
         stateSwitch.setChecked(entity.state.equals(HassUtils.getOnState(entity, true)));
         stateSwitch.setOnClickListener(this);
         if ((entity.attributes.supported_features & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {

@@ -49,6 +49,7 @@ public final class HassUtils {
             entityMap.clear();
             for (Object o : (Object[]) result) {
                 Entity entity = Ason.deserialize((Ason) o, Entity.class);
+                entity.applyType();
                 entityMap.put(entity.id, entity);
             }
             return true;
@@ -63,12 +64,18 @@ public final class HassUtils {
      * @param entityMap the Map where entities are store with their id as key
      * @return true if items were updated, else false
      */
-    public static boolean updateEntityFromEventResult(@Nullable EventData result, @NonNull Map<String, Entity> entityMap) {
+    @Nullable
+    public static Entity updateEntityFromEventResult(@Nullable EventData result, @NonNull Map<String, Entity> entityMap) {
         if (result != null) {
-            entityMap.put(result.entity_id, result.new_state);
-            return true;
+            Entity current = entityMap.get(result.entity_id);
+            Entity updated = result.new_state;
+            current.state = updated.state;
+            current.attributes = updated.attributes;
+            current.last_changed = updated.last_changed;
+            current.last_updated = updated.last_updated;
+            return current;
         }
-        return false;
+        return null;
     }
 
     public static void extractGroups(@NonNull Map<String, Entity> entityMap, List<Pair<Entity, List<Entity>>> entities) {
@@ -78,8 +85,6 @@ public final class HassUtils {
                 if (entity.attributes.hidden) {
                     continue;
                 }
-                // Add visible group item
-                entity.type = EntityType.GROUP;
 
                 // Add group children
                 List<Entity> children = new ArrayList<>();
@@ -87,7 +92,6 @@ public final class HassUtils {
                 for (String childrenKey : childrenKeys) {
                     Entity child = entityMap.get(childrenKey);
                     if (child == null) continue;
-                    child.type = extractTypeFromEntity(child);
                     if (!child.attributes.hidden) {
                         children.add(child);
                     }
@@ -103,43 +107,13 @@ public final class HassUtils {
     }
 
     @NonNull
-    public static EntityType extractTypeFromEntity(@NotNull Entity e) {
-        switch (e.getDomain()) {
-            case AUTOMATION:
-            case INPUT_BOOLEAN:
-            case LIGHT:
-            case LOCK:
-            case SWITCH:
-                return EntityType.SWITCH;
-            case BINARY_SENSOR:
-            case DEVICE_TRACKER:
-            case SENSOR:
-            case SUN:
-                return EntityType.SENSOR;
-            case CAMERA:
-                return EntityType.CAMERA;
-            case COVER:
-                return EntityType.COVER;
-            case INPUT_SELECT:
-                return EntityType.INPUT_SELECT;
-            case SCENE:
-                return EntityType.SCENE;
-            default:
-                if (e.attributes.friendly_name != null) {
-                    return EntityType.TEXT;
-                }
-                return EntityType.BASE;
-        }
-    }
-
-    @NonNull
     public static String extractEntityName(@NonNull Entity e) {
         return e.attributes.friendly_name != null ? e.attributes.friendly_name : e.id;
     }
 
     @Nullable
     public static String getOnState(@NonNull Entity e, boolean on) {
-        if (extractTypeFromEntity(e) == EntityType.SWITCH) {
+        if (e.type == EntityType.SWITCH) {
             if (e.getDomain().equals(LOCK)) {
                 return on ? "locked" : "unlocked";
             } else {
@@ -182,7 +156,7 @@ public final class HassUtils {
             case COVER:
                 icon = e.state != null && e.state.equals("open") ? "mdi:window-open" : "mdi:window-closed";
                 break;
-            case "device_tracker":
+            case DEVICE_TRACKER:
                 icon = "mdi:account";
                 break;
             case "fan":

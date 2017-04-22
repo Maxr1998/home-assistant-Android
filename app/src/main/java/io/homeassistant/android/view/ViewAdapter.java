@@ -58,7 +58,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
     @Override
     public void onBindViewHolder(GroupViewHolder holder, int position) {
-        holder.setEntity(entities.get(position).first);
+        holder.bind(entities.get(position).first);
         holder.adapter.updateChildren(entities.get(position).second);
         holder.space.setVisibility(position >= getItemCount() - holder.itemView.getResources().getInteger(R.integer.view_columns) ? View.GONE : View.VISIBLE);
     }
@@ -89,7 +89,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
 
         @Override
         public void onBindViewHolder(BaseViewHolder holder, int position) {
-            holder.setEntity(children.get(position));
+            holder.bind(children.get(position));
         }
 
         @Override

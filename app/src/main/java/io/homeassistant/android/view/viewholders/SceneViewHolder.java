@@ -6,7 +6,6 @@ import android.widget.Button;
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.ToggleRequest;
-import io.homeassistant.android.api.results.Entity;
 
 public class SceneViewHolder extends TextViewHolder implements View.OnClickListener {
 
@@ -18,8 +17,8 @@ public class SceneViewHolder extends TextViewHolder implements View.OnClickListe
     }
 
     @Override
-    public void setEntity(Entity e) {
-        super.setEntity(e);
+    protected void updateViews() {
+        super.updateViews();
         sceneButton.setOnClickListener(this);
     }
 

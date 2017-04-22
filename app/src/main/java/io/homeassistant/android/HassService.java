@@ -254,8 +254,10 @@ public class HassService extends Service {
                         break;
                     case "event":
                         EventResult eventRequest = Ason.deserialize(message, EventResult.class);
-                        if (HassUtils.updateEntityFromEventResult(eventRequest.event.data, entityMap)) {
-                            activityHandler.obtainMessage(MESSAGE_STATES_AVAILABLE).sendToTarget();
+                        Entity updated;
+                        if ((updated = HassUtils.updateEntityFromEventResult(eventRequest.event.data, entityMap)) != null) {
+                            Log.d(TAG, "Updated " + updated.id);
+                            activityHandler.post(updated::notifyObservers);
                         }
                         break;
                     case "result":
