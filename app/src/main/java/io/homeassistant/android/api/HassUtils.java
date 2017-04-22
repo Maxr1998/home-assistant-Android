@@ -73,9 +73,8 @@ public final class HassUtils {
 
     public static void extractGroups(@NonNull Map<String, Entity> entityMap, List<Pair<Entity, List<Entity>>> entities) {
         entities.clear();
-        for (String entityId : entityMap.keySet()) {
-            if (Entity.getDomain(entityId).equals(GROUP)) {
-                Entity entity = entityMap.get(entityId);
+        for (Entity entity : entityMap.values()) {
+            if (entity.getDomain().equals(GROUP)) {
                 if (entity.attributes.hidden) {
                     continue;
                 }
@@ -85,8 +84,8 @@ public final class HassUtils {
                 // Add group children
                 List<Entity> children = new ArrayList<>();
                 String[] childrenKeys = entity.attributes.children;
-                for (int i = 0; i < childrenKeys.length; i++) {
-                    Entity child = entityMap.get(childrenKeys[i]);
+                for (String childrenKey : childrenKeys) {
+                    Entity child = entityMap.get(childrenKey);
                     if (child == null) continue;
                     child.type = extractTypeFromEntity(child);
                     if (!child.attributes.hidden) {
