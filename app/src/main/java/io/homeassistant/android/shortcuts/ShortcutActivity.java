@@ -139,7 +139,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
                 case LIGHT:
                 case SCENE:
                 case SWITCH:
-                    if (!e.attributes.hidden)
+                    if (!e.isHidden())
                         viewAdapter.entities.add(e);
                     break;
             }

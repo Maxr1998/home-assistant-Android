@@ -17,7 +17,7 @@ public class SensorViewHolder extends TextViewHolder {
     @Override
     protected void updateViews() {
         super.updateViews();
-        String unit = entity.attributes.unit_of_measurement;
+        String unit = (String)entity.attributes.get("unit_of_measurement");
         value.setText(entity.state.concat(unit != null ? " " + unit : ""));
     }
 }
