@@ -19,8 +19,6 @@ lint.xml
 
 # Gradle
 /.gradle/
-/gradle/
-/gradlew*
 
 # Gedit save files
 *.*~
