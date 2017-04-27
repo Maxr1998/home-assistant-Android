@@ -48,8 +48,8 @@ public final class ImageUtils {
     public void loadEntityDrawable(Context context, Entity entity, boolean useCache, DrawableLoadListener listener) throws Exception {
         IconRecord tempIcon = null;
 
-        String iconName = (String)entity.attributes.get("icon");
-        String pictureUrl = (String)entity.attributes.get("entity_picture");
+        String iconName = entity.attributes.getString("icon");
+        String pictureUrl = entity.attributes.getString("entity_picture");
         if (iconName != null) {
             iconName = iconName.substring(4);
             String iconUrl = materialDesignIcons.getUrlFromName(iconName);

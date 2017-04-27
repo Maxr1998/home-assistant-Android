@@ -85,32 +85,24 @@ public final class HassUtils {
                 }
 
                 // Add group children
-                try {
-                    List<Entity> children = new ArrayList<>();
-                    AsonArray entity_ids = (AsonArray) entity.attributes.get("entity_id");
-                    for (Object childrenKey : entity_ids.toList()) {
-                        Entity child = entityMap.get((String)childrenKey);
-                        if (child == null) continue;
-                        if (!child.isHidden()) {
-                            children.add(child);
-                        }
+                List<Entity> children = new ArrayList<>();
+                AsonArray entity_ids = (AsonArray) entity.attributes.get("entity_id");
+                for (Object childrenKey : entity_ids.toList()) {
+                    Entity child = entityMap.get((String)childrenKey);
+                    if (child == null) continue;
+                    if (!child.isHidden()) {
+                        children.add(child);
                     }
-
-                    entities.add(new Pair<>(entity, children));
-                } catch (Exception e) {
-
                 }
+
+                entities.add(new Pair<>(entity, children));
+
             }
         }
 
         // Sort groups according to their order number
         //noinspection Java8ListSort,ComparatorCombinators
         Collections.sort(entities, (o1, o2) -> o1.first.compareTo(o2.first));
-    }
-
-    @NonNull
-    public static String extractEntityName(@NonNull Entity e) {
-        return e.getFriendlyName();
     }
 
     @Nullable

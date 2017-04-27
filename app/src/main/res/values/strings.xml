@@ -46,6 +46,8 @@
     <string name="preference_reset_host_mismatches_summary_empty">List is empty, nothing to do</string>
     <string name="toast_ignored_ssl_mismatches_cleared">Cleared list.</string>
 
+    <!-- Climate -->
+    <string name="climate_current_temperature">Currently: %d</string>
     <!-- Shortcut activity -->
     <string name="button_add_shortcut">Add shortcut</string>
 </resources>

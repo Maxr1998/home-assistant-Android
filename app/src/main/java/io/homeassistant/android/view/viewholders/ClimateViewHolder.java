@@ -21,9 +21,10 @@ public class ClimateViewHolder extends TextViewHolder  {
     @Override
     protected void updateViews() {
         super.updateViews();
-        operation.setText(entity.attributes.getString("operation_mode") + " ");
+        operation.setText(entity.attributes.getString("operation_mode"));
         targetTemperature.setText(entity.attributes.getInt("temperature") + " "+ entity.attributes.getString("unit_of_measurement"));
-        currentTemperature.setText(entity.attributes.getInt("current_temperature") + " "+ entity.attributes.getString("unit_of_measurement"));
+        String currentTemp = this.itemView.getContext().getResources().getString(R.string.climate_current_temperature, entity.attributes.getInt("current_temperature"));
+        currentTemperature.setText(currentTemp + " "+ entity.attributes.getString("unit_of_measurement"));
     }
 
 }

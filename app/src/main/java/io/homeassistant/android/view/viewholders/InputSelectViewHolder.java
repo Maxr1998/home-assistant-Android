@@ -27,11 +27,11 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
     protected void updateViews() {
         super.updateViews();
         inputSpinner.setOnItemSelectedListener(null);
-        AsonArray<String> options = entity.attributes.get("options");
+        List<String> options = entity.attributes.getList("options",String.class);
         if (options != null) {
-            ArrayAdapter adapter = new ArrayAdapter<>(inputSpinner.getContext(), android.support.design.R.layout.support_simple_spinner_dropdown_item, options.toList().toArray());
+            ArrayAdapter adapter = new ArrayAdapter<>(inputSpinner.getContext(), android.support.design.R.layout.support_simple_spinner_dropdown_item, options.toArray());
             inputSpinner.setAdapter(adapter);
-            inputSpinner.setSelection(lastSelected = options.toList().indexOf(entity.state));
+            inputSpinner.setSelection(lastSelected = options.indexOf(entity.state));
             inputSpinner.setOnItemSelectedListener(this);
         } else {
             inputSpinner.setVisibility(View.GONE);

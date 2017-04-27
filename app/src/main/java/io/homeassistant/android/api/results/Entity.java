@@ -52,7 +52,7 @@ public class Entity implements Comparable<Entity> {
     }
 
     public boolean isHidden() {
-        return (attributes.has("hidden") && (((Boolean)attributes.get("hidden")).booleanValue() == true));
+        return attributes.getBool("hidden", false);
     }
 
     public String getFriendlyName(){
@@ -61,10 +61,10 @@ public class Entity implements Comparable<Entity> {
 
     @Override
     public int compareTo(@NonNull Entity e) {
-        if ((int)attributes.getInt("order",-1) != -1 && (int)e.attributes.getInt("order",-1) != -1) {
-            return (int)attributes.getInt("order",-1) - (int)e.attributes.getInt("order",-1);
+        if (attributes.getInt("order",-1) != -1 && e.attributes.getInt("order",-1) != -1) {
+            return attributes.getInt("order",-1) - e.attributes.getInt("order",-1);
         } else if (attributes.get("friendly_name") != null && e.attributes.get("friendly_name") != null) {
-            return ((String)attributes.get("friendly_name")).compareToIgnoreCase((String)e.attributes.get("friendly_name"));
+            return (attributes.getString("friendly_name")).compareToIgnoreCase(e.attributes.getString("friendly_name"));
         }
         return id.compareToIgnoreCase(e.id);
     }

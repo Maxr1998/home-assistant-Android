@@ -27,9 +27,6 @@
         <item name="android:textAppearance">?textAppearanceListItem</item>
     </style>
 
-    <style name="ClimateOperation">
-        <item name="android:textStyle">bold</item>
-    </style>
 
     <style name="ListItemWidget">
         <item name="android:layout_height">wrap_content</item>
