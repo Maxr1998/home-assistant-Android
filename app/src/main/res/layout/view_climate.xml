@@ -35,7 +35,6 @@
                 />
         </LinearLayout>
 
-
         <!-- Current Temperature -->
         <LinearLayout
             android:layout_width="wrap_content"
@@ -48,6 +47,4 @@
                     />
         </LinearLayout>
     </LinearLayout>
-
-
 </LinearLayout>
