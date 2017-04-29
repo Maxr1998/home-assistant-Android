@@ -2,7 +2,6 @@ package io.homeassistant.android.view.viewholders;
 
 import android.view.View;
 import android.widget.ImageButton;
-
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.requests.ToggleRequest;
@@ -15,6 +14,11 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
     private final ImageButton buttonCoverDown;
     private final ImageButton buttonCoverStop;
 
+
+    static final int SUPPORT_OPEN = 1;
+    static final int SUPPORT_CLOSE = 2;
+    static final int SUPPORT_STOP = 8;
+
     public CoverViewHolder(View itemView) {
         super(itemView);
         buttonCoverUp = (ImageButton) itemView.findViewById(R.id.cover_up);
@@ -25,9 +29,15 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
         buttonCoverStop.setOnClickListener(this);
     }
 
+
     @Override
     protected void updateViews() {
         super.updateViews();
+        int supportedFeatures = entity.attributes.getInt("supported_features");
+        buttonCoverUp.setVisibility(((supportedFeatures & SUPPORT_OPEN) != 0) ? View.VISIBLE : View.GONE);
+        buttonCoverDown.setVisibility(((supportedFeatures & SUPPORT_CLOSE) != 0) ? View.VISIBLE : View.GONE);
+        buttonCoverStop.setVisibility(((supportedFeatures & SUPPORT_STOP) != 0) ? View.VISIBLE : View.GONE);
+
         setStatefulImageButtonIcon(itemView.getContext(), entity.state.equalsIgnoreCase("open"), buttonCoverDown, R.drawable.ic_arrow_downward_24dp);
         setStatefulImageButtonIcon(itemView.getContext(), entity.state.equalsIgnoreCase("closed"), buttonCoverUp, R.drawable.ic_arrow_upward_24dp);
     }
