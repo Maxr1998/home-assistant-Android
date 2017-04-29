@@ -3,9 +3,11 @@ package io.homeassistant.android.api;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
+
 import com.afollestad.ason.Ason;
-import com.afollestad.ason.AsonArray;
+
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -17,6 +19,7 @@ import io.homeassistant.android.api.results.EventData;
 import static io.homeassistant.android.api.Domain.AUTOMATION;
 import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
 import static io.homeassistant.android.api.Domain.CAMERA;
+import static io.homeassistant.android.api.Domain.CLIMATE;
 import static io.homeassistant.android.api.Domain.COVER;
 import static io.homeassistant.android.api.Domain.DEVICE_TRACKER;
 import static io.homeassistant.android.api.Domain.GROUP;
@@ -85,18 +88,19 @@ public final class HassUtils {
                 }
 
                 // Add group children
+                List<String> entityIds = entity.attributes.getList("entity_id", String.class);
+                if (entityIds == null) {
+                    continue;
+                }
                 List<Entity> children = new ArrayList<>();
-                AsonArray entity_ids = (AsonArray) entity.attributes.get("entity_id");
-                for (Object childrenKey : entity_ids.toList()) {
-                    Entity child = entityMap.get((String)childrenKey);
+                for (String childrenKey : entityIds) {
+                    Entity child = entityMap.get(childrenKey);
                     if (child == null) continue;
                     if (!child.isHidden()) {
                         children.add(child);
                     }
                 }
-
                 entities.add(new Pair<>(entity, children));
-
             }
         }
 
@@ -138,7 +142,7 @@ public final class HassUtils {
             case CAMERA:
                 icon = "mdi:video";
                 break;
-            case "climate":
+            case CLIMATE:
                 icon = "mdi:nest-thermostat";
                 break;
             case "configurator":
@@ -221,6 +225,6 @@ public final class HassUtils {
                 icon = null;
                 break;
         }
-        e.attributes.put("icon",icon);
+        e.attributes.put("icon", icon);
     }
 }

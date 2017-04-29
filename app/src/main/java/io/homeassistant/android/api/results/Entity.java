@@ -11,7 +11,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import io.homeassistant.android.api.EntityType;
 import io.homeassistant.android.view.viewholders.BaseViewHolder;
@@ -55,15 +54,16 @@ public class Entity implements Comparable<Entity> {
         return attributes.getBool("hidden");
     }
 
-    public String getFriendlyName(){
+    public String getFriendlyName() {
         return attributes.has("friendly_name") ? attributes.getString("friendly_name") : id;
     }
 
     @Override
     public int compareTo(@NonNull Entity e) {
-        if (attributes.getInt("order",-1) != -1 && e.attributes.getInt("order",-1) != -1) {
-            return attributes.getInt("order",-1) - e.attributes.getInt("order",-1);
-        } else if (attributes.get("friendly_name") != null && e.attributes.get("friendly_name") != null) {
+        if (attributes.getInt("order", -1) != -1 && e.attributes.getInt("order", -1) != -1) {
+            return attributes.getInt("order", -1) - e.attributes.getInt("order", -1);
+        } else if (attributes.has("friendly_name") && e.attributes.has("friendly_name")) {
+            //noinspection ConstantConditions
             return (attributes.getString("friendly_name")).compareToIgnoreCase(e.attributes.getString("friendly_name"));
         }
         return id.compareToIgnoreCase(e.id);

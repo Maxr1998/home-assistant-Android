@@ -6,45 +6,39 @@
     android:orientation="horizontal">
 
     <TextView
-        tools:text="Nest"
-        style="@style/ListItemText" />
+        style="@style/ListItemText"
+        tools:text="Nest" />
 
-    <!-- Operation and Target Temperature -->
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/item_padding"
+        style="@style/ListItemWidget"
         android:orientation="vertical">
+
+        <!-- Operation and Target Temperature -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
+
             <TextView
                 android:id="@+id/operation"
-                android:textStyle="bold"
-                tools:text="Heat"
-                android:layout_marginEnd="10dp"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:textStyle="bold"
+                tools:text="Heat" />
+
             <TextView
                 android:id="@+id/targetTemperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingEnd="@dimen/item_padding"
-                tools:text="78 °F"
-                />
+                tools:text="78 °F" />
         </LinearLayout>
 
         <!-- Current Temperature -->
-        <LinearLayout
+        <TextView
+            android:id="@+id/currentTemperature"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-                <TextView
-                    android:id="@+id/currentTemperature"
-                    style="@style/ListItemWidget"
-                    tools:text="Currently: 76 °F"
-                    />
-        </LinearLayout>
+            tools:text="Currently: 76 °F" />
     </LinearLayout>
 </LinearLayout>

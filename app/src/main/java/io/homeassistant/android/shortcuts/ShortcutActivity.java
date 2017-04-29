@@ -27,7 +27,6 @@ import java.util.Map;
 import io.homeassistant.android.CommunicationHandler;
 import io.homeassistant.android.HassService;
 import io.homeassistant.android.R;
-import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.requests.ToggleRequest;
 import io.homeassistant.android.api.results.Entity;
 
