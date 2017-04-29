@@ -52,7 +52,7 @@ public class Entity implements Comparable<Entity> {
     }
 
     public boolean isHidden() {
-        return attributes.getBool("hidden", false);
+        return attributes.getBool("hidden");
     }
 
     public String getFriendlyName(){
