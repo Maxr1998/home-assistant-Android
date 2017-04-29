@@ -5,6 +5,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SwitchCompat;
 import android.view.MotionEvent;
 import android.view.View;
@@ -43,8 +44,8 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
         super.updateViews();
         stateSwitch.setChecked(entity.state.equals(HassUtils.getOnState(entity, true)));
         stateSwitch.setOnClickListener(this);
-        if ((entity.attributes.supported_features & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {
-            brightnessSlider.setProgress((int) entity.attributes.brightness);
+        if ((entity.attributes.getInt("supported_features") & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {
+            brightnessSlider.setProgress((int) entity.attributes.getDouble("brightness"));
             name.setOnTouchListener(this);
         }
         updateColor();
@@ -59,7 +60,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
                 // Add states
                 levelListDrawable.addLevel(1, 1, leftDrawable);
                 BitmapDrawable enabledDrawable = (BitmapDrawable) leftDrawable.getConstantState().newDrawable().mutate();
-                enabledDrawable.setTintList(ColorStateList.valueOf(name.getResources().getColor(R.color.color_activated)));
+                enabledDrawable.setTintList(ColorStateList.valueOf(ContextCompat.getColor(name.getContext(), R.color.color_activated)));
                 levelListDrawable.addLevel(2, 2, enabledDrawable);
                 // Restore bounds
                 levelListDrawable.setBounds(0, 0, name.getResources().getDimensionPixelSize(R.dimen.icon_size), name.getResources().getDimensionPixelSize(R.dimen.icon_size));

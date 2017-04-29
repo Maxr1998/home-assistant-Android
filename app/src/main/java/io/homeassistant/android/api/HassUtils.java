@@ -3,11 +3,9 @@ package io.homeassistant.android.api;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Pair;
-
 import com.afollestad.ason.Ason;
-
+import com.afollestad.ason.AsonArray;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -82,33 +80,29 @@ public final class HassUtils {
         entities.clear();
         for (Entity entity : entityMap.values()) {
             if (entity.getDomain().equals(GROUP)) {
-                if (entity.attributes.hidden) {
+                if (entity.isHidden()) {
                     continue;
                 }
 
                 // Add group children
                 List<Entity> children = new ArrayList<>();
-                String[] childrenKeys = entity.attributes.children;
-                for (String childrenKey : childrenKeys) {
-                    Entity child = entityMap.get(childrenKey);
+                AsonArray entity_ids = (AsonArray) entity.attributes.get("entity_id");
+                for (Object childrenKey : entity_ids.toList()) {
+                    Entity child = entityMap.get((String)childrenKey);
                     if (child == null) continue;
-                    if (!child.attributes.hidden) {
+                    if (!child.isHidden()) {
                         children.add(child);
                     }
                 }
 
                 entities.add(new Pair<>(entity, children));
+
             }
         }
 
         // Sort groups according to their order number
         //noinspection Java8ListSort,ComparatorCombinators
         Collections.sort(entities, (o1, o2) -> o1.first.compareTo(o2.first));
-    }
-
-    @NonNull
-    public static String extractEntityName(@NonNull Entity e) {
-        return e.attributes.friendly_name != null ? e.attributes.friendly_name : e.id;
     }
 
     @Nullable
@@ -123,7 +117,7 @@ public final class HassUtils {
     }
 
     public static void applyDefaultIcon(@NotNull Entity e) {
-        if (e.attributes.icon != null || e.attributes.entity_picture != null)
+        if (e.attributes.get("icon") != null || e.attributes.get("entity_picture") != null)
             return;
         String icon;
         // For now, include all domains from https://github.com/home-assistant/home-assistant-polymer/blob/master/src/util/hass-util.html#L219,
@@ -227,6 +221,6 @@ public final class HassUtils {
                 icon = null;
                 break;
         }
-        e.attributes.icon = icon;
+        e.attributes.put("icon",icon);
     }
 }

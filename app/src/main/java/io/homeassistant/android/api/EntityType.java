@@ -5,6 +5,7 @@ import android.support.annotation.LayoutRes;
 import io.homeassistant.android.R;
 import io.homeassistant.android.view.viewholders.BaseViewHolder;
 import io.homeassistant.android.view.viewholders.CameraViewHolder;
+import io.homeassistant.android.view.viewholders.ClimateViewHolder;
 import io.homeassistant.android.view.viewholders.CoverViewHolder;
 import io.homeassistant.android.view.viewholders.GroupViewHolder;
 import io.homeassistant.android.view.viewholders.InputSelectViewHolder;
@@ -16,6 +17,7 @@ import io.homeassistant.android.view.viewholders.TextViewHolder;
 public enum EntityType {
     BASE(R.layout.view_base, BaseViewHolder.class),
     CAMERA(R.layout.view_camera, CameraViewHolder.class),
+    CLIMATE(R.layout.view_climate, ClimateViewHolder.class),
     COVER(R.layout.view_cover, CoverViewHolder.class),
     GROUP(R.layout.view_group, GroupViewHolder.class),
     INPUT_SELECT(R.layout.view_input_select, InputSelectViewHolder.class),

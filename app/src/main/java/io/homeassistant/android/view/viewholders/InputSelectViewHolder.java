@@ -5,6 +5,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import com.afollestad.ason.AsonArray;
+
 import java.util.List;
 
 import io.homeassistant.android.HassActivity;
@@ -25,7 +27,7 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
     protected void updateViews() {
         super.updateViews();
         inputSpinner.setOnItemSelectedListener(null);
-        List<String> options = entity.attributes.options;
+        List<String> options = entity.attributes.getList("options",String.class);
         if (options != null) {
             ArrayAdapter adapter = new ArrayAdapter<>(inputSpinner.getContext(), android.support.design.R.layout.support_simple_spinner_dropdown_item, options.toArray());
             inputSpinner.setAdapter(adapter);

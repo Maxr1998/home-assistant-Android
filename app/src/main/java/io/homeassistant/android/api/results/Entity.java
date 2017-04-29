@@ -3,6 +3,7 @@ package io.homeassistant.android.api.results;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 
+import com.afollestad.ason.Ason;
 import com.afollestad.ason.AsonIgnore;
 import com.afollestad.ason.AsonName;
 
@@ -10,6 +11,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import io.homeassistant.android.api.EntityType;
 import io.homeassistant.android.view.viewholders.BaseViewHolder;
@@ -17,6 +19,7 @@ import io.homeassistant.android.view.viewholders.BaseViewHolder;
 import static io.homeassistant.android.api.Domain.AUTOMATION;
 import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
 import static io.homeassistant.android.api.Domain.CAMERA;
+import static io.homeassistant.android.api.Domain.CLIMATE;
 import static io.homeassistant.android.api.Domain.COVER;
 import static io.homeassistant.android.api.Domain.DEVICE_TRACKER;
 import static io.homeassistant.android.api.Domain.GROUP;
@@ -40,19 +43,28 @@ public class Entity implements Comparable<Entity> {
     public String last_changed;
     public String last_updated;
     public String state = null;
-    public Attributes attributes;
+
+    public Ason attributes;
 
     @Override
     public String toString() {
         return String.format("%1$s[%2$s]", type, id);
     }
 
+    public boolean isHidden() {
+        return attributes.getBool("hidden");
+    }
+
+    public String getFriendlyName(){
+        return attributes.has("friendly_name") ? attributes.getString("friendly_name") : id;
+    }
+
     @Override
     public int compareTo(@NonNull Entity e) {
-        if (attributes.order != -1 && e.attributes.order != -1) {
-            return attributes.order - e.attributes.order;
-        } else if (attributes.friendly_name != null && e.attributes.friendly_name != null) {
-            return attributes.friendly_name.compareToIgnoreCase(e.attributes.friendly_name);
+        if (attributes.getInt("order",-1) != -1 && e.attributes.getInt("order",-1) != -1) {
+            return attributes.getInt("order",-1) - e.attributes.getInt("order",-1);
+        } else if (attributes.get("friendly_name") != null && e.attributes.get("friendly_name") != null) {
+            return (attributes.getString("friendly_name")).compareToIgnoreCase(e.attributes.getString("friendly_name"));
         }
         return id.compareToIgnoreCase(e.id);
     }
@@ -79,6 +91,9 @@ public class Entity implements Comparable<Entity> {
             case CAMERA:
                 type = EntityType.CAMERA;
                 break;
+            case CLIMATE:
+                type = EntityType.CLIMATE;
+                break;
             case COVER:
                 type = EntityType.COVER;
                 break;
@@ -92,7 +107,7 @@ public class Entity implements Comparable<Entity> {
                 type = EntityType.SCENE;
                 break;
             default:
-                if (attributes.friendly_name != null) {
+                if (attributes.get("friendly_name") != null) {
                     type = EntityType.TEXT;
                 }
         }

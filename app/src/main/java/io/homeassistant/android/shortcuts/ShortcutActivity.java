@@ -100,7 +100,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
                     shortcut.setAction(ACTION_SHORTCUT_LAUNCHED);
                     boolean stateOn = selectActionSpinner.getSelectedItem().equals("On");
                     shortcut.putExtra(EXTRA_ACTION_COMMAND, new ToggleRequest(selected, stateOn).toString());
-                    result.putExtra(Intent.EXTRA_SHORTCUT_NAME, HassUtils.extractEntityName(selected));
+                    result.putExtra(Intent.EXTRA_SHORTCUT_NAME, selected.getFriendlyName());
                     result.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getApplicationContext(),
                             selected.id.startsWith("light") ? stateOn ? R.mipmap.ic_lightbulb_on : R.mipmap.ic_lightbulb_off : stateOn ? R.mipmap.ic_switch_on : R.mipmap.ic_switch_off));
                     result.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcut);
@@ -139,7 +139,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
                 case LIGHT:
                 case SCENE:
                 case SWITCH:
-                    if (!e.attributes.hidden)
+                    if (!e.isHidden())
                         viewAdapter.entities.add(e);
                     break;
             }
@@ -169,7 +169,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
         public void onBindViewHolder(final ItemViewHolder holder, int position) {
             Entity e = entities.get(holder.getAdapterPosition());
             holder.item.setChecked(holder.getAdapterPosition() == selected);
-            holder.item.setText(HassUtils.extractEntityName(e));
+            holder.item.setText(e.getFriendlyName());
             holder.item.setOnClickListener(v -> {
                 int last = selected;
                 selected = holder.getAdapterPosition();
