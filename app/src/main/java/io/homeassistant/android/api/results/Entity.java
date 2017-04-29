@@ -56,7 +56,7 @@ public class Entity implements Comparable<Entity> {
     }
 
     public String getFriendlyName(){
-        return attributes.has("friendly_name") ? (String)attributes.get("friendly_name") : this.id;
+        return attributes.has("friendly_name") ? attributes.getString("friendly_name") : id;
     }
 
     @Override
