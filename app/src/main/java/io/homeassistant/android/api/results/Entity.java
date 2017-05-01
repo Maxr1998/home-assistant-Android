@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.EntityType;
 import io.homeassistant.android.view.viewholders.BaseViewHolder;
 
@@ -37,7 +38,7 @@ public class Entity implements Comparable<Entity> {
     @AsonIgnore
     public EntityType type = EntityType.BASE;
 
-    @AsonName(name = "entity_id")
+    @AsonName(name = Attribute.ENTITY_ID)
     public String id;
     public String last_changed;
     public String last_updated;
@@ -51,20 +52,20 @@ public class Entity implements Comparable<Entity> {
     }
 
     public boolean isHidden() {
-        return attributes.getBool("hidden");
+        return attributes.getBool(Attribute.HIDDEN);
     }
 
     public String getFriendlyName() {
-        return attributes.has("friendly_name") ? attributes.getString("friendly_name") : id;
+        return attributes.has(Attribute.FRIENDLY_NAME) ? attributes.getString(Attribute.FRIENDLY_NAME) : id;
     }
 
     @Override
     public int compareTo(@NonNull Entity e) {
-        if (attributes.getInt("order", -1) != -1 && e.attributes.getInt("order", -1) != -1) {
-            return attributes.getInt("order", -1) - e.attributes.getInt("order", -1);
-        } else if (attributes.has("friendly_name") && e.attributes.has("friendly_name")) {
+        if (attributes.getInt(Attribute.ORDER, -1) != -1 && e.attributes.getInt(Attribute.ORDER, -1) != -1) {
+            return attributes.getInt(Attribute.ORDER) - e.attributes.getInt(Attribute.ORDER);
+        } else if (attributes.has(Attribute.FRIENDLY_NAME) && e.attributes.has(Attribute.FRIENDLY_NAME)) {
             //noinspection ConstantConditions
-            return (attributes.getString("friendly_name")).compareToIgnoreCase(e.attributes.getString("friendly_name"));
+            return (attributes.getString(Attribute.FRIENDLY_NAME)).compareToIgnoreCase(e.attributes.getString(Attribute.FRIENDLY_NAME));
         }
         return id.compareToIgnoreCase(e.id);
     }
@@ -107,7 +108,7 @@ public class Entity implements Comparable<Entity> {
                 type = EntityType.SCENE;
                 break;
             default:
-                if (attributes.get("friendly_name") != null) {
+                if (attributes.get(Attribute.FRIENDLY_NAME) != null) {
                     type = EntityType.TEXT;
                 }
         }

@@ -15,6 +15,7 @@ import android.widget.SeekBar;
 import io.homeassistant.android.Common;
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
+import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.requests.ToggleRequest;
 
@@ -44,8 +45,8 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
         super.updateViews();
         stateSwitch.setChecked(entity.state.equals(HassUtils.getOnState(entity, true)));
         stateSwitch.setOnClickListener(this);
-        if ((entity.attributes.getInt("supported_features") & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {
-            brightnessSlider.setProgress(entity.attributes.get("brightness", (Number) 0).intValue());
+        if ((entity.attributes.getInt(Attribute.SUPPORTED_FEATURES) & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {
+            brightnessSlider.setProgress(entity.attributes.get(Attribute.BRIGHTNESS, (Number) 0).intValue());
             name.setOnTouchListener(this);
         }
         updateColor();

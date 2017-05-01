@@ -2,22 +2,23 @@ package io.homeassistant.android.view.viewholders;
 
 import android.view.View;
 import android.widget.ImageButton;
+
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
+import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.requests.ToggleRequest;
 
 import static io.homeassistant.android.Utils.setStatefulImageButtonIcon;
 
 public class CoverViewHolder extends TextViewHolder implements View.OnClickListener {
 
+    private static final int SUPPORT_OPEN = 1;
+    private static final int SUPPORT_CLOSE = 2;
+    private static final int SUPPORT_STOP = 8;
+
     private final ImageButton buttonCoverUp;
     private final ImageButton buttonCoverDown;
     private final ImageButton buttonCoverStop;
-
-
-    static final int SUPPORT_OPEN = 1;
-    static final int SUPPORT_CLOSE = 2;
-    static final int SUPPORT_STOP = 8;
 
     public CoverViewHolder(View itemView) {
         super(itemView);
@@ -33,7 +34,7 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
     @Override
     protected void updateViews() {
         super.updateViews();
-        int supportedFeatures = entity.attributes.getInt("supported_features");
+        int supportedFeatures = entity.attributes.getInt(Attribute.SUPPORTED_FEATURES);
         buttonCoverUp.setVisibility(((supportedFeatures & SUPPORT_OPEN) != 0) ? View.VISIBLE : View.GONE);
         buttonCoverDown.setVisibility(((supportedFeatures & SUPPORT_CLOSE) != 0) ? View.VISIBLE : View.GONE);
         buttonCoverStop.setVisibility(((supportedFeatures & SUPPORT_STOP) != 0) ? View.VISIBLE : View.GONE);

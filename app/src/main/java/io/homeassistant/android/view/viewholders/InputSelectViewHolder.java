@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
+import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.requests.SelectRequest;
 
 public class InputSelectViewHolder extends TextViewHolder implements AdapterView.OnItemSelectedListener {
@@ -25,7 +26,7 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
     protected void updateViews() {
         super.updateViews();
         inputSpinner.setOnItemSelectedListener(null);
-        List<String> options = entity.attributes.getList("options", String.class);
+        List<String> options = entity.attributes.getList(Attribute.OPTIONS, String.class);
         if (options != null) {
             ArrayAdapter adapter = new ArrayAdapter<>(inputSpinner.getContext(), android.support.design.R.layout.support_simple_spinner_dropdown_item, options.toArray());
             inputSpinner.setAdapter(adapter);

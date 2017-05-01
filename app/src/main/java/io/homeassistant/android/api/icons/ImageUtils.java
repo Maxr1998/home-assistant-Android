@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.homeassistant.android.Utils;
+import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.results.Entity;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -48,8 +49,8 @@ public final class ImageUtils {
     public void loadEntityDrawable(Context context, Entity entity, boolean useCache, DrawableLoadListener listener) throws Exception {
         IconRecord tempIcon = null;
 
-        String iconName = entity.attributes.getString("icon");
-        String pictureUrl = entity.attributes.getString("entity_picture");
+        String iconName = entity.attributes.getString(Attribute.ICON);
+        String pictureUrl = entity.attributes.getString(Attribute.ENTITY_PICTURE);
         if (iconName != null) {
             iconName = iconName.substring(4);
             String iconUrl = materialDesignIcons.getUrlFromName(iconName);

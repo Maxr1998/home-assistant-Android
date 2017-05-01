@@ -88,7 +88,7 @@ public final class HassUtils {
                 }
 
                 // Add group children
-                List<String> entityIds = entity.attributes.getList("entity_id", String.class);
+                List<String> entityIds = entity.attributes.getList(Attribute.ENTITY_ID, String.class);
                 if (entityIds == null) {
                     continue;
                 }
@@ -121,7 +121,7 @@ public final class HassUtils {
     }
 
     public static void applyDefaultIcon(@NotNull Entity e) {
-        if (e.attributes.get("icon") != null || e.attributes.get("entity_picture") != null)
+        if (e.attributes.get(Attribute.ICON) != null || e.attributes.get(Attribute.ENTITY_PICTURE) != null)
             return;
         String icon;
         // For now, include all domains from https://github.com/home-assistant/home-assistant-polymer/blob/master/src/util/hass-util.html#L219,
@@ -225,6 +225,6 @@ public final class HassUtils {
                 icon = null;
                 break;
         }
-        e.attributes.put("icon", icon);
+        e.attributes.put(Attribute.ICON, icon);
     }
 }
