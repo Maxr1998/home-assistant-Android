@@ -15,23 +15,16 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-    signingConfigs {
-        main
-    }
     buildTypes {
         release {
             debuggable false
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-conf.txt'
-            //noinspection GroovyAssignabilityCheck
-            signingConfig signingConfigs.main
         }
         debug {
             debuggable true
             versionNameSuffix "-debug"
-            //noinspection GroovyAssignabilityCheck
-            signingConfig signingConfigs.main
         }
     }
     sourceSets {
@@ -53,12 +46,16 @@ android {
 
 def propFile = project.file("keyStore.properties")
 if (propFile.exists()) {
-    def props = new Properties()
+    Properties props = new Properties()
     props.load(new FileInputStream(propFile))
-    android.signingConfigs.main.storeFile project.file(props.keyStore)
-    android.signingConfigs.main.storePassword props.keyStorePassword
-    android.signingConfigs.main.keyAlias props.keyAlias
-    android.signingConfigs.main.keyPassword props.keyPassword
+    def main = android.signingConfigs.create("main")
+    main.storeFile project.file(props["keyStore"])
+    main.storePassword props["keyStorePassword"]
+    main.keyAlias props["keyAlias"]
+    main.keyPassword props["keyPassword"]
+
+    android.buildTypes.release.signingConfig = main
+    android.buildTypes.debug.signingConfig = main
 }
 
 repositories {
