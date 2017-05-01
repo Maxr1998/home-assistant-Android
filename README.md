@@ -3,12 +3,21 @@ home-assistant-Android
 
 [![Platform Android](https://img.shields.io/badge/Platform-Android-6ab344.svg?style=flat)](https://developer.android.com/)
 [![GitHub issues](https://img.shields.io/github/issues/Maxr1998/home-assistant-Android.svg)](https://github.com/Maxr1998/home-assistant-Android/issues)
-[![License MIT](https://img.shields.io/badge/license-GPLv3-red.svg?style=flat)](https://github.com/Maxr1998/home-assistant-Android/blob/master/LICENSE)
+[![Crowdin](https://d322cqt584bo4o.cloudfront.net/home-assistant-android/localized.svg)](https://crowdin.com/project/home-assistant-android)
+[![License GPLv3](https://img.shields.io/badge/license-GPLv3-red.svg?style=flat)](https://github.com/Maxr1998/home-assistant-Android/blob/master/LICENSE)
 [![Twitter](https://img.shields.io/twitter/url/https/twitter.com/home_assistant.svg?style=social)](https://twitter.com/home_assistant)
+
+
+## Downloads
+[<img src="https://f-droid.org/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="80">](https://f-droid.org/app/io.homeassistant.android)
+
+- [GitHub releases page](https://github.com/Maxr1998/home-assistant-Android/releases)
 
 ## Getting Started
 
-Build in terminal with `./gradlew build` or import into Android Studio (recommended).
+Build in terminal with `./gradlew assembleRelease` or import into Android Studio (recommended).
 
 ## Dependencies
 
@@ -28,7 +37,7 @@ Depending on future maintainance, there will be different keys used for this.
 
 ## Contributing
 
-See CONTRIBUTING.md
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ## LICENSE
 
