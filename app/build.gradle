@@ -34,6 +34,14 @@ android {
             signingConfig signingConfigs.main
         }
     }
+    sourceSets {
+        main {
+            res.srcDirs = [
+                    res.srcDirs.toArray()[0],
+                    "src/main/res/viewholders"
+            ]
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
