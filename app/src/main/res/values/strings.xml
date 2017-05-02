@@ -10,7 +10,7 @@
 
     <string name="button_connect">Connect</string>
     <string name="button_connect_no_network">No network available</string>
-    <string name="login_error">Connection failure: Invalid IP/password, SSL mismatch, or is the server off?</string>
+    <string name="login_error">Connection failure: Invalid IP or password, or is the server off?</string>
     <string name="login_error_generic">Connection failure: Invalid IP, or is the server off?</string>
     <string name="login_error_wrong_password">Connection failure: Invalid password!</string>
     <string name="dialog_login_error_ssl_mismatch_title">SSL hostname mismatch error!</string>
