@@ -26,6 +26,8 @@ import okhttp3.Response;
 
 public final class ImageUtils {
 
+    private static final String TAG = ImageUtils.class.getSimpleName();
+
     private static ImageUtils sInstance;
 
     private final File iconDirectory;
@@ -79,7 +81,7 @@ public final class ImageUtils {
             // Try to read from cache
             final Drawable cached = drawableCache.get(icon.name) != null ? drawableCache.get(icon.name).get() : null;
             if (cached != null) {
-                Log.d(getClass().getSimpleName(), "Cached " + tempIcon.name);
+                Log.d(TAG, "Cached " + tempIcon.name);
                 listener.onDrawableLoaded(cached, false);
                 return;
             }
@@ -88,6 +90,7 @@ public final class ImageUtils {
             if (iconFile.exists()) {
                 final Drawable drawable = Drawable.createFromPath(iconFile.getAbsolutePath());
                 if (drawable != null) {
+                    Log.d(TAG, "Stored " + tempIcon.name);
                     drawableCache.put(icon.name, new WeakReference<>(drawable));
                     listener.onDrawableLoaded(drawable, false);
                     return;
@@ -98,7 +101,7 @@ public final class ImageUtils {
         }
 
         // Download from server
-        Log.d(getClass().getSimpleName(), "Loading " + tempIcon.name + " from " + tempIcon.url);
+        Log.d(TAG, "Loading " + tempIcon.name + " from " + tempIcon.url);
         Request request = new Request.Builder().url(tempIcon.url).build();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override

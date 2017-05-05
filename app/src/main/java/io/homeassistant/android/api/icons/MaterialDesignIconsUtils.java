@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -27,6 +28,8 @@ final class MaterialDesignIconsUtils {
     private final File manifestFile;
     private final Map<String, String> manifest = new HashMap<>();
 
+    private final AtomicBoolean downloadingManifest = new AtomicBoolean(false);
+
     MaterialDesignIconsUtils(File iconDir, OkHttpClient client) {
         manifestFile = new File(iconDir, "manifest.json");
         httpClient = client;
@@ -34,6 +37,9 @@ final class MaterialDesignIconsUtils {
     }
 
     private void downloadManifest() {
+        if (!downloadingManifest.compareAndSet(false, true)) {
+            return;
+        }
         Request request = new Request.Builder().url("https://materialdesignicons.com/api/package/38EF63D0-4744-11E4-B3CF-842B2B6CFE1B").build();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
@@ -53,10 +59,12 @@ final class MaterialDesignIconsUtils {
                     writer.write(data);
                     writer.close();
                 }
+                downloadingManifest.set(false);
             }
 
             @Override
             public void onFailure(Call call, IOException e) {
+                downloadingManifest.set(false);
             }
         });
     }
@@ -91,9 +99,10 @@ final class MaterialDesignIconsUtils {
     }
 
     @Nullable
-    public String getUrlFromName(String name) {
+    String getUrlFromName(String name) {
         if (manifest.isEmpty() || !manifest.containsKey(name)) {
-            updateMap(null);
+            if (!downloadingManifest.get())
+                updateMap(null);
             return null;
         }
         return "https://materialdesignicons.com/api/download/icon/png/" + manifest.get(name) + "/192/000000/0.54";
