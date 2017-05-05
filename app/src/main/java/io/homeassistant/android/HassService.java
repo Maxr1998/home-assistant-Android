@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -128,6 +129,7 @@ public class HassService extends Service {
         if (!url.isEmpty() && !Utils.getPassword(this).isEmpty()) {
             Log.d("Home Assistant URL", url = url.concat("/api/websocket"));
             OkHttpClient client = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
                     .hostnameVerifier((hostname, session) -> {
                         if (OkHostnameVerifier.INSTANCE.verify(hostname, session) || Utils.getAllowedHostMismatches(HassService.this).contains(hostname)) {
                             return true;
