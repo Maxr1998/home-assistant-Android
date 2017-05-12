@@ -2,6 +2,7 @@ home-assistant-Android
 ======================
 
 [![Platform Android](https://img.shields.io/badge/Platform-Android-6ab344.svg?style=flat)](https://developer.android.com/)
+[![CircleCI](https://circleci.com/gh/Maxr1998/home-assistant-Android.svg?style=svg)](https://circleci.com/gh/Maxr1998/home-assistant-Android)
 [![GitHub issues](https://img.shields.io/github/issues/Maxr1998/home-assistant-Android.svg)](https://github.com/Maxr1998/home-assistant-Android/issues)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/home-assistant-android/localized.svg)](https://crowdin.com/project/home-assistant-android)
 [![License GPLv3](https://img.shields.io/badge/license-GPLv3-red.svg?style=flat)](https://github.com/Maxr1998/home-assistant-Android/blob/master/LICENSE)
@@ -17,7 +18,7 @@ home-assistant-Android
 
 ## Getting Started
 
-Build in terminal with `./gradlew assembleRelease` or import into Android Studio (recommended).
+Build in terminal with `./gradlew assembleRelease` or import into Android Studio and build there (recommended).
 
 ## Dependencies
 
