@@ -1,0 +1,3 @@
+dependencies:
+  pre:
+    - yes | /usr/local/android-sdk-linux/tools/bin/sdkmanager --licenses
