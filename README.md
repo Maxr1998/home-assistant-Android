@@ -16,6 +16,8 @@ home-assistant-Android
 
 - [GitHub releases page](https://github.com/Maxr1998/home-assistant-Android/releases)
 
+- [Latest CI build](https://circleci.com/api/v1.1/project/github/Maxr1998/home-assistant-Android/latest/artifacts/0/$CIRCLE_ARTIFACTS/hass-ci-unsigned.apk)
+
 ## Getting Started
 
 Build in terminal with `./gradlew assembleRelease` or import into Android Studio and build there (recommended).

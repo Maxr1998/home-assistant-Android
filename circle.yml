@@ -8,4 +8,4 @@ dependencies:
 test:
   override:
     - ./gradlew assembleRelease
-    - cp app/build/outputs/apk/hass-*.apk $CIRCLE_ARTIFACTS
+    - cp app/build/outputs/apk/hass-*-release-unsigned.apk $CIRCLE_ARTIFACTS/hass-ci-unsigned.apk
