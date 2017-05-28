@@ -40,6 +40,9 @@
     public <init>(...);
 }
 
+# Kotlin
+-dontwarn kotlin.**
+
 # OkHttp
 -dontwarn okio.**
 
