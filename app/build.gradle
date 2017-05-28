@@ -32,6 +32,21 @@ android {
             versionNameSuffix "-debug"
         }
     }
+    flavorDimensions "dependencies"
+    productFlavors {
+        fdroid {
+            dimension "dependencies"
+            versionNameSuffix "-fdroid"
+        }
+        gms {
+            dimension "dependencies"
+        }
+    }
+    variantFilter { variant ->
+        if (variant.name == "fdroidDebug") {
+            setIgnore(true)
+        }
+    }
     sourceSets {
         main {
             res.srcDirs = [
@@ -80,7 +95,8 @@ dependencies {
         exclude group: 'com.intellij', module: 'annotations'
     }
 
-    implementation "com.google.android.gms:play-services-location:10.2.6"
+    gmsImplementation "com.google.android.gms:play-services-location:10.2.6"
+    fdroidImplementation 'com.mapzen.android:lost:2.2.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2') {
