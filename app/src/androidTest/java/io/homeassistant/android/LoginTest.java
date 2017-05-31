@@ -44,7 +44,7 @@ public class LoginTest {
     private static SharedPreferences PREFS;
     @Rule
     public ActivityTestRule<HassActivity> mActivityTestRule = new ActivityTestRule<>(HassActivity.class);
-    private Resources res;
+    private Resources testRes;
 
     private static Matcher<View> childAtPosition(
             final Matcher<View> parentMatcher, final int position) {
@@ -75,17 +75,17 @@ public class LoginTest {
 
     @Before
     public void before() {
-        res = InstrumentationRegistry.getContext().getResources();
+        testRes = InstrumentationRegistry.getContext().getResources();
     }
 
     @Test
     public void hassActivityDefaultTest() {
-        hassActivityTest(res.getString(io.homeassistant.android.test.R.string.test_hass_url), res.getString(io.homeassistant.android.test.R.string.test_hass_password));
+        hassActivityTest(testRes.getString(io.homeassistant.android.test.R.string.test_hass_url), testRes.getString(io.homeassistant.android.test.R.string.test_hass_password));
     }
 
     @Test
     public void hassActivityUnprotectedTest() {
-        hassActivityTest(res.getString(io.homeassistant.android.test.R.string.test_unprotected_hass_url), null);
+        hassActivityTest(testRes.getString(io.homeassistant.android.test.R.string.test_unprotected_hass_url), null);
     }
 
     private void hassActivityTest(String url, String password) {
@@ -100,33 +100,22 @@ public class LoginTest {
         // Login
         ViewInteraction textInput = onView(
                 allOf(withId(R.id.url_input),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.url_input_layout),
-                                        0),
-                                0),
+                        childAtPosition(childAtPosition(withId(R.id.url_input_layout), 0), 0),
                         isDisplayed()));
         textInput.perform(replaceText(url), closeSoftKeyboard());
 
         if (password != null) {
             ViewInteraction passwordInput = onView(
                     allOf(withId(R.id.password_input),
-                            childAtPosition(
-                                    childAtPosition(
-                                            withId(R.id.password_input_layout),
-                                            0),
-                                    0),
+                            childAtPosition(childAtPosition(withId(R.id.password_input_layout), 0), 0),
                             isDisplayed()));
             passwordInput.perform(replaceText(password), closeSoftKeyboard());
         }
 
         ViewInteraction connectButton = onView(
-                allOf(withId(R.id.connect_button), withText("Connect"),
-                        childAtPosition(
-                                childAtPosition(
-                                        withId(R.id.login_layout),
-                                        3),
-                                1),
+                allOf(withId(R.id.connect_button),
+                        withText(R.string.button_connect),
+                        childAtPosition(childAtPosition(withId(R.id.login_layout), 3), 1),
                         isDisplayed()));
         connectButton.perform(click());
 
