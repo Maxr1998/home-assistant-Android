@@ -44,7 +44,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
     }
 
     public void updateEntities(Map<String, Entity> entityMap) {
-        HassUtils.extractGroups(entityMap, entities);
+        HassUtils.extractGroups(entityMap, entities, false);
         notifyDataSetChanged();
     }
 

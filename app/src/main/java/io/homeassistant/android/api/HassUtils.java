@@ -79,12 +79,17 @@ public final class HassUtils {
         return null;
     }
 
-    public static void extractGroups(@NonNull Map<String, Entity> entityMap, List<Pair<Entity, List<Entity>>> entities) {
+    public static void extractGroups(@NonNull Map<String, Entity> entityMap, List<Pair<Entity, List<Entity>>> entities, boolean extractDefaultGroups) {
         entities.clear();
         for (Entity entity : entityMap.values()) {
             if (entity.getDomain().equals(GROUP)) {
                 if (entity.isHidden()) {
-                    continue;
+                    if (extractDefaultGroups && entity.getName().length() > 5 && entity.getName().startsWith("all_")) {
+                        String name = Character.toUpperCase(entity.getName().charAt(4)) + entity.getName().substring(5);
+                        entity.attributes.put(Attribute.FRIENDLY_NAME, name);
+                    } else {
+                        continue;
+                    }
                 }
 
                 // Add group children
@@ -102,6 +107,12 @@ public final class HassUtils {
                 }
                 entities.add(new Pair<>(entity, children));
             }
+        }
+
+        // If list is still empty, try extracting the default groups
+        if (entities.isEmpty() && !extractDefaultGroups) {
+            extractGroups(entityMap, entities, true);
+            return;
         }
 
         // Sort groups according to their order number

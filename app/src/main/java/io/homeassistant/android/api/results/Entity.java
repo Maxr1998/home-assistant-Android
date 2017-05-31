@@ -48,7 +48,7 @@ public class Entity implements Comparable<Entity> {
 
     @Override
     public String toString() {
-        return String.format("%1$s[%2$s]", type, id);
+        return String.format("[%1$s] %2$s %3$s", type, id, getFriendlyName());
     }
 
     public boolean isHidden() {
@@ -72,6 +72,10 @@ public class Entity implements Comparable<Entity> {
 
     public String getDomain() {
         return id.split("\\.")[0];
+    }
+
+    public String getName() {
+        return id.split("\\.")[1];
     }
 
     public void applyType() {
