@@ -11,17 +11,11 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import io.homeassistant.android.CommunicationHandler;
@@ -50,7 +44,7 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
     private RecyclerView selectShortcutItemRecycler;
     private Spinner selectActionSpinner;
 
-    private ViewAdapter viewAdapter = new ViewAdapter();
+    private SelectEntityViewAdapter viewAdapter = new SelectEntityViewAdapter(false);
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,19 +86,22 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
                 selectActionSpinner.setAdapter(adapter);
 
                 findViewById(R.id.button_add_shortcut).setOnClickListener(v -> {
-                    Entity selected = viewAdapter.entities.get(viewAdapter.selected);
+                    Entity selected = viewAdapter.getSelected()[0];
+                    if (selected != null) {
+                        Intent result = new Intent();
+                        Intent shortcut = new Intent(ShortcutActivity.this, ShortcutActivity.class);
+                        shortcut.setAction(ACTION_SHORTCUT_LAUNCHED);
+                        boolean stateOn = selectActionSpinner.getSelectedItem().equals("On");
+                        shortcut.putExtra(EXTRA_ACTION_COMMAND, new ToggleRequest(selected, stateOn).toString());
+                        result.putExtra(Intent.EXTRA_SHORTCUT_NAME, selected.getFriendlyName());
+                        result.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getApplicationContext(),
+                                selected.id.startsWith("light") ? stateOn ? R.mipmap.ic_lightbulb_on : R.mipmap.ic_lightbulb_off : stateOn ? R.mipmap.ic_switch_on : R.mipmap.ic_switch_off));
+                        result.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcut);
 
-                    Intent result = new Intent();
-                    Intent shortcut = new Intent(ShortcutActivity.this, ShortcutActivity.class);
-                    shortcut.setAction(ACTION_SHORTCUT_LAUNCHED);
-                    boolean stateOn = selectActionSpinner.getSelectedItem().equals("On");
-                    shortcut.putExtra(EXTRA_ACTION_COMMAND, new ToggleRequest(selected, stateOn).toString());
-                    result.putExtra(Intent.EXTRA_SHORTCUT_NAME, selected.getFriendlyName());
-                    result.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(getApplicationContext(),
-                            selected.id.startsWith("light") ? stateOn ? R.mipmap.ic_lightbulb_on : R.mipmap.ic_lightbulb_off : stateOn ? R.mipmap.ic_switch_on : R.mipmap.ic_switch_off));
-                    result.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcut);
-
-                    setResult(RESULT_OK, result);
+                        setResult(RESULT_OK, result);
+                    } else {
+                        setResult(RESULT_CANCELED);
+                    }
                     finish();
                 });
                 break;
@@ -152,44 +149,5 @@ public class ShortcutActivity extends AppCompatActivity implements Communication
         if (hassConnection != null)
             unbindService(hassConnection);
         super.onDestroy();
-    }
-
-    private static class ViewAdapter extends RecyclerView.Adapter<ItemViewHolder> {
-
-        List<Entity> entities = new ArrayList<>();
-        int selected = -1;
-
-        @Override
-        public ItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new ItemViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.shortcut_item, parent, false));
-        }
-
-        @Override
-        public void onBindViewHolder(final ItemViewHolder holder, int position) {
-            Entity e = entities.get(holder.getAdapterPosition());
-            holder.item.setChecked(holder.getAdapterPosition() == selected);
-            holder.item.setText(e.getFriendlyName());
-            holder.item.setOnClickListener(v -> {
-                int last = selected;
-                selected = holder.getAdapterPosition();
-                notifyItemChanged(last);
-                notifyItemChanged(selected);
-            });
-        }
-
-        @Override
-        public int getItemCount() {
-            return entities.size();
-        }
-    }
-
-    private static class ItemViewHolder extends RecyclerView.ViewHolder {
-
-        RadioButton item;
-
-        ItemViewHolder(View itemView) {
-            super(itemView);
-            item = (RadioButton) itemView.findViewById(R.id.shortcut_item);
-        }
     }
 }
