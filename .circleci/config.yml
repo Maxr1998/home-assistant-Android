@@ -24,12 +24,16 @@ jobs:
           name: Compile apks
           command: ./gradlew --no-daemon assembleRelease
 
-      - store_artifacts:
-          path: app/build/outputs/apk/fdroid/release/
-          destination: apks/
+      - run:
+          name: Copy artifacts
+          command: |
+            mkdir app/build/outputs/apks || true
+            cp app/build/outputs/apk/gms/release/hass-*.apk app/build/outputs/apks/hass-gms.apk
+            cp app/build/outputs/apk/fdroid/release/hass-*.apk app/build/outputs/apks/hass-fdroid.apk
+            mv app/build/outputs/apk/gms/release/hass-*.apk app/build/outputs/apk/fdroid/release/hass-*.apk app/build/outputs/apks/
 
       - store_artifacts:
-          path: app/build/outputs/apk/gms/release/
+          path: app/build/outputs/apks/
           destination: apks/
 
       - store_artifacts:

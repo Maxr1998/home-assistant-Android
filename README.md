@@ -16,7 +16,7 @@ home-assistant-Android
 
 - [GitHub releases page](https://github.com/Maxr1998/home-assistant-Android/releases)
 
-- [Latest CI build](https://circleci.com/api/v1.1/project/github/Maxr1998/home-assistant-Android/latest/artifacts/0/$CIRCLE_ARTIFACTS/hass-ci-unsigned.apk)
+- [Latest CI build](https://circleci-tkn.rhcloud.com/api/v1/project/Maxr1998/home-assistant-Android/tree/master/latest/artifacts/hass-gms.apk)
 
 ## Getting Started
 
