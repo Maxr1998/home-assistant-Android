@@ -11,10 +11,9 @@
     <string name="login_error">Verbindungsfehler: Ungültige IP-Adresse/ungültiges Passwort, oder ist der Server aus?</string>
     <string name="login_error_generic">Verbindungsfehler: Ungültige IP-Adresse, oder ist der Server aus?</string>
     <string name="login_error_wrong_password">Verbindungsfehler: Ungültiges Kennwort!</string>
-    <string name="dialog_login_error_ssl_mismatch_title">SSL hostname mismatch error!</string>
-    <string name="dialog_login_error_ssl_mismatch_message">The current IP doesn\'t match the hostname specified in the SSL certificate.
-        That means that you either typed in an alias to your hostname or an attacker may have tried to intercept your connection.
-        Only tap ignore if you really know what you do!</string>
+    <string name="dialog_login_error_ssl_mismatch_title">Hostname des Zertifikats abweichend!</string>
+    <string name="dialog_login_error_ssl_mismatch_message">Die eingegebene IP stimmt nicht mit dem Hostnamen des SSL-Zertifikats überein!
+Das bedeutet, dass du entweder einen (lokalen) Alias zur Verbindung verwendest oder ein Angreifer versucht, deine Verbindung umzuleiten. Ignoriere dies nur wenn du wirklich weißt was du tust!</string>
     <string name="dialog_login_error_ssl_mismatch_ignore">Ignorieren</string>
     <!-- Main screen -->
     <string name="menu_custom_tab">Weboberfläche laden</string>
@@ -27,8 +26,7 @@
     <string name="preference_category_location_tracking">Standortverlauf</string>
     <string name="preference_enable_location_tracking">Standortverlauf aktivieren</string>
     <string name="preference_location_device_name">Gerätebezeichnung</string>
-    <string name="preference_location_device_name_summary">Enter the name of your device as listed in known-devices.yaml, or choose your own.
-        Feature is disabled if empty.\nCurrently set to: %s</string>
+    <string name="preference_location_device_name_summary">Gib den den Gerätenamen dieses Telefons wie in der known-devices.yaml angegeben oder einen eigens gewählten an. Funktion bleibt deaktiviert wenn Eingabe leer.\nMomentaner Wert: %s</string>
     <string name="preference_location_update_interval">Aktualisierungsintervall</string>
     <string-array name="location_update_interval_summaries">
         <item>Alle 5 Minuten (höherer Akkuverbrauch)</item>

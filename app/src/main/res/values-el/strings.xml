@@ -27,7 +27,7 @@
     <string name="preference_reset_host_mismatches_summary_empty">Άδεια λίστα, τίποτα ενδιαφέρον</string>
     <string name="settings_name">Ρυθμίσεις</string>
     <string name="toast_ignored_ssl_mismatches_cleared">Άδειασμα λίστας</string>
-    <string name="preference_location_device_name_summary">Εισάγεται το όνομα τις συσκευής όπως εμφανίζεται στο known-devices.yaml, ή επιλέξτε την δικια σας.         Η λειτουργία απενεργοποιείται αν έιναι κενή. Επιλεγμένο: %σ</string>
+    <string name="preference_location_device_name_summary">Εισάγεται το όνομα τις συσκευής όπως εμφανίζεται στο known-devices.yaml, ή επιλέξτε την δικια σας.         Η λειτουργία απενεργοποιείται αν έιναι κενή. Επιλεγμένο: %s</string>
     <string name="dialog_login_error_ssl_mismatch_message">Η IP δεν ταιριάζει με το όνομα στο πιστοποιητικό SSL.   Αυτό μπορεί να οφείλεται σε εσφαλμένη ρύθμιση ή σε κάποιον εισβολέα που παρεμβαίνει στη σύνδεσή σας.   Προσθέστε εξαίρεσε μονο άμα γνωρίζετε τις συνέπειες</string>
     <string name="dialog_login_error_ssl_mismatch_title">Σφάλμα αταίριαστου ονόματος κεντρικού υπολογιστή SSL!</string>
 </resources>
