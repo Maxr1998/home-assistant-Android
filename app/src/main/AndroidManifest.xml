@@ -28,7 +28,7 @@
             android:parentActivityName=".HassActivity" />
 
         <activity
-            android:name=".shortcuts.ShortcutActivity"
+            android:name=".select.SelectEntityActivity"
             android:autoRemoveFromRecents="true"
             android:excludeFromRecents="true"
             android:taskAffinity="">
@@ -36,6 +36,13 @@
                 <action android:name="android.intent.action.CREATE_SHORTCUT" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".shortcuts.ShortcutActivity"
+            android:autoRemoveFromRecents="true"
+            android:excludeFromRecents="true"
+            android:exported="true"
+            android:taskAffinity="" />
 
         <receiver
             android:name=".location.LocationUpdateReceiver"

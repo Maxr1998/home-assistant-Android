@@ -1,4 +1,4 @@
-package io.homeassistant.android.shortcuts;
+package io.homeassistant.android.select;
 
 import android.annotation.SuppressLint;
 import android.os.Build;

@@ -3,13 +3,9 @@ package io.homeassistant.android;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
 import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
 import android.support.customtabs.CustomTabsIntent;
@@ -17,7 +13,6 @@ import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -35,26 +30,8 @@ import io.homeassistant.android.view.LoginView;
 import io.homeassistant.android.view.ViewAdapter;
 
 
-public class HassActivity extends AppCompatActivity implements CommunicationHandler.ServiceCommunicator {
+public class HassActivity extends BaseActivity {
 
-    private final Handler communicationHandler = new CommunicationHandler(this);
-    @VisibleForTesting()
-    public HassService service;
-    private final ServiceConnection hassConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            service = ((HassService.HassBinder) binder).getService();
-            service.setActivityHandler(communicationHandler);
-            // Make sure that service is connected, if not it'll re-attempt
-            service.connect();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            service.setActivityHandler(null);
-            service = null;
-        }
-    };
     private CustomTabsSession customTabsSession;
     private final CustomTabsServiceConnection chromeConnection = new CustomTabsServiceConnection() {
         @Override
@@ -86,8 +63,6 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
         setContentView(R.layout.activity_hass);
         Toolbar t = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(t);
-
-        getApplicationContext().bindService(new Intent(this, HassService.class), hassConnection, BIND_AUTO_CREATE);
 
         rootView = (FrameLayout) findViewById(R.id.root);
         mainLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator);
@@ -127,10 +102,6 @@ public class HassActivity extends AppCompatActivity implements CommunicationHand
 
     @Override
     protected void onDestroy() {
-        // Keep service alive for configuration changes. No connection will be leaked as it's bound to application context
-        if (!isChangingConfigurations()) {
-            getApplicationContext().unbindService(hassConnection);
-        }
         unbindService(chromeConnection);
         super.onDestroy();
     }
