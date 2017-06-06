@@ -41,6 +41,8 @@
     <string name="preference_reset_host_mismatches_summary">無視した SSL ホスト不一致の一覧をクリアします</string>
     <string name="preference_reset_host_mismatches_summary_empty">リストは空です。何もすることはありません</string>
     <string name="toast_ignored_ssl_mismatches_cleared">リストをクリアしました。</string>
+    <string name="preference_help_translate">Help translate</string>
+    <string name="preference_help_translate_summary">Translate this app into your language on crowdin!</string>
     <!-- Shortcut activity -->
     <string name="button_add_shortcut">ショートカットを追加</string>
 </resources>

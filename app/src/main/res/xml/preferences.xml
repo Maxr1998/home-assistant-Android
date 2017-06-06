@@ -19,5 +19,9 @@
             android:key="reset_host_mismatches"
             android:summary="@string/preference_reset_host_mismatches_summary"
             android:title="@string/preference_reset_host_mismatches" />
+        <Preference
+            android:key="help_translate"
+            android:summary="@string/preference_help_translate_summary"
+            android:title="@string/preference_help_translate" />
     </PreferenceCategory>
 </PreferenceScreen>

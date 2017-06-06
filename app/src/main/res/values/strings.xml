@@ -46,6 +46,8 @@
     <string name="preference_reset_host_mismatches_summary">Clear the list of ignored SSL host mismatches</string>
     <string name="preference_reset_host_mismatches_summary_empty">List is empty, nothing to do</string>
     <string name="toast_ignored_ssl_mismatches_cleared">Cleared list.</string>
+    <string name="preference_help_translate">Help translate</string>
+    <string name="preference_help_translate_summary">Translate this app into your language on crowdin!</string>
 
     <!-- Shortcut activity -->
     <string name="button_add_shortcut">Add shortcut</string>

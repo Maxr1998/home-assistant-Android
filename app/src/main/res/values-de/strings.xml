@@ -39,6 +39,8 @@ Das bedeutet, dass du entweder einen (lokalen) Alias zur Verbindung verwendest o
     <string name="preference_reset_host_mismatches_summary">Liste der ignorierten Hostnamen-Abweichungen zurücksetzen</string>
     <string name="preference_reset_host_mismatches_summary_empty">Liste ist leer, nichts zu tun</string>
     <string name="toast_ignored_ssl_mismatches_cleared">Liste geleert.</string>
+    <string name="preference_help_translate">Hilf beim Übersetzen</string>
+    <string name="preference_help_translate_summary">Übersetze diese App in deine Sprache auf crowdin!</string>
     <!-- Shortcut activity -->
     <string name="button_add_shortcut">Verknüpfung erstellen</string>
 </resources>

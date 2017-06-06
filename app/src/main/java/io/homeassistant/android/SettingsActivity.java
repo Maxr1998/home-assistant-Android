@@ -1,12 +1,19 @@
 package io.homeassistant.android;
 
 import android.Manifest;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.customtabs.CustomTabsCallback;
+import android.support.customtabs.CustomTabsClient;
+import android.support.customtabs.CustomTabsIntent;
+import android.support.customtabs.CustomTabsServiceConnection;
+import android.support.customtabs.CustomTabsSession;
 import android.support.v14.preference.PreferenceFragment;
 import android.support.v14.preference.SwitchPreference;
 import android.support.v4.app.ActivityCompat;
@@ -14,6 +21,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.Preference;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,6 +36,25 @@ import io.homeassistant.android.location.LocationUpdateReceiver;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private CustomTabsSession customTabsSession;
+    private final CustomTabsServiceConnection chromeConnection = new CustomTabsServiceConnection() {
+        @Override
+        public void onCustomTabsServiceConnected(ComponentName name, CustomTabsClient client) {
+            client.warmup(0);
+            customTabsSession = client.newSession(new CustomTabsCallback());
+            if (customTabsSession == null) {
+                return;
+            }
+            // Delay to not slow down native app loading
+            customTabsSession.mayLaunchUrl(Uri.parse(Common.CROWDIN_URL), null, null);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+
+        }
+    };
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +65,9 @@ public class SettingsActivity extends AppCompatActivity {
 
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        String packageName = CustomTabsClient.getPackageName(this, null);
+        CustomTabsClient.bindCustomTabsService(this, !TextUtils.isEmpty(packageName) ? packageName : "com.android.chrome", chromeConnection);
     }
 
     @Override
@@ -57,6 +87,16 @@ public class SettingsActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        unbindService(chromeConnection);
+        super.onDestroy();
+    }
+
+    public CustomTabsSession getCustomTabsSession() {
+        return customTabsSession;
     }
 
     public static class Settings extends PreferenceFragment {
@@ -95,6 +135,17 @@ public class SettingsActivity extends AppCompatActivity {
                     prefs.edit().remove(Common.PREF_ALLOWED_HOST_MISMATCHES_KEY).apply();
                     Toast.makeText(getActivity(), R.string.toast_ignored_ssl_mismatches_cleared, Toast.LENGTH_SHORT).show();
                     updatePreferenceSummaries();
+                    return true;
+                case Common.HELP_TRANSLATE:
+                    CustomTabsSession session = ((SettingsActivity) getActivity()).getCustomTabsSession();
+                    if (session != null) {
+                        @SuppressWarnings("deprecation") CustomTabsIntent intent = new CustomTabsIntent.Builder(session)
+                                .setShowTitle(true)
+                                .enableUrlBarHiding()
+                                .setToolbarColor(getResources().getColor(R.color.primary))
+                                .build();
+                        intent.launchUrl(getActivity(), Uri.parse(Common.CROWDIN_URL));
+                    }
                     return true;
                 default:
                     return super.onPreferenceTreeClick(preference);
