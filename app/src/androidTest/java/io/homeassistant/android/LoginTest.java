@@ -142,7 +142,7 @@ public class LoginTest {
         ViewInteraction logoutButton = onView(allOf(withId(R.id.title), withText(R.string.menu_logout), isDisplayed()));
         logoutButton.perform(click());
 
-        sleep(100);
+        sleep(200);
 
         onView(withId(R.id.login_layout)).check(ViewAssertions.matches(isDisplayed()));
 
