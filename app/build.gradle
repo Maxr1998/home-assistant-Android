@@ -3,17 +3,17 @@ apply plugin: 'com.jakewharton.hugo'
 apply plugin: 'kotlin-android'
 
 ext.languages = ["de", "ja", "nl"]
-ext.supportLibraryVersion = "25.3.1"
+ext.supportLibraryVersion = "26.0.0-beta2"
 ext.c_languages = ["de", "ja", "nl"]
 ext.crowdinKey = null
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.0"
     defaultConfig {
         applicationId "io.homeassistant.android"
         minSdkVersion 21
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 3
         versionName "1.0-RC1"
         resConfigs languages
@@ -96,7 +96,7 @@ dependencies {
         exclude group: 'com.intellij', module: 'annotations'
     }
 
-    gmsImplementation "com.google.android.gms:play-services-location:10.2.6"
+    gmsImplementation "com.google.android.gms:play-services-location:11.0.1"
     fdroidImplementation 'com.mapzen.android:lost:2.2.0'
 
     testImplementation 'junit:junit:4.12'
