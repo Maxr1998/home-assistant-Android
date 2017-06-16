@@ -47,5 +47,6 @@
 -dontwarn okio.**
 
 # Other warnings
+-dontwarn android.content.ServiceConnection$$CC
 -dontwarn java.lang.invoke.MethodHandles
 -dontwarn java.lang.invoke.MethodHandles$Lookup
