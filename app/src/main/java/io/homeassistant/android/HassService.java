@@ -12,6 +12,7 @@ import android.util.SparseArray;
 import com.afollestad.ason.Ason;
 
 import java.lang.ref.SoftReference;
+import java.net.HttpURLConnection;
 import java.net.ProtocolException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -43,6 +44,7 @@ import okhttp3.WebSocket;
 import okhttp3.WebSocketListener;
 import okhttp3.internal.tls.OkHostnameVerifier;
 
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_BASIC_AUTH;
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_GENERIC;
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_SSL_MISMATCH;
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_WRONG_PASSWORD;
@@ -136,8 +138,22 @@ public class HassService extends Service {
                         }
                         loginMessage(false, FAILURE_REASON_SSL_MISMATCH);
                         return false;
-                    }).build();
-            hassSocket = client.newWebSocket(new Request.Builder().url(HttpUrl.parse(url)).build(), socketListener);
+                    })
+                    .authenticator((route, response) -> {
+                        System.out.println("Authenticator running..");
+                        if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                            loginMessage(false, FAILURE_REASON_BASIC_AUTH);
+                        }
+                        return null;
+                    })
+                    .build();
+            Request.Builder requestBuilder = new Request.Builder().url(HttpUrl.parse(url));
+            String basicAuth = Utils.getBasicAuth(this);
+            if (!basicAuth.isEmpty()) {
+                requestBuilder.header("Authorization", basicAuth);
+                Log.d(TAG, basicAuth);
+            }
+            hassSocket = client.newWebSocket(requestBuilder.build(), socketListener);
         } else connecting.set(false);
     }
 
@@ -159,9 +175,7 @@ public class HassService extends Service {
 
     public void subscribeEvents() {
         SubscribeEventsRequest eventSubscribe = new SubscribeEventsRequest("state_changed");
-        send(eventSubscribe, (success, result) -> {
-            Log.i(TAG, "Subscribed to events");
-        });
+        send(eventSubscribe, (success, result) -> Log.i(TAG, "Subscribed to events"));
     }
 
     public void loadStates() {
@@ -291,9 +305,9 @@ public class HassService extends Service {
             connecting.set(false);
             connected.set(false);
             if (t instanceof SocketException || t instanceof ProtocolException || t instanceof SSLException || t instanceof UnknownHostException) {
-                Log.e(TAG, "Error while connecting to Socket, going to try again: " + t.getClass().getSimpleName());
+                Log.e(TAG, String.format("%1$s while connecting to Socket, going to try again - Code %2$d", t.getClass().getSimpleName(), response.code()));
                 disconnect();
-                if (!(t instanceof SSLPeerUnverifiedException))
+                if (!(t instanceof SSLPeerUnverifiedException) && response.code() != HttpURLConnection.HTTP_UNAUTHORIZED)
                     loginMessage(false, FAILURE_REASON_GENERIC);
                 return;
             }

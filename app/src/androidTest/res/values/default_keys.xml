@@ -5,5 +5,8 @@
 <resources>
     <string name="test_hass_url">localhost:8123</string>
     <string name="test_hass_password"></string>
-    <string name="test_unprotected_hass_url">localhost:8123</string>
+    <string name="test_unprotected_hass_url">@string/test_hass_url</string>
+    <string name="test_basic_auth_hass_url">@string/test_hass_url</string>
+    <string name="test_basic_auth_user"></string>
+    <string name="test_basic_auth_password"></string>
 </resources>

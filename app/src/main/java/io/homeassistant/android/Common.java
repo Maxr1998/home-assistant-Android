@@ -4,6 +4,7 @@ public final class Common {
 
     public static final String PREF_HASS_URL_KEY = "hass_url";
     public static final String PREF_HASS_PASSWORD_KEY = "hass_password";
+    public static final String PREF_BASIC_AUTH_KEY = "basic_auth";
     public static final String PREF_ALLOWED_HOST_MISMATCHES_KEY = "allowed_ssl_mismatches";
 
     public static final String PREF_ENABLE_LOCATION_TRACKING = "enable_location_tracking";

@@ -1,6 +1,7 @@
 package io.homeassistant.android;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
@@ -12,22 +13,28 @@ import android.support.customtabs.CustomTabsIntent;
 import android.support.customtabs.CustomTabsServiceConnection;
 import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.afollestad.ason.Ason;
 
 import io.homeassistant.android.api.results.RequestResult;
 import io.homeassistant.android.view.LoginView;
 import io.homeassistant.android.view.ViewAdapter;
+
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_BASIC_AUTH;
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_GENERIC;
 
 
 public class HassActivity extends BaseActivity {
@@ -61,17 +68,17 @@ public class HassActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hass);
-        Toolbar t = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar t = findViewById(R.id.toolbar);
         setSupportActionBar(t);
 
-        rootView = (FrameLayout) findViewById(R.id.root);
-        mainLayout = (CoordinatorLayout) findViewById(R.id.main_coordinator);
+        rootView = findViewById(R.id.root);
+        mainLayout = findViewById(R.id.main_coordinator);
 
         if (Utils.getUrl(this).isEmpty() || Utils.getPassword(this).isEmpty()) {
             addLoginLayout();
         }
 
-        swipeRefreshLayout = (SwipeRefreshLayout) mainLayout.findViewById(R.id.swipe_refresh);
+        swipeRefreshLayout = mainLayout.findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.accent);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             if (service != null) {
@@ -80,7 +87,7 @@ public class HassActivity extends BaseActivity {
         });
         swipeRefreshLayout.setRefreshing(true);
 
-        RecyclerView viewRecycler = (RecyclerView) mainLayout.findViewById(R.id.view_recycler);
+        RecyclerView viewRecycler = mainLayout.findViewById(R.id.view_recycler);
         viewRecycler.setLayoutManager(new StaggeredGridLayoutManager(getResources().getInteger(R.integer.view_columns), StaggeredGridLayoutManager.VERTICAL));
         viewRecycler.setAdapter(viewAdapter);
         viewRecycler.setRecycledViewPool(viewAdapter.recycledViewPool);
@@ -88,7 +95,7 @@ public class HassActivity extends BaseActivity {
 
     private void addLoginLayout() {
         mainLayout.setVisibility(View.GONE);
-        loginLayout = (LoginView) getLayoutInflater().inflate(R.layout.custom_login, rootView, true).findViewById(R.id.login_layout);
+        loginLayout = getLayoutInflater().inflate(R.layout.custom_login, rootView, true).findViewById(R.id.login_layout);
     }
 
     @Override
@@ -164,6 +171,27 @@ public class HassActivity extends BaseActivity {
 
     @Override
     public void loginFailed(int reason) {
+        if (reason == FAILURE_REASON_BASIC_AUTH) {
+            LayoutInflater inflater = LayoutInflater.from(this);
+            @SuppressLint("InflateParams") View dialogView = inflater.inflate(R.layout.dialog_basic_auth, null);
+            TextView dialogText = dialogView.findViewById(R.id.dialog_basic_auth_text);
+            dialogText.setText(getString(R.string.dialog_basic_auth_text, Utils.getUrl(this)));
+
+            new AlertDialog.Builder(this)
+                    .setTitle(R.string.dialog_basic_auth_title)
+                    .setView(dialogView)
+                    .setNegativeButton(android.R.string.cancel, ((dialogInterface, i) -> loginFailed(FAILURE_REASON_GENERIC)))
+                    .setPositiveButton(R.string.dialog_basic_auth_button_login, (dialogInterface, i) -> {
+                        TextInputEditText dialogUsername = dialogView.findViewById(R.id.dialog_basic_auth_username);
+                        TextInputEditText dialogPassword = dialogView.findViewById(R.id.dialog_basic_auth_password);
+                        Utils.setBasicAuth(this, dialogUsername.getText().toString(), dialogPassword.getText().toString());
+                        attemptLogin();
+                    })
+                    .setCancelable(false)
+                    .show();
+            return;
+        }
+
         if (loginLayout == null) {
             addLoginLayout();
         }

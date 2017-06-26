@@ -23,12 +23,15 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static android.support.test.espresso.action.ViewActions.replaceText;
+import static android.support.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
@@ -88,6 +91,11 @@ public class LoginTest {
         hassActivityTest(testRes.getString(io.homeassistant.android.test.R.string.test_unprotected_hass_url), null);
     }
 
+    @Test
+    public void hassActivityBasicAuthTest() {
+        hassActivityTest(testRes.getString(io.homeassistant.android.test.R.string.test_basic_auth_hass_url), testRes.getString(io.homeassistant.android.test.R.string.test_hass_password));
+    }
+
     private void hassActivityTest(String url, String password) {
         sleep(1000);
         final HassActivity activity = mActivityTestRule.getActivity();
@@ -109,7 +117,7 @@ public class LoginTest {
                     allOf(withId(R.id.password_input),
                             childAtPosition(childAtPosition(withId(R.id.password_input_layout), 0), 0),
                             isDisplayed()));
-            passwordInput.perform(replaceText(password), closeSoftKeyboard());
+            passwordInput.perform(replaceText(password));
         }
 
         ViewInteraction connectButton = onView(
@@ -120,6 +128,23 @@ public class LoginTest {
         connectButton.perform(click());
 
         sleep(1000);
+
+        AtomicBoolean basicAuthRequired = new AtomicBoolean(false);
+        onView(withText(R.string.dialog_basic_auth_title)).withFailureHandler((throwable, matcher) -> basicAuthRequired.set(true))
+                .check(doesNotExist());
+
+        if (basicAuthRequired.get()) {
+            onView(allOf(withId(R.id.dialog_basic_auth_username), isDisplayed()))
+                    .perform(replaceText(testRes.getString(io.homeassistant.android.test.R.string.test_basic_auth_user)));
+
+            onView(allOf(withId(R.id.dialog_basic_auth_password), isDisplayed()))
+                    .perform(replaceText(testRes.getString(io.homeassistant.android.test.R.string.test_basic_auth_password)));
+
+            onView(allOf(withId(android.R.id.button1), withText(R.string.dialog_basic_auth_button_login), isDisplayed()))
+                    .perform(click());
+
+            sleep(1000);
+        }
 
         // Assert service states
         HassService service = activity.service;

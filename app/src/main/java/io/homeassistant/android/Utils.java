@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.widget.ImageButton;
 
@@ -13,6 +14,8 @@ import java.lang.ref.WeakReference;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import okhttp3.Credentials;
 
 public final class Utils {
 
@@ -34,6 +37,14 @@ public final class Utils {
 
     public static String getPassword(Context context) {
         return getPrefs(context).getString(Common.PREF_HASS_PASSWORD_KEY, "");
+    }
+
+    public static String getBasicAuth(Context context) {
+        return getPrefs(context).getString(Common.PREF_BASIC_AUTH_KEY, "");
+    }
+
+    public static void setBasicAuth(Context context, @NonNull String username, @NonNull String password) {
+        getPrefs(context).edit().putString(Common.PREF_BASIC_AUTH_KEY, Credentials.basic(username, password)).apply();
     }
 
     public static Set<String> getAllowedHostMismatches(Context context) {

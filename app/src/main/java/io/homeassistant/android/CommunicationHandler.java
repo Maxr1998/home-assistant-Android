@@ -13,7 +13,8 @@ public class CommunicationHandler extends Handler {
 
     public static final int FAILURE_REASON_GENERIC = 0x1;
     public static final int FAILURE_REASON_WRONG_PASSWORD = 0x2;
-    public static final int FAILURE_REASON_SSL_MISMATCH = 0x4;
+    public static final int FAILURE_REASON_BASIC_AUTH = 0x4;
+    public static final int FAILURE_REASON_SSL_MISMATCH = 0x8;
 
     private final WeakReference<ServiceCommunicator> activity;
 
