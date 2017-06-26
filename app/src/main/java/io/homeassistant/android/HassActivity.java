@@ -204,7 +204,9 @@ public class HassActivity extends BaseActivity {
         swipeRefreshLayout.setRefreshing(false);
     }
 
-    public boolean send(Ason message, @Nullable RequestResult.OnRequestResultListener resultListener) {
-        return service.send(message, resultListener);
+    public void send(Ason message, @Nullable RequestResult.OnRequestResultListener resultListener) {
+        if (!service.send(message, resultListener) && resultListener != null) {
+            resultListener.onRequestResult(false, null);
+        }
     }
 }
