@@ -96,7 +96,7 @@ dependencies {
         exclude group: 'com.intellij', module: 'annotations'
     }
 
-    gmsImplementation "com.google.android.gms:play-services-location:11.0.1"
+    gmsImplementation "com.google.android.gms:play-services-location:11.0.2"
     fdroidImplementation 'com.mapzen.android:lost:2.2.0'
 
     testImplementation 'junit:junit:4.12'
