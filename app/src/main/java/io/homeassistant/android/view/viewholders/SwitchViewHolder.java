@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.SeekBar;
 
+import io.homeassistant.android.BaseActivity;
 import io.homeassistant.android.Common;
-import io.homeassistant.android.HassActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.HassUtils;
@@ -33,9 +33,9 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
     public SwitchViewHolder(View itemView) {
         super(itemView);
-        stateSwitch = (SwitchCompat) itemView.findViewById(R.id.state_switch);
+        stateSwitch = itemView.findViewById(R.id.state_switch);
         stateSwitch.setOnClickListener(null);
-        brightnessSlider = (SeekBar) itemView.findViewById(R.id.brightness_slider);
+        brightnessSlider = itemView.findViewById(R.id.brightness_slider);
         sliderRunnable.lastEvent = null;
         name.setOnTouchListener(null);
     }
@@ -76,7 +76,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
     @Override
     public void onClick(View v) {
-        HassActivity activity = (HassActivity) v.getContext();
+        BaseActivity activity = (BaseActivity) v.getContext();
         activity.send(new ToggleRequest(entity, stateSwitch.isChecked()), (success, result) -> {
             if (success) {
                 entity.state = HassUtils.getOnState(entity, stateSwitch.isChecked());
@@ -111,7 +111,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
                 handler.removeCallbacks(sliderRunnable);
 
                 if (brightnessSlider.getProgress() != sliderRunnable.previousProgress) { // Changed
-                    HassActivity activity = (HassActivity) brightnessSlider.getContext();
+                    BaseActivity activity = (BaseActivity) brightnessSlider.getContext();
                     activity.send(new ToggleRequest(entity, brightnessSlider.getProgress()), (success, result) -> {
                         if (success) {
                             stateSwitch.setChecked(brightnessSlider.getProgress() > 0);

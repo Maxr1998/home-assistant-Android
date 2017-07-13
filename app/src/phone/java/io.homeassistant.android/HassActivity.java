@@ -154,12 +154,6 @@ public class HassActivity extends BaseActivity {
         }
     }
 
-    public void attemptLogin() {
-        // Force reconnect, this call is safe if not connected
-        service.disconnect();
-        service.connect();
-    }
-
     @Override
     public void loginSuccess() {
         if (loginLayout != null) {
@@ -202,11 +196,5 @@ public class HassActivity extends BaseActivity {
     public void updateStates() {
         viewAdapter.updateEntities(service.getEntityMap());
         swipeRefreshLayout.setRefreshing(false);
-    }
-
-    public void send(Ason message, @Nullable RequestResult.OnRequestResultListener resultListener) {
-        if (!service.send(message, resultListener) && resultListener != null) {
-            resultListener.onRequestResult(false, null);
-        }
     }
 }

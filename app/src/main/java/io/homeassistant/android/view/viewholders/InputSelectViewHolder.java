@@ -7,7 +7,7 @@ import android.widget.Spinner;
 
 import java.util.List;
 
-import io.homeassistant.android.HassActivity;
+import io.homeassistant.android.BaseActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.requests.SelectRequest;
@@ -19,7 +19,7 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
 
     public InputSelectViewHolder(View itemView) {
         super(itemView);
-        inputSpinner = (Spinner) itemView.findViewById(R.id.input_spinner);
+        inputSpinner = itemView.findViewById(R.id.input_spinner);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class InputSelectViewHolder extends TextViewHolder implements AdapterView
         if (position == lastSelected) {
             return;
         }
-        HassActivity activity = (HassActivity) inputSpinner.getContext();
+        BaseActivity activity = (BaseActivity) inputSpinner.getContext();
         activity.send(new SelectRequest(entity, (String) parent.getAdapter().getItem(position)), (success, result) -> {
             if (success) {
                 lastSelected = inputSpinner.getSelectedItemPosition();

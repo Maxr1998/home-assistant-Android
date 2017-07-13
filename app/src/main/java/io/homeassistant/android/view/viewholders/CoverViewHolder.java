@@ -3,7 +3,7 @@ package io.homeassistant.android.view.viewholders;
 import android.view.View;
 import android.widget.ImageButton;
 
-import io.homeassistant.android.HassActivity;
+import io.homeassistant.android.BaseActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.requests.ToggleRequest;
@@ -45,7 +45,7 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        HassActivity activity = (HassActivity) v.getContext();
+        BaseActivity activity = (BaseActivity) v.getContext();
         String operation;
         switch (v.getId()) {
             case R.id.cover_up:
