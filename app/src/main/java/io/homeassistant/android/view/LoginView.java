@@ -37,6 +37,7 @@ public class LoginView extends LinearLayout {
 
     private TextInputLayout urlInputLayout;
     private TextInputEditText urlInput;
+    @SuppressWarnings("FieldCanBeLocal")
     private TextInputLayout passwordInputLayout;
     private TextInputEditText passwordInput;
     private Button connectButton;
@@ -65,12 +66,12 @@ public class LoginView extends LinearLayout {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        urlInputLayout = (TextInputLayout) findViewById(R.id.url_input_layout);
-        urlInput = (TextInputEditText) findViewById(R.id.url_input);
-        passwordInputLayout = (TextInputLayout) findViewById(R.id.password_input_layout);
-        passwordInput = (TextInputEditText) findViewById(R.id.password_input);
-        connectButton = (Button) findViewById(R.id.connect_button);
-        progress = (ProgressBar) findViewById(android.R.id.progress);
+        urlInputLayout = findViewById(R.id.url_input_layout);
+        urlInput = findViewById(R.id.url_input);
+        passwordInputLayout = findViewById(R.id.password_input_layout);
+        passwordInput = findViewById(R.id.password_input);
+        connectButton = findViewById(R.id.connect_button);
+        progress = findViewById(android.R.id.progress);
 
         urlInputLayout.setErrorEnabled(true);
         if (!Utils.getUrl(getContext()).isEmpty()) {

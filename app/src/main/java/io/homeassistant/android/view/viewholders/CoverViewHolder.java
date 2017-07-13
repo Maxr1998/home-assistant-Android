@@ -22,11 +22,11 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
 
     public CoverViewHolder(View itemView) {
         super(itemView);
-        buttonCoverUp = (ImageButton) itemView.findViewById(R.id.cover_up);
+        buttonCoverUp = itemView.findViewById(R.id.cover_up);
         buttonCoverUp.setOnClickListener(this);
-        buttonCoverDown = (ImageButton) itemView.findViewById(R.id.cover_down);
+        buttonCoverDown = itemView.findViewById(R.id.cover_down);
         buttonCoverDown.setOnClickListener(this);
-        buttonCoverStop = (ImageButton) itemView.findViewById(R.id.cover_stop);
+        buttonCoverStop = itemView.findViewById(R.id.cover_stop);
         buttonCoverStop.setOnClickListener(this);
     }
 
