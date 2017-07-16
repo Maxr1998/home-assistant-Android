@@ -63,17 +63,19 @@ public final class HassUtils {
      *
      * @param result    the EventData to extract from
      * @param entityMap the Map where entities are store with their id as key
-     * @return true if items were updated, else false
+     * @return the updated entity
      */
     @Nullable
     public static Entity updateEntityFromEventResult(@Nullable EventData result, @NonNull Map<String, Entity> entityMap) {
         if (result != null) {
             Entity current = entityMap.get(result.entity_id);
             Entity updated = result.new_state;
-            current.state = updated.state;
-            current.attributes = updated.attributes;
-            current.last_changed = updated.last_changed;
-            current.last_updated = updated.last_updated;
+            if (current != null) {
+                current.state = updated.state;
+                current.attributes = updated.attributes;
+                current.last_changed = updated.last_changed;
+                current.last_updated = updated.last_updated;
+            }
             return current;
         }
         return null;
