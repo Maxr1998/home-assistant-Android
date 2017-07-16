@@ -13,5 +13,5 @@
         android:paddingEnd="@dimen/item_padding"
         android:paddingStart="@dimen/item_padding"
         android:paddingTop="@dimen/item_padding"
-        android:textAppearance="?textAppearanceListItem" />
+        android:textAppearance="@style/ListItemTextAppearance" />
 </LinearLayout>

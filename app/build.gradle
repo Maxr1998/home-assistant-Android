@@ -20,6 +20,8 @@ android {
         setProperty("archivesBaseName", "hass-$versionName")
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        buildConfigField "boolean", "WEAR_APP", "false"
     }
     buildTypes {
         release {
@@ -41,6 +43,7 @@ android {
         wear {
             dimension "platform"
             minSdkVersion 25
+            buildConfigField "boolean", "WEAR_APP", "true"
         }
         standard {
             dimension "dependencies"

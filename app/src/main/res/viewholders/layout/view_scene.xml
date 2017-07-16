@@ -8,7 +8,7 @@
 
     <Button
         android:id="@+id/scene_button"
-        style="@style/ListItemWidget"
+        style="@style/ListItemWidget.Scene"
         android:background="?selectableItemBackground"
         android:text="@string/button_scene_activate"
         android:textColor="?colorAccent" />

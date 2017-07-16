@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="ListItemTextAppearance" parent="@android:style/TextAppearance.Material.Subhead">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ListItemWidget.Dropdown" parent="@android:style/Widget.Material.DropDownItem">
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="ListItemWidget.Scene">
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>

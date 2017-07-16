@@ -7,9 +7,11 @@
         <item name="colorAccent">@color/accent</item>
         <item name="windowBackground">@color/default_window_background</item>
         <item name="android:windowBackground">@android:color/white</item>
+        <item name="spinnerDropDownItemStyle">@style/ListItemWidget.Dropdown</item>
     </style>
 
     <item name="name" type="id" />
+    <item name="childRecycler" type="id" />
 
     <style name="ListItemText">
         <item name="android:id">@id/name</item>
@@ -22,8 +24,10 @@
         <item name="android:paddingEnd">@dimen/item_padding</item>
         <item name="android:paddingStart">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingTop">@dimen/item_padding</item>
-        <item name="android:textAppearance">?textAppearanceListItem</item>
+        <item name="android:textAppearance">@style/ListItemTextAppearance</item>
     </style>
+
+    <style name="ListItemTextAppearance" parent="@android:style/TextAppearance.Material.Subhead" />
 
     <style name="ListItemWidget">
         <item name="android:layout_height">wrap_content</item>
@@ -38,4 +42,8 @@
         <item name="android:background">?selectableItemBackground</item>
         <item name="android:layout_marginEnd">0dp</item>
     </style>
+
+    <style name="ListItemWidget.Dropdown" parent="@android:style/Widget.Material.DropDownItem" />
+
+    <style name="ListItemWidget.Scene" />
 </resources>
