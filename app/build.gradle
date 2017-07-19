@@ -14,8 +14,8 @@ android {
         applicationId "io.homeassistant.android"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 3
-        versionName "1.0-RC1"
+        versionCode 4
+        versionName "1.0"
         resConfigs languages
         setProperty("archivesBaseName", "hass-$versionName")
 
