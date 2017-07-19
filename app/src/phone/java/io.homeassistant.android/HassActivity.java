@@ -27,11 +27,9 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.afollestad.ason.Ason;
-
-import io.homeassistant.android.api.results.RequestResult;
 import io.homeassistant.android.view.LoginView;
 import io.homeassistant.android.view.ViewAdapter;
+import io.homeassistant.android.wearable.WearableCredentialsSync;
 
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_BASIC_AUTH;
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_GENERIC;
@@ -161,6 +159,7 @@ public class HassActivity extends BaseActivity {
             loginLayout = null;
             mainLayout.setVisibility(View.VISIBLE);
         }
+        WearableCredentialsSync.transferCredentials(this);
     }
 
     @Override
