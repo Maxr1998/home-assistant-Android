@@ -28,6 +28,7 @@ import static io.homeassistant.android.api.Domain.INPUT_SELECT;
 import static io.homeassistant.android.api.Domain.LIGHT;
 import static io.homeassistant.android.api.Domain.LOCK;
 import static io.homeassistant.android.api.Domain.SCENE;
+import static io.homeassistant.android.api.Domain.SCRIPT;
 import static io.homeassistant.android.api.Domain.SENSOR;
 import static io.homeassistant.android.api.Domain.SUN;
 import static io.homeassistant.android.api.Domain.SWITCH;
@@ -212,7 +213,7 @@ public final class HassUtils {
             case SCENE:
                 icon = "mdi:google-pages";
                 break;
-            case "script":
+            case SCRIPT:
                 icon = "mdi:file-document";
                 break;
             case SENSOR:

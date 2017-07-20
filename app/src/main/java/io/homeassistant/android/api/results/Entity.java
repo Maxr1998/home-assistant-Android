@@ -28,6 +28,7 @@ import static io.homeassistant.android.api.Domain.INPUT_SELECT;
 import static io.homeassistant.android.api.Domain.LIGHT;
 import static io.homeassistant.android.api.Domain.LOCK;
 import static io.homeassistant.android.api.Domain.SCENE;
+import static io.homeassistant.android.api.Domain.SCRIPT;
 import static io.homeassistant.android.api.Domain.SENSOR;
 import static io.homeassistant.android.api.Domain.SUN;
 import static io.homeassistant.android.api.Domain.SWITCH;
@@ -109,6 +110,7 @@ public class Entity implements Comparable<Entity> {
                 type = EntityType.INPUT_SELECT;
                 break;
             case SCENE:
+            case SCRIPT:
                 type = EntityType.SCENE;
                 break;
             default:

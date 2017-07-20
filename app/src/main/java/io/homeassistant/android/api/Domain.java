@@ -15,6 +15,7 @@ public final class Domain {
     public static final String LIGHT = "light";
     public static final String LOCK = "lock";
     public static final String SCENE = "scene";
+    public static final String SCRIPT = "script";
     public static final String SENSOR = "sensor";
     public static final String SUN = "sun";
     public static final String SWITCH = "switch";
