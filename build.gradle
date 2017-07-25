@@ -10,7 +10,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha6'
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha8'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
     }
@@ -22,5 +22,6 @@ allprojects {
             url "https://maven.google.com"
         }
         jcenter()
+        maven { url 'https://jitpack.io' }
     }
 }

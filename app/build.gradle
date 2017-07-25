@@ -3,7 +3,7 @@ apply plugin: 'com.jakewharton.hugo'
 apply plugin: 'kotlin-android'
 
 ext.languages = ["de", "ja", "nl"]
-ext.supportLibraryVersion = "26.0.0-beta2"
+ext.supportLibraryVersion = "26.0.0"
 ext.c_languages = ["de", "ja", "nl"]
 ext.crowdinKey = null
 
@@ -102,7 +102,8 @@ dependencies {
     wearImplementation "com.android.support:wear:$supportLibraryVersion"
 
     implementation "com.squareup.okhttp3:okhttp:3.7.0"
-    implementation("com.afollestad:ason:1.4.13") {
+    //implementation("com.afollestad:ason:1.4.13") {
+    implementation("com.github.Maxr1998:ason:32bbe92e29") {
         exclude group: 'org.json', module: 'json'
         exclude group: 'com.intellij', module: 'annotations'
     }
