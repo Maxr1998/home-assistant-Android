@@ -27,5 +27,4 @@ lint.xml
 app/src/main/res/values-v21/private.xml
 app/src/androidTestPhone/res/values-v21/keys.xml
 # KeyStore + Passwords
-sMaxr1998_key.jks
 keyStore.properties
