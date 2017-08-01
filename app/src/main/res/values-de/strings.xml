@@ -11,6 +11,11 @@
     <string name="login_error">Verbindungsfehler: Ungültige IP-Adresse/ungültiges Passwort, oder ist der Server aus?</string>
     <string name="login_error_generic">Verbindungsfehler: Ungültige IP-Adresse, oder ist der Server aus?</string>
     <string name="login_error_wrong_password">Verbindungsfehler: Ungültiges Kennwort!</string>
+    <string name="dialog_basic_auth_title">Anmeldung erforderlich</string>
+    <string name="dialog_basic_auth_text">%s erfordert Benutzernamen und Passwort.</string>
+    <string name="hint_dialog_basic_auth_username">Benutzername</string>
+    <string name="hint_dialog_basic_auth_password">@string/hint_password</string>
+    <string name="dialog_basic_auth_button_login">Anmelden</string>
     <string name="dialog_login_error_ssl_mismatch_title">Hostname des Zertifikats abweichend!</string>
     <string name="dialog_login_error_ssl_mismatch_message">Die eingegebene IP stimmt nicht mit dem Hostnamen des SSL-Zertifikats überein!
 Das bedeutet, dass du entweder einen (lokalen) Alias zur Verbindung verwendest oder ein Angreifer versucht, deine Verbindung umzuleiten. Ignoriere dies nur wenn du wirklich weißt was du tust!</string>
