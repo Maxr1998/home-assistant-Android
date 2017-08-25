@@ -102,14 +102,13 @@ dependencies {
     wearImplementation "com.android.support:wear:$supportLibraryVersion"
 
     implementation "com.squareup.okhttp3:okhttp:3.7.0"
-    //implementation("com.afollestad:ason:1.4.13") {
-    implementation("com.github.Maxr1998:ason:32bbe92e29") {
+    implementation("com.afollestad:ason:1.4.14") {
         exclude group: 'org.json', module: 'json'
         exclude group: 'com.intellij', module: 'annotations'
     }
 
-    standardImplementation "com.google.android.gms:play-services-wearable:11.0.2"
-    standardImplementation "com.google.android.gms:play-services-location:11.0.2"
+    standardImplementation "com.google.android.gms:play-services-wearable:11.0.4"
+    standardImplementation "com.google.android.gms:play-services-location:11.0.4"
     fdroidImplementation "com.mapzen.android:lost:2.2.0"
 
     testImplementation "junit:junit:4.12"
