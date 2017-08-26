@@ -10,8 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 
-import com.afollestad.ason.Ason;
-
+import io.homeassistant.android.api.requests.HassRequest;
 import io.homeassistant.android.api.results.RequestResult;
 
 public abstract class BaseActivity extends AppCompatActivity implements CommunicationHandler.ServiceCommunicator {
@@ -47,7 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity implements Communic
         service.connect();
     }
 
-    public void send(Ason message, @Nullable RequestResult.OnRequestResultListener resultListener) {
+    public void send(HassRequest message, @Nullable RequestResult.OnRequestResultListener resultListener) {
         if (!service.send(message, resultListener) && resultListener != null) {
             resultListener.onRequestResult(false, null);
         }

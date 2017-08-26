@@ -1,16 +1,14 @@
 package io.homeassistant.android.api.requests;
 
-import com.afollestad.ason.Ason;
+import com.afollestad.ason.AsonIgnore;
 
 import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.api.Domain.LOCK;
 
-public class ToggleRequest extends Ason {
-    protected final String type = "call_service";
-    protected final String domain;
-    protected final String service;
-    protected final Object service_data;
+public class ToggleRequest extends ServiceRequest {
+    @AsonIgnore
+    private byte tmp;
 
     /**
      * For use with lights (without changing brightness), locks, switches
@@ -23,9 +21,7 @@ public class ToggleRequest extends Ason {
      * For use with cover
      */
     public ToggleRequest(Entity entity, String operation) {
-        domain = entity.getDomain();
-        service = operation;
-        service_data = new ServiceData(entity.id);
+        super(entity.getDomain(), operation, entity.id);
     }
 
     /**
@@ -33,8 +29,7 @@ public class ToggleRequest extends Ason {
      */
     public ToggleRequest(Entity entity, int brightness) {
         this(entity);
-        toString();
-        put("service_data.brightness", brightness);
+        data.put("brightness", brightness);
     }
 
     /**

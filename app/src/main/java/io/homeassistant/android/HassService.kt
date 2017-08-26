@@ -10,9 +10,7 @@ import android.util.SparseArray
 import com.afollestad.ason.Ason
 import io.homeassistant.android.CommunicationHandler.*
 import io.homeassistant.android.api.HassUtils
-import io.homeassistant.android.api.requests.AuthRequest
-import io.homeassistant.android.api.requests.StatesRequest
-import io.homeassistant.android.api.requests.SubscribeEventsRequest
+import io.homeassistant.android.api.requests.*
 import io.homeassistant.android.api.results.Entity
 import io.homeassistant.android.api.results.EventResult
 import io.homeassistant.android.api.results.RequestResult
@@ -158,8 +156,9 @@ class HassService : Service() {
         })
     }
 
-    fun send(message: Ason, resultListener: RequestResult.OnRequestResultListener?): Boolean {
-        if (message !is AuthRequest) {
+    fun send(hassRequest: HassRequest, resultListener: RequestResult.OnRequestResultListener?): Boolean {
+        val message = hassRequest.toAson()
+        if (hassRequest !is AuthRequest) {
             val rId = lastId.incrementAndGet()
             message.put("id", rId)
             resultListener?.let { requests.append(rId, SoftReference<RequestResult.OnRequestResultListener>(resultListener)) }
@@ -178,7 +177,7 @@ class HassService : Service() {
     private fun runNextAction() {
         if (actionsQueue.peek() != null) {
             Log.d(TAG, "Sending action command " + actionsQueue.peek())
-            send(Ason(actionsQueue.remove()), RequestResult.OnRequestResultListener { _, _ -> runNextAction() })
+            send(StringRequest(actionsQueue.remove()), RequestResult.OnRequestResultListener { _, _ -> runNextAction() })
         } else
             handlingQueue.set(false)
     }

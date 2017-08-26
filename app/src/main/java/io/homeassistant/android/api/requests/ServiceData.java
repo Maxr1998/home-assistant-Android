@@ -1,9 +1,9 @@
 package io.homeassistant.android.api.requests;
 
-public class ServiceData {
-    protected final String entity_id;
+import com.afollestad.ason.Ason;
 
+public class ServiceData extends Ason {
     ServiceData(String id) {
-        entity_id = id;
+        put("entity_id", id);
     }
 }
