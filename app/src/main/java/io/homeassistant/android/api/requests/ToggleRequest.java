@@ -1,15 +1,10 @@
 package io.homeassistant.android.api.requests;
 
-import com.afollestad.ason.AsonIgnore;
-
 import io.homeassistant.android.api.results.Entity;
 
 import static io.homeassistant.android.api.Domain.LOCK;
 
 public class ToggleRequest extends ServiceRequest {
-    @AsonIgnore
-    private byte tmp;
-
     /**
      * For use with lights (without changing brightness), locks, switches
      */
