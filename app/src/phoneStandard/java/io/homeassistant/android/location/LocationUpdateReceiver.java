@@ -111,8 +111,12 @@ public class LocationUpdateReceiver extends BroadcastReceiver implements GoogleA
             int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, 1);
             percentage = Math.round(level / (float) scale * 100);
         }
+
+        DeviceTrackerRequest trakerMessage = new DeviceTrackerRequest(deviceName, location.getLatitude(), location.getLongitude(), Math.round(location.getAccuracy()), percentage);
+        Log.d(TAG, "Sending location " + trakerMessage.toAson().toString());
+
         Intent serviceIntent = new Intent(context, HassService.class);
-        serviceIntent.putExtra(EXTRA_ACTION_COMMAND, new DeviceTrackerRequest(deviceName, location.getLatitude(), location.getLongitude(), Math.round(location.getAccuracy()), percentage).toString());
+        serviceIntent.putExtra(EXTRA_ACTION_COMMAND, trakerMessage.toAson().toString());
         context.startService(serviceIntent);
     }
 }
