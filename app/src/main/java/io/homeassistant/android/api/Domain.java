@@ -10,6 +10,7 @@ public final class Domain {
     public static final String CLIMATE = "climate";
     public static final String COVER = "cover";
     public static final String DEVICE_TRACKER = "device_tracker";
+    public static final String FAN = "fan";
     public static final String INPUT_BOOLEAN = "input_boolean";
     public static final String INPUT_SELECT = "input_select";
     public static final String LIGHT = "light";

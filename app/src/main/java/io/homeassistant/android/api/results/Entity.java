@@ -22,6 +22,7 @@ import static io.homeassistant.android.api.Domain.CAMERA;
 import static io.homeassistant.android.api.Domain.CLIMATE;
 import static io.homeassistant.android.api.Domain.COVER;
 import static io.homeassistant.android.api.Domain.DEVICE_TRACKER;
+import static io.homeassistant.android.api.Domain.FAN;
 import static io.homeassistant.android.api.Domain.GROUP;
 import static io.homeassistant.android.api.Domain.INPUT_BOOLEAN;
 import static io.homeassistant.android.api.Domain.INPUT_SELECT;
@@ -82,6 +83,7 @@ public class Entity implements Comparable<Entity> {
     public void applyType() {
         switch (getDomain()) {
             case AUTOMATION:
+            case FAN:
             case INPUT_BOOLEAN:
             case LIGHT:
             case LOCK:
