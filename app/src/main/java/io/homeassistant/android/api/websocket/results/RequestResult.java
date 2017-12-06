@@ -1,4 +1,4 @@
-package io.homeassistant.android.api.results;
+package io.homeassistant.android.api.websocket.results;
 
 import com.afollestad.ason.Ason;
 

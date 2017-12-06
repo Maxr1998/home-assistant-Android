@@ -14,8 +14,8 @@ public class ClimateViewHolder extends TextViewHolder {
     private final TextView targetTemperature;
     private final TextView currentTemperature;
 
-    public ClimateViewHolder(View itemView) {
-        super(itemView);
+    public ClimateViewHolder(View itemView, RequestSender sender) {
+        super(itemView,sender);
         operation = (TextView) itemView.findViewById(R.id.operation);
         targetTemperature = (TextView) itemView.findViewById(R.id.targetTemperature);
         currentTemperature = (TextView) itemView.findViewById(R.id.currentTemperature);

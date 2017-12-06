@@ -1,23 +1,21 @@
-package io.homeassistant.android.api.results;
+package io.homeassistant.android.api.websocket.results;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 
 import com.afollestad.ason.Ason;
 import com.afollestad.ason.AsonIgnore;
 import com.afollestad.ason.AsonName;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+
+import java.lang.annotation.Retention;
 
 import io.homeassistant.android.api.Attribute;
-import io.homeassistant.android.api.EntityType;
-import io.homeassistant.android.view.viewholders.BaseViewHolder;
+
 
 import static io.homeassistant.android.api.Domain.AUTOMATION;
 import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
+
 import static io.homeassistant.android.api.Domain.CAMERA;
 import static io.homeassistant.android.api.Domain.CLIMATE;
 import static io.homeassistant.android.api.Domain.COVER;
@@ -32,12 +30,38 @@ import static io.homeassistant.android.api.Domain.SCRIPT;
 import static io.homeassistant.android.api.Domain.SENSOR;
 import static io.homeassistant.android.api.Domain.SUN;
 import static io.homeassistant.android.api.Domain.SWITCH;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public class Entity implements Comparable<Entity> {
+    //@AsonIgnore
+    //private final List<WeakReference<BaseViewHolder>> observers = new ArrayList<>();
+
+    @Retention(SOURCE)
+    @IntDef({TYPE_BASE,
+            TYPE_CAMERA,
+            TYPE_CLIMATE,
+            TYPE_COVER,
+            TYPE_GROUP,
+            TYPE_INPUT_SELECT,
+            TYPE_SENSOR,
+            TYPE_SCENE,
+            TYPE_SWITCH,
+            TYPE_TEXT})
+    public @interface Type {}
+    public static final int  TYPE_BASE = 0;
+    public static final int  TYPE_CAMERA =2;
+    public static final int  TYPE_CLIMATE =3;
+    public static final int  TYPE_COVER =4;
+    public static final int  TYPE_GROUP =5;
+    public static final int  TYPE_INPUT_SELECT =6;
+    public static final int  TYPE_SENSOR =7;
+    public static final int  TYPE_SCENE =8;
+    public static final int  TYPE_SWITCH =9;
+    public static final int  TYPE_TEXT =10;
+
     @AsonIgnore
-    private final List<WeakReference<BaseViewHolder>> observers = new ArrayList<>();
-    @AsonIgnore
-    public EntityType type = EntityType.BASE;
+    //public EntityType type = EntityType.BASE;
+    public @Type int type;
 
     @AsonName(name = Attribute.ENTITY_ID)
     public String id;
@@ -86,41 +110,41 @@ public class Entity implements Comparable<Entity> {
             case LIGHT:
             case LOCK:
             case SWITCH:
-                type = EntityType.SWITCH;
+                type = TYPE_SWITCH;
                 break;
             case BINARY_SENSOR:
             case DEVICE_TRACKER:
             case SENSOR:
             case SUN:
-                type = EntityType.SENSOR;
+                type = TYPE_SENSOR;
                 break;
             case CAMERA:
-                type = EntityType.CAMERA;
+                type = TYPE_CAMERA;
                 break;
             case CLIMATE:
-                type = EntityType.CLIMATE;
+                type = TYPE_CLIMATE;
                 break;
             case COVER:
-                type = EntityType.COVER;
+                type = TYPE_COVER;
                 break;
             case GROUP:
-                type = EntityType.GROUP;
+                type = TYPE_GROUP;
                 break;
             case INPUT_SELECT:
-                type = EntityType.INPUT_SELECT;
+                type = TYPE_INPUT_SELECT;
                 break;
             case SCENE:
             case SCRIPT:
-                type = EntityType.SCENE;
+                type = TYPE_SCENE;
                 break;
             default:
                 if (attributes.get(Attribute.FRIENDLY_NAME) != null) {
-                    type = EntityType.TEXT;
+                    type = TYPE_TEXT;
                 }
         }
     }
 
-    public void registerObserver(BaseViewHolder observer) {
+    /*public void registerObserver(BaseViewHolder observer) {
         observers.add(new WeakReference<>(observer));
     }
 
@@ -136,5 +160,5 @@ public class Entity implements Comparable<Entity> {
             }
             iterator.remove();
         }
-    }
+    }*/
 }

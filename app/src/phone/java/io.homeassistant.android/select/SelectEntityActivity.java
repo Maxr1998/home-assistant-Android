@@ -3,6 +3,7 @@ package io.homeassistant.android.select;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,10 +15,10 @@ import android.widget.Toast;
 import java.util.Collections;
 import java.util.Map;
 
-import io.homeassistant.android.BaseActivity;
+
 import io.homeassistant.android.R;
-import io.homeassistant.android.api.requests.ToggleRequest;
-import io.homeassistant.android.api.results.Entity;
+import io.homeassistant.android.api.websocket.requests.ToggleRequest;
+import io.homeassistant.android.api.websocket.results.Entity;
 import io.homeassistant.android.shortcuts.ShortcutActivity;
 
 import static io.homeassistant.android.HassService.EXTRA_ACTION_COMMAND;
@@ -28,7 +29,7 @@ import static io.homeassistant.android.api.Domain.SCENE;
 import static io.homeassistant.android.api.Domain.SWITCH;
 
 
-public class SelectEntityActivity extends BaseActivity {
+public class SelectEntityActivity extends AppCompatActivity {
 
     public static final String ACTION_SHORTCUT_LAUNCHED = "action_shortcut_launched";
 
@@ -79,19 +80,24 @@ public class SelectEntityActivity extends BaseActivity {
         }
     }
 
+
     @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
     public void loginSuccess() {
     }
 
-    @Override
+
     public void loginFailed(int reason) {
         finish();
         Toast.makeText(this, R.string.login_error, Toast.LENGTH_LONG).show();
     }
 
-    @Override
-    public void updateStates() {
-        for (Map.Entry<String, Entity> s : service.getEntityMap().entrySet()) {
+
+    public void updateStates(Map<String, Entity> entityMap) {
+        for (Map.Entry<String, Entity> s : entityMap.entrySet()) {
             Entity e = s.getValue();
             switch (e.getDomain()) {
                 case AUTOMATION:

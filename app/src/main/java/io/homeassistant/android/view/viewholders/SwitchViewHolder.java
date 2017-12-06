@@ -12,12 +12,11 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.widget.SeekBar;
 
-import io.homeassistant.android.BaseActivity;
 import io.homeassistant.android.Common;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.HassUtils;
-import io.homeassistant.android.api.requests.ToggleRequest;
+import io.homeassistant.android.api.websocket.requests.ToggleRequest;
 
 import static io.homeassistant.android.api.Domain.LIGHT;
 import static io.homeassistant.android.api.Domain.SWITCH;
@@ -31,8 +30,8 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
     private final Runnable touchDisallowRunnable = () -> itemView.getParent().requestDisallowInterceptTouchEvent(true);
     private final SliderRunnable sliderRunnable = new SliderRunnable();
 
-    public SwitchViewHolder(View itemView) {
-        super(itemView);
+    public SwitchViewHolder(View itemView, RequestSender sender) {
+        super(itemView,sender);
         stateSwitch = itemView.findViewById(R.id.state_switch);
         stateSwitch.setOnClickListener(null);
         brightnessSlider = itemView.findViewById(R.id.brightness_slider);
@@ -76,15 +75,15 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
     @Override
     public void onClick(View v) {
-        BaseActivity activity = (BaseActivity) v.getContext();
-        activity.send(new ToggleRequest(entity, stateSwitch.isChecked()), (success, result) -> activity.runOnUiThread(() -> {
+
+        sender.send(new ToggleRequest(entity, stateSwitch.isChecked()), (success, result) ->  {
             if (success) {
                 entity.state = HassUtils.getOnState(entity, stateSwitch.isChecked());
                 updateColor();
             } else {
                 stateSwitch.toggle();
             }
-        }));
+        });
     }
 
     @Override
@@ -111,8 +110,8 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
                 handler.removeCallbacks(sliderRunnable);
 
                 if (brightnessSlider.getProgress() != sliderRunnable.previousProgress) { // Changed
-                    BaseActivity activity = (BaseActivity) brightnessSlider.getContext();
-                    activity.send(new ToggleRequest(entity, brightnessSlider.getProgress()), (success, result) -> activity.runOnUiThread(() -> {
+
+                    sender.send(new ToggleRequest(entity, brightnessSlider.getProgress()), (success, result) -> {
                         if (success) {
                             stateSwitch.setChecked(brightnessSlider.getProgress() > 0);
                             entity.state = HassUtils.getOnState(entity, brightnessSlider.getProgress() > 0);
@@ -120,7 +119,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
                         } else {
                             brightnessSlider.setProgress(sliderRunnable.previousProgress);
                         }
-                    }));
+                    });
                 }
 
                 brightnessSlider.setVisibility(View.GONE);

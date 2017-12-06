@@ -22,9 +22,10 @@ import com.mapzen.android.lost.api.LocationServices;
 import com.mapzen.android.lost.api.LostApiClient;
 
 import io.homeassistant.android.Common;
+import io.homeassistant.android.HassFactory;
 import io.homeassistant.android.HassService;
 import io.homeassistant.android.Utils;
-import io.homeassistant.android.api.requests.DeviceTrackerRequest;
+import io.homeassistant.android.api.websocket.requests.DeviceTrackerRequest;
 
 import static io.homeassistant.android.HassService.EXTRA_ACTION_COMMAND;
 
@@ -91,7 +92,7 @@ public class LocationUpdateReceiver extends BroadcastReceiver implements LostApi
     }
 
     private void logLocation(@NonNull Location location, @NonNull Context context) {
-        Log.d(TAG, "Sending location");
+        /*Log.d(TAG, "Sending location");
         String deviceName = Utils.getPrefs(context).getString(Common.PREF_LOCATION_DEVICE_NAME, null);
         if (TextUtils.isEmpty(deviceName)) {
             return;
@@ -106,6 +107,8 @@ public class LocationUpdateReceiver extends BroadcastReceiver implements LostApi
         }
         Intent serviceIntent = new Intent(context, HassService.class);
         serviceIntent.putExtra(EXTRA_ACTION_COMMAND, new DeviceTrackerRequest(deviceName, location.getLatitude(), location.getLongitude(), Math.round(location.getAccuracy()), percentage).toString());
-        context.startService(serviceIntent);
+        context.startService(serviceIntent);*/
+
+        HassFactory.getLocationUpdateHandler(context).onLocation(location);
     }
 }

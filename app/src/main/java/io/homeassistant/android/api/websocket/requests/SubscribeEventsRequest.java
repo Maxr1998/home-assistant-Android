@@ -1,4 +1,4 @@
-package io.homeassistant.android.api.requests;
+package io.homeassistant.android.api.websocket.requests;
 
 public class SubscribeEventsRequest extends HassRequest {
     protected final String event_type;

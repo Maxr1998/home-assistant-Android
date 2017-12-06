@@ -10,8 +10,8 @@ public class SensorViewHolder extends TextViewHolder {
 
     private final TextView value;
 
-    public SensorViewHolder(View itemView) {
-        super(itemView);
+    public SensorViewHolder(View itemView, RequestSender sender) {
+        super(itemView,sender);
         value = (TextView) itemView.findViewById(R.id.value);
     }
 

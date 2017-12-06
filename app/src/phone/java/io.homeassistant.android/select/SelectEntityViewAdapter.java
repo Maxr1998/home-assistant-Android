@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import io.homeassistant.android.R;
-import io.homeassistant.android.api.results.Entity;
+import io.homeassistant.android.api.websocket.results.Entity;
 
 public class SelectEntityViewAdapter extends RecyclerView.Adapter<SelectEntityViewAdapter.ItemViewHolder> {
 

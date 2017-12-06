@@ -24,15 +24,15 @@
 # hide the original source file name.
 -renamesourcefileattribute SourceFile
 
--keepclassmembers class io.homeassistant.android.api.icons.MaterialDesignIconsUtils$ManifestItem {
+-keepclassmembers class io.homeassistant.android.api.MaterialDesignIconsUtils$ManifestItem {
     public java.lang.String *;
 }
 
--keepclassmembers class io.homeassistant.android.api.requests.** {
+-keepclassmembers class io.homeassistant.android.api.websocket.requests.** {
     protected final *** *;
 }
 
--keep class io.homeassistant.android.api.results.** {
+-keep class io.homeassistant.android.api.websocket.results.** {
     public *** *;
 }
 

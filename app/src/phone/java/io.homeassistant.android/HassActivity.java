@@ -2,10 +2,12 @@ package io.homeassistant.android;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsCallback;
 import android.support.customtabs.CustomTabsClient;
@@ -15,11 +17,13 @@ import android.support.customtabs.CustomTabsSession;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.view.menu.MenuBuilder;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -27,16 +31,22 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.Map;
+
+import io.homeassistant.android.api.websocket.requests.HassRequest;
+import io.homeassistant.android.api.websocket.results.Entity;
 import io.homeassistant.android.view.LoginView;
 import io.homeassistant.android.view.ViewAdapter;
+import io.homeassistant.android.view.viewholders.BaseViewHolder;
 import io.homeassistant.android.wearable.WearableCredentialsSync;
 
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_BASIC_AUTH;
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_GENERIC;
 
 
-public class HassActivity extends BaseActivity {
-
+public class HassActivity extends AppCompatActivity implements ApiBase {
+    final static String TAG = HassActivity.class.getSimpleName();
+    protected HassViewModel model;
     private CustomTabsSession customTabsSession;
     private final CustomTabsServiceConnection chromeConnection = new CustomTabsServiceConnection() {
         @Override
@@ -56,7 +66,13 @@ public class HassActivity extends BaseActivity {
         }
     };
 
-    private ViewAdapter viewAdapter = new ViewAdapter(this);
+    private Handler communicationHandler = new Handler();
+    private ViewAdapter viewAdapter = new ViewAdapter(this, new BaseViewHolder.RequestSender() {
+        @Override
+        public void send(HassRequest request, BaseViewHolder.RequestResultListener listener) {
+            // TODO
+        }
+    });
     private FrameLayout rootView;
     private CoordinatorLayout mainLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -66,6 +82,10 @@ public class HassActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hass);
+
+        HassViewModelFactory hassViewModelFactory = HassFactory.getHassViewModelFactory(this);
+        model = ViewModelProviders.of(this, hassViewModelFactory).get(HassViewModel.class);
+
         Toolbar t = findViewById(R.id.toolbar);
         setSupportActionBar(t);
 
@@ -79,8 +99,8 @@ public class HassActivity extends BaseActivity {
         swipeRefreshLayout = mainLayout.findViewById(R.id.swipe_refresh);
         swipeRefreshLayout.setColorSchemeResources(R.color.accent);
         swipeRefreshLayout.setOnRefreshListener(() -> {
-            if (service != null) {
-                service.loadStates();
+            if (model != null) {
+                model.loadStates();
             }
         });
         swipeRefreshLayout.setRefreshing(true);
@@ -89,6 +109,8 @@ public class HassActivity extends BaseActivity {
         viewRecycler.setLayoutManager(new StaggeredGridLayoutManager(getResources().getInteger(R.integer.view_columns), StaggeredGridLayoutManager.VERTICAL));
         viewRecycler.setAdapter(viewAdapter);
         viewRecycler.setRecycledViewPool(viewAdapter.recycledViewPool);
+
+
     }
 
     private void addLoginLayout() {
@@ -99,10 +121,33 @@ public class HassActivity extends BaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if (service != null) {
-            // Make sure that service is connected, if not it'll re-attempt
-            service.connect();
-        }
+
+        model.getAuthStatus().observe(this, authStatus -> {
+            if(authStatus.sucess)
+            {
+                loginSuccess();
+            }
+            else
+            {
+                loginFailed(authStatus.reason);
+            }
+        });
+
+        model.getEntityMap().observe(this, entityMap -> onUpdateStates(entityMap));
+
+
+        model.getUpdatedEntity().observe(this, entity -> {
+            // TODO: notify adapter of updated entity
+        });
+
+
+        tryConnect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        model.disconnect();
     }
 
     @Override
@@ -139,7 +184,7 @@ public class HassActivity extends BaseActivity {
             case R.id.menu_logout:
                 if (loginLayout == null) {
                     Utils.getPrefs(this).edit().remove(Common.PREF_HASS_PASSWORD_KEY).apply();
-                    service.disconnect();
+                    model.disconnect();
                     addLoginLayout();
                 }
                 return true;
@@ -152,18 +197,37 @@ public class HassActivity extends BaseActivity {
         }
     }
 
-    @Override
-    public void loginSuccess() {
+    public void tryConnect()
+    {
+        String url = Utils.getUrl(this);
+        String password = Utils.getPassword(this);
+
+        // TODO validate password and url, if invalid call loginFailed
+
+        model.connect(url,password);
+    }
+
+    public void attemptLogin()
+    {
+        model.disconnect();
+        tryConnect();
+    }
+
+    protected void loginSuccess() {
+        Log.d(TAG,"loginSuccess");
         if (loginLayout != null) {
             rootView.removeView(loginLayout);
             loginLayout = null;
             mainLayout.setVisibility(View.VISIBLE);
         }
         WearableCredentialsSync.transferCredentials(this);
+
+        model.loadStates();
     }
 
-    @Override
-    public void loginFailed(int reason) {
+
+    protected void loginFailed(int reason) {
+        Log.d(TAG,"loginFailed, reason = " + reason);
         if (reason == FAILURE_REASON_BASIC_AUTH) {
             LayoutInflater inflater = LayoutInflater.from(this);
             @SuppressLint("InflateParams") View dialogView = inflater.inflate(R.layout.dialog_basic_auth, null);
@@ -191,9 +255,11 @@ public class HassActivity extends BaseActivity {
         loginLayout.showLoginError(reason);
     }
 
-    @Override
-    public void updateStates() {
-        viewAdapter.updateEntities(service.getEntityMap());
+
+
+    protected void onUpdateStates(Map<String, Entity> entityMap) {
+        Log.d(TAG,"onUpdateStates");
+        viewAdapter.updateEntities(entityMap);
         swipeRefreshLayout.setRefreshing(false);
     }
 }

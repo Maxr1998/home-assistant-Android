@@ -1,4 +1,4 @@
-package io.homeassistant.android.api.icons;
+package io.homeassistant.android.api;
 
 final class IconRecord {
     public final String name;

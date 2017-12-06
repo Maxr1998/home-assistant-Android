@@ -3,10 +3,9 @@ package io.homeassistant.android.view.viewholders;
 import android.view.View;
 import android.widget.ImageButton;
 
-import io.homeassistant.android.BaseActivity;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.Attribute;
-import io.homeassistant.android.api.requests.ToggleRequest;
+import io.homeassistant.android.api.websocket.requests.ToggleRequest;
 
 import static io.homeassistant.android.Utils.setStatefulImageButtonIcon;
 
@@ -20,8 +19,8 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
     private final ImageButton buttonCoverDown;
     private final ImageButton buttonCoverStop;
 
-    public CoverViewHolder(View itemView) {
-        super(itemView);
+    public CoverViewHolder(View itemView, RequestSender sender) {
+        super(itemView,sender);
         buttonCoverUp = itemView.findViewById(R.id.cover_up);
         buttonCoverUp.setOnClickListener(this);
         buttonCoverDown = itemView.findViewById(R.id.cover_down);
@@ -45,7 +44,6 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        BaseActivity activity = (BaseActivity) v.getContext();
         String operation;
         switch (v.getId()) {
             case R.id.cover_up:
@@ -63,6 +61,6 @@ public class CoverViewHolder extends TextViewHolder implements View.OnClickListe
                 operation = "";
                 break;
         }
-        activity.send(new ToggleRequest(entity, operation), null);
+        sender.send(new ToggleRequest(entity, operation), null);
     }
 }

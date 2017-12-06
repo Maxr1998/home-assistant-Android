@@ -10,10 +10,10 @@ import android.util.SparseArray
 import com.afollestad.ason.Ason
 import io.homeassistant.android.CommunicationHandler.*
 import io.homeassistant.android.api.HassUtils
-import io.homeassistant.android.api.requests.*
-import io.homeassistant.android.api.results.Entity
-import io.homeassistant.android.api.results.EventResult
-import io.homeassistant.android.api.results.RequestResult
+import io.homeassistant.android.api.websocket.requests.*
+import io.homeassistant.android.api.websocket.results.Entity
+import io.homeassistant.android.api.websocket.results.EventResult
+import io.homeassistant.android.api.websocket.results.RequestResult
 import okhttp3.*
 import okhttp3.internal.tls.OkHostnameVerifier
 import java.lang.ref.SoftReference
@@ -29,7 +29,10 @@ import javax.net.ssl.SSLException
 import javax.net.ssl.SSLPeerUnverifiedException
 
 class HassService : Service() {
-
+    override fun onBind(p0: Intent?): IBinder {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+/*
     private val binder = HassBinder()
     val entityMap: Map<String, Entity> = HashMap()
     @JvmField val connecting = AtomicBoolean(false)
@@ -228,7 +231,7 @@ class HassService : Service() {
                         val updated = HassUtils.updateEntityFromEventResult(eventRequest.event.data, entityMap)
                         updated?.let {
                             Log.d(TAG, "Updated " + updated.id)
-                            activityHandler!!.post { updated.notifyObservers() }
+                            //activityHandler!!.post { updated.notifyObservers() }
                         }
                     }
                     "result" -> {
@@ -268,7 +271,7 @@ class HassService : Service() {
             Log.e(TAG, "Error from onFailure()", t)
         }
     }
-
+*/
     companion object {
         @JvmField val EXTRA_ACTION_COMMAND = "extra_action_command"
 

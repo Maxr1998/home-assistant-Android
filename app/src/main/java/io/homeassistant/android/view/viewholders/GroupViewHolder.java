@@ -13,14 +13,14 @@ public class GroupViewHolder extends TextViewHolder {
     public final ViewAdapter.ChildViewAdapter adapter;
     public final View space;
 
-    public GroupViewHolder(View itemView) {
-        super(itemView);
+    public GroupViewHolder(View itemView, RequestSender sender) {
+        super(itemView,sender);
         if (BuildConfig.WEAR_APP) {
             childRecycler = null;
             adapter = null;
         } else {
             childRecycler = itemView.findViewById(R.id.childRecycler);
-            adapter = new ViewAdapter.ChildViewAdapter();
+            adapter = new ViewAdapter.ChildViewAdapter(sender);
             childRecycler.setAdapter(adapter);
         }
         space = itemView.findViewById(R.id.spacer);

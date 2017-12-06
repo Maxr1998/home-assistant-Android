@@ -1,4 +1,4 @@
-package io.homeassistant.android.api.requests;
+package io.homeassistant.android.api.websocket.requests;
 
 import com.afollestad.ason.Ason;
 

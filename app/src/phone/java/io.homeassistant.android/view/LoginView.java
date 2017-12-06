@@ -22,7 +22,8 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import io.homeassistant.android.BaseActivity;
+
+import io.homeassistant.android.ApiBase;
 import io.homeassistant.android.Common;
 import io.homeassistant.android.R;
 import io.homeassistant.android.Utils;
@@ -141,7 +142,7 @@ public class LoginView extends LinearLayout {
             imm.hideSoftInputFromWindow(getWindowToken(), 0);
             connectButton.setVisibility(INVISIBLE);
             progress.setVisibility(VISIBLE);
-            ((BaseActivity) getContext()).attemptLogin();
+            ((ApiBase) getContext()).attemptLogin();
         });
         connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
 

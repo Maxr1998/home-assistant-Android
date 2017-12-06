@@ -1,4 +1,4 @@
-package io.homeassistant.android.api.icons;
+package io.homeassistant.android.api;
 
 import android.support.annotation.Nullable;
 

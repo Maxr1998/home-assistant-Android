@@ -1,4 +1,4 @@
-package io.homeassistant.android.api.icons;
+package io.homeassistant.android.api;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
@@ -16,8 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.homeassistant.android.Utils;
-import io.homeassistant.android.api.Attribute;
-import io.homeassistant.android.api.results.Entity;
+import io.homeassistant.android.api.websocket.results.Entity;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;

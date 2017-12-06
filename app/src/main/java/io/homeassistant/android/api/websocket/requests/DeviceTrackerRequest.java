@@ -1,4 +1,4 @@
-package io.homeassistant.android.api.requests;
+package io.homeassistant.android.api.websocket.requests;
 
 public class DeviceTrackerRequest extends ServiceRequest {
     public DeviceTrackerRequest(String id, double latitude, double longitude, int accuracy, int batteryLevel) {

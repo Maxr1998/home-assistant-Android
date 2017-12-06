@@ -1,6 +1,6 @@
-package io.homeassistant.android.api.requests;
+package io.homeassistant.android.api.websocket.requests;
 
-import io.homeassistant.android.api.results.Entity;
+import io.homeassistant.android.api.websocket.results.Entity;
 
 import static io.homeassistant.android.api.Domain.LOCK;
 

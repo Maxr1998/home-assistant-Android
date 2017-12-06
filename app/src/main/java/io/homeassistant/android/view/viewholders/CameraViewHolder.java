@@ -4,15 +4,15 @@ import android.view.View;
 import android.widget.ImageView;
 
 import io.homeassistant.android.R;
-import io.homeassistant.android.api.icons.ImageUtils;
+import io.homeassistant.android.api.ImageUtils;
 
 
 public class CameraViewHolder extends TextViewHolder {
 
     private final ImageView cameraView;
 
-    public CameraViewHolder(View itemView) {
-        super(itemView);
+    public CameraViewHolder(View itemView, RequestSender sender) {
+        super(itemView,sender);
         cameraView = (ImageView) itemView.findViewById(R.id.camera_view);
     }
 

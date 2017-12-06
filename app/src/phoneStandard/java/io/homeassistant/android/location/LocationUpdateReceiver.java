@@ -5,11 +5,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,11 +23,9 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import io.homeassistant.android.Common;
-import io.homeassistant.android.HassService;
+import io.homeassistant.android.HassFactory;
+import io.homeassistant.android.LocationUpdateHandler;
 import io.homeassistant.android.Utils;
-import io.homeassistant.android.api.requests.DeviceTrackerRequest;
-
-import static io.homeassistant.android.HassService.EXTRA_ACTION_COMMAND;
 
 public class LocationUpdateReceiver extends BroadcastReceiver implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -38,6 +34,7 @@ public class LocationUpdateReceiver extends BroadcastReceiver implements GoogleA
     private static final String TAG = "LocationUpdater";
     private SharedPreferences prefs;
     private GoogleApiClient apiClient;
+
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -99,7 +96,7 @@ public class LocationUpdateReceiver extends BroadcastReceiver implements GoogleA
 
     private void logLocation(@NonNull Location location, @NonNull Context context) {
         Log.d(TAG, "Sending location");
-        String deviceName = Utils.getPrefs(context).getString(Common.PREF_LOCATION_DEVICE_NAME, null);
+        /*String deviceName = Utils.getPrefs(context).getString(Common.PREF_LOCATION_DEVICE_NAME, null);
         if (TextUtils.isEmpty(deviceName)) {
             return;
         }
@@ -117,6 +114,10 @@ public class LocationUpdateReceiver extends BroadcastReceiver implements GoogleA
 
         Intent serviceIntent = new Intent(context, HassService.class);
         serviceIntent.putExtra(EXTRA_ACTION_COMMAND, trakerMessage.toAson().toString());
-        context.startService(serviceIntent);
+        context.startService(serviceIntent);*/
+
+        LocationUpdateHandler handler = HassFactory.getLocationUpdateHandler(context);
+
+        handler.onLocation(location);
     }
 }

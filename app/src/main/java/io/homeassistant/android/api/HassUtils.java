@@ -13,8 +13,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import io.homeassistant.android.api.results.Entity;
-import io.homeassistant.android.api.results.EventData;
+import io.homeassistant.android.api.websocket.results.Entity;
+import io.homeassistant.android.api.websocket.results.EventData;
 
 import static io.homeassistant.android.api.Domain.AUTOMATION;
 import static io.homeassistant.android.api.Domain.BINARY_SENSOR;
@@ -125,7 +125,7 @@ public final class HassUtils {
 
     @Nullable
     public static String getOnState(@NonNull Entity e, boolean on) {
-        if (e.type == EntityType.SWITCH) {
+        if (e.type == Entity.TYPE_SWITCH) {
             if (e.getDomain().equals(LOCK)) {
                 return on ? "locked" : "unlocked";
             } else {

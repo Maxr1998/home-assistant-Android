@@ -3,11 +3,19 @@ apply plugin: 'com.jakewharton.hugo'
 apply plugin: 'kotlin-android'
 
 ext.languages = ["de", "ja", "nl"]
-ext.supportLibraryVersion = "26.0.1"
+ext.supportLibraryVersion = "26.1.0"
 ext.c_languages = ["de", "ja", "nl"]
 ext.crowdinKey = null
 
 android {
+
+    /*dexOptions {
+
+        jumboMode true
+        javaMaxHeapSize "4g"
+
+    }*/
+
     compileSdkVersion 26
     buildToolsVersion '26.0.2'
     defaultConfig {
@@ -22,6 +30,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         buildConfigField "boolean", "WEAR_APP", "false"
+        //multiDexEnabled true //important
     }
     buildTypes {
         release {
@@ -99,16 +108,27 @@ dependencies {
     implementation "com.android.support:design:$supportLibraryVersion"
     phoneImplementation "com.android.support:preference-v14:$supportLibraryVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibraryVersion"
+    implementation "android.arch.lifecycle:extensions:1.0.0"
+
     wearImplementation "com.android.support:wear:$supportLibraryVersion"
 
-    implementation "com.squareup.okhttp3:okhttp:3.7.0"
-    implementation("com.afollestad:ason:1.4.15") {
+    implementation "com.squareup.okhttp3:okhttp:3.8.0"
+    implementation("com.afollestad:ason:1.4.16") {
         exclude group: 'org.json', module: 'json'
         exclude group: 'com.intellij', module: 'annotations'
     }
+    implementation( 'com.afollestad:ason-retrofit:1.4.16'){
+        //exclude group: 'org.json', module: 'json'
+        exclude group: 'com.intellij', module: 'annotations'
+    }
 
-    standardImplementation "com.google.android.gms:play-services-wearable:11.2.0"
-    standardImplementation "com.google.android.gms:play-services-location:11.2.0"
+    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
+
+    implementation 'com.facebook.stetho:stetho:1.4.2'
+    implementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
+
+    standardImplementation "com.google.android.gms:play-services-wearable:11.6.2"
+    standardImplementation "com.google.android.gms:play-services-location:11.6.2"
     fdroidImplementation "com.mapzen.android:lost:2.2.0"
 
     testImplementation "junit:junit:4.12"
