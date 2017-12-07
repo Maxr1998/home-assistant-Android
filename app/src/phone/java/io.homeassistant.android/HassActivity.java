@@ -83,7 +83,7 @@ public class HassActivity extends AppCompatActivity implements ApiBase {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_hass);
 
-        HassViewModelFactory hassViewModelFactory = HassFactory.getHassViewModelFactory(this);
+        HassViewModelFactory hassViewModelFactory = PhoneInjector.getHassViewModelFactory(this);
         model = ViewModelProviders.of(this, hassViewModelFactory).get(HassViewModel.class);
 
         Toolbar t = findViewById(R.id.toolbar);

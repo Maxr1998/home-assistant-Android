@@ -23,7 +23,7 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 
 import io.homeassistant.android.Common;
-import io.homeassistant.android.HassFactory;
+import io.homeassistant.android.ApiInjector;
 import io.homeassistant.android.LocationUpdateHandler;
 import io.homeassistant.android.Utils;
 
@@ -116,7 +116,7 @@ public class LocationUpdateReceiver extends BroadcastReceiver implements GoogleA
         serviceIntent.putExtra(EXTRA_ACTION_COMMAND, trakerMessage.toAson().toString());
         context.startService(serviceIntent);*/
 
-        LocationUpdateHandler handler = HassFactory.getLocationUpdateHandler(context);
+        LocationUpdateHandler handler = ApiInjector.getLocationUpdateHandler(context);
 
         handler.onLocation(location);
     }

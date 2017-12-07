@@ -16,7 +16,7 @@ import retrofit2.Retrofit;
  * Created by Nicolas on 2017-11-23.
  */
 
-public class HassFactory {
+public class ApiInjector {
 
     public static LocationUpdateHandler getLocationUpdateHandler(Context context) {
 
@@ -105,9 +105,6 @@ public class HassFactory {
         return hassApi;
     }
 
-    public static HassViewModelFactory getHassViewModelFactory(Context context)
-    {
-        return new HassViewModelFactory(getHassApi(context));
-    }
+
 
 }

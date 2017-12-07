@@ -66,7 +66,7 @@ public class HassViewModel extends ViewModel {
             public void onChanged(@Nullable RequestResult requestResult) {
                 data.removeObserver(this);
                 if(requestResult.success) {
-                    HassUtils.extractEntitiesFromStateResult(requestResult, entityMap);
+                    HassUtils.extractEntitiesFromStateResult(requestResult.result, entityMap);
                     entityMapData.postValue(entityMap);
                 }
             }
