@@ -2,6 +2,8 @@ package io.homeassistant.android;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -31,12 +33,16 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import java.util.List;
 import java.util.Map;
 
 import io.homeassistant.android.api.websocket.requests.HassRequest;
 import io.homeassistant.android.api.websocket.results.Entity;
+import io.homeassistant.android.api.websocket.results.RequestResult;
 import io.homeassistant.android.view.LoginView;
 import io.homeassistant.android.view.ViewAdapter;
+import io.homeassistant.android.view.adapter.EntityAdapter;
+import io.homeassistant.android.view.adapter.EntityList;
 import io.homeassistant.android.view.viewholders.BaseViewHolder;
 import io.homeassistant.android.wearable.WearableCredentialsSync;
 
@@ -67,12 +73,27 @@ public class HassActivity extends AppCompatActivity implements ApiBase {
     };
 
     private Handler communicationHandler = new Handler();
-    private ViewAdapter viewAdapter = new ViewAdapter(this, new BaseViewHolder.RequestSender() {
+    private EntityAdapter viewAdapter = new EntityAdapter(new BaseViewHolder.RequestSender() {
         @Override
-        public void send(HassRequest request, BaseViewHolder.RequestResultListener listener) {
-            // TODO
+        public void send(HassRequest request, final BaseViewHolder.RequestResultListener listener) {
+
+            LiveData<RequestResult> liveData = model.send(request);
+
+            if(listener!=null) {
+                Observer<RequestResult> observer = new Observer<RequestResult>() {
+                    @Override
+                    public void onChanged(@Nullable RequestResult requestResult) {
+                        liveData.removeObserver(this);
+                        listener.onResult(requestResult.success, requestResult.result);
+
+                    }
+                };
+
+                liveData.observe(HassActivity.this, observer);
+            }
+
         }
-    });
+    },  new RecyclerView.RecycledViewPool());
     private FrameLayout rootView;
     private CoordinatorLayout mainLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -257,9 +278,11 @@ public class HassActivity extends AppCompatActivity implements ApiBase {
 
 
 
-    protected void onUpdateStates(Map<String, Entity> entityMap) {
+    protected void onUpdateStates(Map<String, Entity> entities) {
         Log.d(TAG,"onUpdateStates");
-        viewAdapter.updateEntities(entityMap);
+
+        viewAdapter.setEntities(EntityList.getTopLevelEntities(entities));
+        //viewAdapter.updateEntities(entityMap);
         swipeRefreshLayout.setRefreshing(false);
     }
 }

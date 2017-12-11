@@ -1,28 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    tools:ignore="ContentDescription">
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+    >
 
-    <TextView
-        style="@style/ListItemText"
-        tools:text="Cover Name" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:tools="http://schemas.android.com/tools"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  tools:ignore="ContentDescription">
 
-    <ImageButton
-        android:id="@+id/cover_up"
-        style="@style/ListItemWidget.Cover"
-        android:src="@drawable/ic_arrow_upward_24dp" />
+        <TextView
+            style="@style/ListItemText"
+            tools:text="Cover Name"/>
 
-    <ImageButton
-        android:id="@+id/cover_stop"
-        style="@style/ListItemWidget.Cover"
-        android:src="@drawable/ic_stop_24dp" />
+        <ImageButton
+            android:id="@+id/cover_up"
+            style="@style/ListItemWidget.Cover"
+            android:src="@drawable/ic_arrow_upward_24dp"/>
 
-    <ImageButton
-        android:id="@+id/cover_down"
-        style="@style/ListItemWidget.Cover"
-        android:layout_marginEnd="@dimen/activity_horizontal_margin"
-        android:src="@drawable/ic_arrow_downward_24dp" />
+        <ImageButton
+            android:id="@+id/cover_stop"
+            style="@style/ListItemWidget.Cover"
+            android:src="@drawable/ic_stop_24dp"/>
+
+        <ImageButton
+            android:id="@+id/cover_down"
+            style="@style/ListItemWidget.Cover"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:src="@drawable/ic_arrow_downward_24dp"/>
+    </LinearLayout>
+
+    <include layout="@layout/include_spacer"/>
 </LinearLayout>

@@ -12,6 +12,7 @@ import java.util.Map;
 
 import io.homeassistant.android.api.websocket.HassWebSockerApi;
 import io.homeassistant.android.api.HassUtils;
+import io.homeassistant.android.api.websocket.requests.HassRequest;
 import io.homeassistant.android.api.websocket.requests.StatesRequest;
 import io.homeassistant.android.api.websocket.results.Entity;
 import io.homeassistant.android.api.websocket.results.EventResult;
@@ -96,4 +97,7 @@ public class HassViewModel extends ViewModel {
         return hassApi.getAuthStatus();
     }
 
+    public LiveData<RequestResult> send(HassRequest request) {
+        return hassApi.send(request);
+    }
 }

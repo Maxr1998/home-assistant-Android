@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
 
-    <TextView style="@style/ListItemText" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/value"
-        style="@style/ListItemWidget"
-        android:paddingBottom="@dimen/item_padding"
-        android:paddingEnd="@dimen/item_padding"
-        android:paddingStart="@dimen/item_padding"
-        android:paddingTop="@dimen/item_padding"
-        android:textAppearance="@style/ListItemTextAppearance" />
+        <TextView style="@style/ListItemText"/>
+
+        <TextView
+            android:id="@+id/value"
+            style="@style/ListItemWidget"
+            android:paddingBottom="@dimen/item_padding"
+            android:paddingEnd="@dimen/item_padding"
+            android:paddingStart="@dimen/item_padding"
+            android:paddingTop="@dimen/item_padding"
+            android:textAppearance="@style/ListItemTextAppearance"/>
+    </LinearLayout>
+
+    <include layout="@layout/include_spacer"/>
 </LinearLayout>

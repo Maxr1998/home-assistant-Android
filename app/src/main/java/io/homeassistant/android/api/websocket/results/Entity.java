@@ -2,6 +2,7 @@ package io.homeassistant.android.api.websocket.results;
 
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.afollestad.ason.Ason;
 import com.afollestad.ason.AsonIgnore;
@@ -9,6 +10,9 @@ import com.afollestad.ason.AsonName;
 
 
 import java.lang.annotation.Retention;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import io.homeassistant.android.api.Attribute;
 
@@ -33,6 +37,7 @@ import static io.homeassistant.android.api.Domain.SWITCH;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 public class Entity implements Comparable<Entity> {
+
     //@AsonIgnore
     //private final List<WeakReference<BaseViewHolder>> observers = new ArrayList<>();
 
@@ -61,7 +66,12 @@ public class Entity implements Comparable<Entity> {
 
     @AsonIgnore
     //public EntityType type = EntityType.BASE;
-    public @Type int type;
+    private @Type int type;
+
+    public @Type int getType()
+    {
+        return type;
+    }
 
     @AsonName(name = Attribute.ENTITY_ID)
     public String id;
@@ -142,6 +152,34 @@ public class Entity implements Comparable<Entity> {
                     type = TYPE_TEXT;
                 }
         }
+    }
+
+    public @Nullable  List<String> getGroupChildren()  {
+        if( type != TYPE_GROUP)
+            return null;
+
+        return attributes.getList(Attribute.ENTITY_ID, String.class);
+    }
+
+    public @Nullable List<Entity> getGroupChildren(Map<String,Entity> allEntities) throws Exception {
+        List<String> ids = getGroupChildren();
+        if(ids==null)
+            return null;
+
+        List<Entity> entities = new ArrayList<>();
+        for(String id : ids)
+        {
+            Entity e = allEntities.get(id);
+            if(e!=null)
+                entities.add(e);
+        }
+
+        return entities;
+    }
+
+    public boolean getBoolAttribute(String name, boolean defaultValue)
+    {
+        return attributes.getBool(name,defaultValue);
     }
 
     /*public void registerObserver(BaseViewHolder observer) {

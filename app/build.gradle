@@ -127,6 +127,8 @@ dependencies {
     implementation 'com.facebook.stetho:stetho:1.4.2'
     implementation 'com.facebook.stetho:stetho-okhttp3:1.4.2'
 
+    //implementation 'com.hannesdorfmann:adapterdelegates3:3.0.1'
+
     standardImplementation "com.google.android.gms:play-services-wearable:11.6.2"
     standardImplementation "com.google.android.gms:play-services-location:11.6.2"
     fdroidImplementation "com.mapzen.android:lost:2.2.0"

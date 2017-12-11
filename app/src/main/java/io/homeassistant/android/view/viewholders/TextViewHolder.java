@@ -1,6 +1,7 @@
 package io.homeassistant.android.view.viewholders;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ public class TextViewHolder extends BaseViewHolder {
         name.setText(entity.getFriendlyName());
         name.setCompoundDrawablePadding(name.getResources().getDimensionPixelSize(R.dimen.icon_padding));
         name.setCompoundDrawablesRelative(null, null, null, null);
-        if (entity.type != Entity.TYPE_GROUP && entity.type != Entity.TYPE_CAMERA) {
+        if (entity.getType() != Entity.TYPE_GROUP && entity.getType() != Entity.TYPE_CAMERA) {
             try {
                 ImageUtils.getInstance(name.getContext()).loadEntityDrawable(name.getContext(), entity, true, (drawable, async) -> {
                     if (drawable != null)
@@ -37,7 +38,7 @@ public class TextViewHolder extends BaseViewHolder {
                     else name.setCompoundDrawablesRelative(drawable, null, null, null);
                 });
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.e("TextViewHolder","Error",ex);
             }
         }
     }

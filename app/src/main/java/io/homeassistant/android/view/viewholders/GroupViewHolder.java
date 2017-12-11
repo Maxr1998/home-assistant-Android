@@ -1,28 +1,56 @@
 package io.homeassistant.android.view.viewholders;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+
+import java.util.List;
 
 import io.homeassistant.android.BuildConfig;
 import io.homeassistant.android.R;
-import io.homeassistant.android.view.ViewAdapter;
+import io.homeassistant.android.api.websocket.results.Entity;
+import io.homeassistant.android.view.adapter.EntityAdapter;
+import io.homeassistant.android.view.adapter.EntityList;
 
 public class GroupViewHolder extends TextViewHolder {
 
-    public final RecyclerView childRecycler;
-    public final ViewAdapter.ChildViewAdapter adapter;
-    public final View space;
+    final static String TAG = GroupViewHolder.class.getSimpleName();
+    private final RecyclerView childRecycler;
+    private final EntityAdapter adapter;
+    //private final View space;
 
-    public GroupViewHolder(View itemView, RequestSender sender) {
+    public GroupViewHolder(View itemView, RecyclerView.RecycledViewPool pool, RequestSender sender) {
         super(itemView,sender);
         if (BuildConfig.WEAR_APP) {
             childRecycler = null;
             adapter = null;
         } else {
             childRecycler = itemView.findViewById(R.id.childRecycler);
-            adapter = new ViewAdapter.ChildViewAdapter(sender);
+            childRecycler.setRecycledViewPool(pool);
+            adapter = new EntityAdapter(sender, pool);
+            adapter.setIsGroup(true);
             childRecycler.setAdapter(adapter);
         }
-        space = itemView.findViewById(R.id.spacer);
+
+    }
+
+    @Override
+    protected void updateViews() {
+        super.updateViews();
+
+        // Get the child views
+        try {
+            List<Entity> children = entity.getGroupChildren(allEntities);
+
+            EntityList list = new EntityList(children,allEntities);
+            adapter.setEntities(list);
+
+        } catch (Exception e) {
+            Log.e(TAG,"Group holder is not holding a group.");
+        }
+
+        // TODO reinstate this behaviour
+        //holder.space.setVisibility(position >= getItemCount() - holder.itemView.getResources().getInteger(R.integer.view_columns) ? View.GONE : View.VISIBLE);*/
+
     }
 }

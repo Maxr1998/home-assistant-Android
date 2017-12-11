@@ -1,19 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/camera_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter" />
 
-    <TextView
-        style="@style/ListItemText"
-        android:layout_width="match_parent"
-        android:layout_alignParentBottom="true"
-        android:background="#54000000"
-        android:textColor="@android:color/white" />
-</RelativeLayout>
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/camera_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitCenter"/>
+
+        <TextView
+            style="@style/ListItemText"
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
+            android:background="#54000000"
+            android:textColor="@android:color/white"/>
+    </RelativeLayout>
+
+    <include layout="@layout/include_spacer"/>
+</LinearLayout>

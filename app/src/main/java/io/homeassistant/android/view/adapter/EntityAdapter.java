@@ -1,20 +1,12 @@
-package io.homeassistant.android.view;
+package io.homeassistant.android.view.adapter;
 
-import android.content.Context;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
 import io.homeassistant.android.R;
-import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.websocket.results.Entity;
 import io.homeassistant.android.view.viewholders.BaseViewHolder;
 import io.homeassistant.android.view.viewholders.CameraViewHolder;
@@ -27,32 +19,43 @@ import io.homeassistant.android.view.viewholders.SensorViewHolder;
 import io.homeassistant.android.view.viewholders.SwitchViewHolder;
 import io.homeassistant.android.view.viewholders.TextViewHolder;
 
+/**
+ * Created by Nicolas on 2017-12-06.
+ */
 
-public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
+public class EntityAdapter extends RecyclerView.Adapter<BaseViewHolder> {
 
-    public final RecyclerView.RecycledViewPool recycledViewPool = new RecyclerView.RecycledViewPool();
-    private final Context context;
-    private final List<Pair<Entity, List<Entity>>> entities;
+    private EntityList entities;
     private final BaseViewHolder.RequestSender sender;
-
-    public ViewAdapter(Context c, BaseViewHolder.RequestSender sender) {
-        context = c;
+    // todo track the recycled view pool for group view
+    public final RecyclerView.RecycledViewPool recycledViewPool;
+    private boolean isGroup=false;
+    public EntityAdapter(BaseViewHolder.RequestSender sender, RecyclerView.RecycledViewPool recycledViewPool) {
         this.sender = sender;
-        entities = new ArrayList<>();
+        this.recycledViewPool = recycledViewPool;
     }
 
-    private static BaseViewHolder createViewHolder(@Entity.Type int type,
-                                                                 LayoutInflater inflater,
-                                                                 ViewGroup parent,
-                                                                 BaseViewHolder.RequestSender sender
-    ) {
+    public void setIsGroup(boolean b)
+    {
+        isGroup=b;
+    }
 
+    @Override
+    public int getItemViewType(int position) {
+        return entities.get(position).getType();
+    }
 
+    public void setEntities(EntityList entities)
+    {
+        this.entities = entities;
+        notifyDataSetChanged();
+    }
 
-
+    @Override
+    public BaseViewHolder onCreateViewHolder(ViewGroup parent, @ Entity.Type int viewType) {
         BaseViewHolder viewHolder=null;
         @LayoutRes int layout=-1;
-        switch (type) {
+        switch (viewType) {
 
             case Entity.TYPE_BASE:
                 layout = R.layout.view_base;
@@ -86,11 +89,9 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                 break;
         }
 
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(layout, parent, false);
 
-
-        View itemView = inflater.inflate(layout, parent, false);
-
-        switch (type) {
+        switch (viewType) {
 
             case Entity.TYPE_BASE:
                 viewHolder = new BaseViewHolder(itemView,sender);
@@ -105,7 +106,7 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
                 viewHolder = new CoverViewHolder(itemView,sender);
                 break;
             case Entity.TYPE_GROUP:
-                //viewHolder = new GroupViewHolder(itemView,sender);
+                viewHolder = new GroupViewHolder(itemView,this.recycledViewPool,sender);
                 break;
             case Entity.TYPE_INPUT_SELECT:
                 viewHolder = new InputSelectViewHolder(itemView,sender);
@@ -127,74 +128,15 @@ public class ViewAdapter extends RecyclerView.Adapter<GroupViewHolder> {
         return viewHolder;
     }
 
-    public void updateEntities(Map<String, Entity> entityMap) {
-        HassUtils.extractGroups(entityMap, entities, false);
-        notifyDataSetChanged();
-    }
-
     @Override
-    public GroupViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // Only group items
+    public void onBindViewHolder(BaseViewHolder holder, int position) {
 
-        /*View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_group, parent, false);
+        holder.bind(entities.get(position), entities.getAllEntities(), isGroup);
 
-        GroupViewHolder holder = new GroupViewHolder(itemView,sender);
-        holder.childRecycler.setRecycledViewPool(recycledViewPool);
-        return holder;*/
-        return null;
-    }
-
-    @Override
-    public void onBindViewHolder(GroupViewHolder holder, int position) {
-        /*holder.bind(entities.get(position).first, null);
-        holder.adapter.updateChildren(entities.get(position).second);
-        holder.space.setVisibility(position >= getItemCount() - holder.itemView.getResources().getInteger(R.integer.view_columns) ? View.GONE : View.VISIBLE);*/
-
-
-    }
-
-    @Override
-    public int getItemViewType(int position) {
-        return Entity.TYPE_GROUP;
     }
 
     @Override
     public int getItemCount() {
-        return entities.size();
-    }
-
-    public static class ChildViewAdapter extends RecyclerView.Adapter<BaseViewHolder> {
-
-        private List<Entity> children = Collections.emptyList();
-        private final BaseViewHolder.RequestSender sender;
-
-        public ChildViewAdapter(BaseViewHolder.RequestSender sender) {
-            this.sender = sender;
-        }
-
-        void updateChildren(List<Entity> c) {
-            children = c;
-            notifyDataSetChanged();
-        }
-
-        @Override
-        public BaseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return ViewAdapter.createViewHolder(viewType, LayoutInflater.from(parent.getContext()), parent,sender);
-        }
-
-        @Override
-        public void onBindViewHolder(BaseViewHolder holder, int position) {
-            holder.bind(children.get(position),null,false);
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return children.get(position).getType();
-        }
-
-        @Override
-        public int getItemCount() {
-            return children.size();
-        }
+        return entities != null ? entities.size():0;
     }
 }

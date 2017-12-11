@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <RelativeLayout
+        android:id="@+id/spacer"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:background="?windowBackground">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/card_shadow_bottom" />
+
+        <View
+            android:id="@+id/top_shadow"
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/card_shadow_top" />
+    </RelativeLayout>
+
+</merge >

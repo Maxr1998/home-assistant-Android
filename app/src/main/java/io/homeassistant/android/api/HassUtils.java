@@ -10,6 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,6 +37,30 @@ import static io.homeassistant.android.api.Domain.SWITCH;
 public final class HassUtils {
 
     private HassUtils() {
+    }
+
+    public static @NonNull Map<String,Entity> createEntityMap(@NonNull List<Entity> entities)
+    {
+        Map<String,Entity> map = new HashMap<>();
+        for( Entity e : entities)
+        {
+            map.put(e.id,e);
+        }
+        return map;
+    }
+
+    public static boolean extractEntitiesFromStateResult(@Nullable Object result, @NonNull List<Entity> entities) {
+        if (result != null && result.getClass().isArray()) {
+            // Clear map before adding new content
+            entities.clear();
+            for (Object o : (Object[]) result) {
+                Entity entity = Ason.deserialize((Ason) o, Entity.class);
+                entity.applyType();
+                entities.add(entity);
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -125,7 +150,7 @@ public final class HassUtils {
 
     @Nullable
     public static String getOnState(@NonNull Entity e, boolean on) {
-        if (e.type == Entity.TYPE_SWITCH) {
+        if (e.getType() == Entity.TYPE_SWITCH) {
             if (e.getDomain().equals(LOCK)) {
                 return on ? "locked" : "unlocked";
             } else {
