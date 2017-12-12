@@ -1,5 +1,7 @@
 package io.homeassistant.android.select;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,10 +14,15 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 
+import io.homeassistant.android.HassViewModel;
+import io.homeassistant.android.HassViewModelFactory;
+import io.homeassistant.android.PhoneInjector;
 import io.homeassistant.android.R;
 import io.homeassistant.android.api.websocket.requests.ToggleRequest;
 import io.homeassistant.android.api.websocket.results.Entity;
@@ -35,6 +42,7 @@ public class SelectEntityActivity extends AppCompatActivity {
 
     private RecyclerView selectShortcutItemRecycler;
     private Spinner selectActionSpinner;
+    private SelectViewModel model;
 
     private SelectEntityViewAdapter viewAdapter = new SelectEntityViewAdapter(false);
 
@@ -54,6 +62,23 @@ public class SelectEntityActivity extends AppCompatActivity {
             selectActionSpinner = (Spinner) findViewById(R.id.spinner_set_shortcut_type);
             ArrayAdapter adapter = new ArrayAdapter<>(this, android.support.design.R.layout.support_simple_spinner_dropdown_item, new String[]{"On", "Off"});
             selectActionSpinner.setAdapter(adapter);
+
+            SelectViewModelFactory factory = PhoneInjector.getSelectiewModelFactory(this);
+            model = ViewModelProviders.of(this, factory).get(SelectViewModel.class);
+
+            model.getEntityList().observe(this, entities -> updateStates(entities));
+
+            model.getStatus().observe(this, sucess -> {
+                if(!sucess)
+                {
+                    loginFailed();
+                }
+            });
+
+            if(savedInstanceState==null)
+            {
+                model.load();
+            }
 
             findViewById(R.id.button_add_shortcut).setOnClickListener(v -> {
                 Entity selected = viewAdapter.getSelected()[0];
@@ -84,21 +109,23 @@ public class SelectEntityActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
     }
 
-    public void loginSuccess() {
+    private void loginSuccess() {
     }
 
 
-    public void loginFailed(int reason) {
+    private void loginFailed() {
         finish();
         Toast.makeText(this, R.string.login_error, Toast.LENGTH_LONG).show();
     }
 
 
-    public void updateStates(Map<String, Entity> entityMap) {
-        for (Map.Entry<String, Entity> s : entityMap.entrySet()) {
-            Entity e = s.getValue();
+    private void updateStates(List<Entity> entities) {
+        List<Entity> filteredEntitie = new ArrayList<>();
+
+        for (Entity e : entities) {
             switch (e.getDomain()) {
                 case AUTOMATION:
                 case INPUT_BOOLEAN:
@@ -106,11 +133,11 @@ public class SelectEntityActivity extends AppCompatActivity {
                 case SCENE:
                 case SWITCH:
                     if (!e.isHidden())
-                        viewAdapter.entities.add(e);
+                        filteredEntitie.add(e);
                     break;
             }
         }
-        Collections.sort(viewAdapter.entities);
-        viewAdapter.notifyDataSetChanged();
+
+        viewAdapter.setEntities(filteredEntitie);
     }
 }

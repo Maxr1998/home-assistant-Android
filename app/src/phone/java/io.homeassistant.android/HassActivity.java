@@ -121,7 +121,7 @@ public class HassActivity extends AppCompatActivity implements ApiBase {
         swipeRefreshLayout.setColorSchemeResources(R.color.accent);
         swipeRefreshLayout.setOnRefreshListener(() -> {
             if (model != null) {
-                model.loadStates();
+                model.load();
             }
         });
         swipeRefreshLayout.setRefreshing(true);
@@ -243,7 +243,7 @@ public class HassActivity extends AppCompatActivity implements ApiBase {
         }
         WearableCredentialsSync.transferCredentials(this);
 
-        model.loadStates();
+        model.load();
     }
 
 

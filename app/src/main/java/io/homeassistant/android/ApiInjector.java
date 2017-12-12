@@ -5,11 +5,15 @@ import android.content.Context;
 import com.afollestad.asonretrofit.AsonConverterFactory;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import io.homeassistant.android.api.rest.HassRestService;
 import io.homeassistant.android.api.websocket.HassWebSockerApi;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 
 /**
@@ -22,7 +26,7 @@ public class ApiInjector {
 
         String url = getUrl(context);
         String deviceName = getDeviceName(context);
-        HassRestService api = getRestApi(url + "/api");
+        HassRestService api = getRestApi(context,url);
 
         return new LocationUpdateHandler(api,deviceName,context);
     }
@@ -85,13 +89,56 @@ public class ApiInjector {
     }
 
 
-    public static HassRestService getRestApi(String baseUrl)
+    public static OkHttpClient getOkHttpClientWithAuth(String password)
+    {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .addNetworkInterceptor(new StethoInterceptor())
+                    .addInterceptor(new Interceptor() {
+                        @Override
+                        public Response intercept(Interceptor.Chain chain) throws IOException {
+                            Request original = chain.request();
+
+                            // Request customization: add request headers
+                            Request.Builder requestBuilder = original.newBuilder()
+                                    .header("x-ha-access", password); // <-- this is the important line
+
+                            Request request = requestBuilder.build();
+                            return chain.proceed(request);
+                        }
+                    })
+                    .build();
+
+
+        return okHttpClient;
+    }
+
+    private static Retrofit getRestApiRetrofit(String baseUrl, String password)
     {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(baseUrl + "/api/")
                 .addConverterFactory(new AsonConverterFactory())
-                .client(getOkHttpClient())
+                .client(getOkHttpClientWithAuth(password))
                 .build();
+        return retrofit;
+    }
+
+    public static HassRestService getRestApi(Context context)
+    {
+        Retrofit retrofit = getRestApiRetrofit(getUrl(context),getPassword(context));
+
+        return retrofit.create(HassRestService.class);
+    }
+
+    public static HassRestService getRestApi(Context context,String baseUrl)
+    {
+        Retrofit retrofit = getRestApiRetrofit(baseUrl,getPassword(context));
+        return retrofit.create(HassRestService.class);
+    }
+
+    public static HassRestService getRestApi(String baseUrl, String password)
+    {
+        Retrofit retrofit = getRestApiRetrofit(baseUrl,password);
         return retrofit.create(HassRestService.class);
     }
 

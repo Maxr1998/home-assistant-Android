@@ -10,10 +10,12 @@ import android.util.Log;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.homeassistant.android.api.Events;
 import io.homeassistant.android.api.websocket.HassWebSockerApi;
 import io.homeassistant.android.api.HassUtils;
 import io.homeassistant.android.api.websocket.requests.HassRequest;
 import io.homeassistant.android.api.websocket.requests.StatesRequest;
+import io.homeassistant.android.api.websocket.requests.SubscribeEventsRequest;
 import io.homeassistant.android.api.websocket.results.Entity;
 import io.homeassistant.android.api.websocket.results.EventResult;
 import io.homeassistant.android.api.websocket.results.RequestResult;
@@ -40,6 +42,7 @@ public class HassViewModel extends ViewModel {
                 if(entity!=null)
                 {
                     updatedEntityData.postValue(entity);
+                    entityMapData.postValue(entityMap);
                 }
             }
         });
@@ -48,16 +51,18 @@ public class HassViewModel extends ViewModel {
     public void connect(String url, String password)
     {
         if (!url.isEmpty() && !password.isEmpty()) {
+            Log.d(TAG,"connecting");
             hassApi.connect(url, password);
         }
     }
 
     public void disconnect()
     {
+        Log.d(TAG,"disconnecting");
         hassApi.disconnect();
     }
 
-    public void loadStates()
+    public void load()
     {
         Log.d(TAG,"Loading states");
         final LiveData<RequestResult> data = hassApi.send(new StatesRequest());
@@ -69,12 +74,16 @@ public class HassViewModel extends ViewModel {
                 if(requestResult.success) {
                     HassUtils.extractEntitiesFromStateResult(requestResult.result, entityMap);
                     entityMapData.postValue(entityMap);
+
+                    hassApi.send(new SubscribeEventsRequest(Events.STATE_CHANGED));
                 }
             }
         };
 
         data.observeForever(observer);
     }
+
+
 
     public LiveData<Map<String, Entity>> getEntityMap()
     {

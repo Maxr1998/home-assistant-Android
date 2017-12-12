@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.CompoundButton;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,7 @@ import io.homeassistant.android.api.websocket.results.Entity;
 public class SelectEntityViewAdapter extends RecyclerView.Adapter<SelectEntityViewAdapter.ItemViewHolder> {
 
     private final boolean allowMultiSelect;
-    public List<Entity> entities = new ArrayList<>();
+    private List<Entity> entities = new ArrayList<>();
     private Set<Integer> selectedPositions = new HashSet<>();
 
 
@@ -66,6 +67,12 @@ public class SelectEntityViewAdapter extends RecyclerView.Adapter<SelectEntityVi
     @Override
     public int getItemCount() {
         return entities.size();
+    }
+
+    public void setEntities(List<Entity> entities) {
+        this.entities = entities;
+        Collections.sort(this.entities);
+        notifyDataSetChanged();
     }
 
     static class ItemViewHolder extends RecyclerView.ViewHolder {
