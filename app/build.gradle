@@ -9,7 +9,7 @@ ext.crowdinKey = null
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.3'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "io.homeassistant.android"
         minSdkVersion 21
@@ -107,8 +107,8 @@ dependencies {
         exclude group: 'com.intellij', module: 'annotations'
     }
 
-    standardImplementation "com.google.android.gms:play-services-wearable:11.6.2"
-    standardImplementation "com.google.android.gms:play-services-location:11.6.2"
+    standardImplementation "com.google.android.gms:play-services-wearable:11.8.0"
+    standardImplementation "com.google.android.gms:play-services-location:11.8.0"
     fdroidImplementation "com.mapzen.android:lost:2.2.0"
 
     testImplementation "junit:junit:4.12"
