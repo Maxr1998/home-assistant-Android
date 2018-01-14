@@ -10,6 +10,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
@@ -18,7 +19,6 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -33,7 +33,7 @@ import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_SSL_M
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_WRONG_PASSWORD;
 
 
-public class LoginView extends LinearLayout {
+public class LoginView extends ConstraintLayout {
 
     private TextInputLayout urlInputLayout;
     private TextInputEditText urlInput;
