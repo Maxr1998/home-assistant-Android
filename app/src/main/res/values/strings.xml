@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Home Assistant</string>
+    <string name="app_name">HassDroid</string>
 
     <!-- Login screen -->
     <string name="hint_url">Home Assistant URL/IP</string>
