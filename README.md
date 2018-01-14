@@ -1,13 +1,11 @@
-home-assistant-Android
-======================
+HassDroid - a Home Assistant Client for Android
+===============================================
 
 [![Platform Android](https://img.shields.io/badge/Platform-Android-6ab344.svg?style=flat)](https://developer.android.com/)
 [![CircleCI](https://circleci.com/gh/Maxr1998/home-assistant-Android.svg?style=svg)](https://circleci.com/gh/Maxr1998/home-assistant-Android)
 [![GitHub issues](https://img.shields.io/github/issues/Maxr1998/home-assistant-Android.svg)](https://github.com/Maxr1998/home-assistant-Android/issues)
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/home-assistant-android/localized.svg)](https://crowdin.com/project/home-assistant-android)
 [![License GPLv3](https://img.shields.io/badge/license-GPLv3-red.svg?style=flat)](https://github.com/Maxr1998/home-assistant-Android/blob/master/LICENSE)
-[![Twitter](https://img.shields.io/twitter/url/https/twitter.com/home_assistant.svg?style=social)](https://twitter.com/home_assistant)
-
 
 ## Downloads
 [<img src="https://f-droid.org/badge/get-it-on.png"
@@ -28,6 +26,9 @@ Build in terminal with `./gradlew assembleRelease` or import into Android Studio
 
 - [Android support libraries](https://developer.android.com/topic/libraries/support-library/index.html): Used for a lot of classes, views, etc.
 - [Ason](https://github.com/afollestad/ason): A really awesome JSON library building on top of Android's integrated JSON classes.
+- Google Play services: Used for acquiring your location for the device_tracker feature and configuring the Wearable app.
+- [Mapzen Lost](https://mapzen.com/blog/lets-get-lost/): alternative location provider used in the F-Droid builds, replacing Google Play services.
+- JetBrains' Kotlin build tools and stdlib
 
 ### Networking
 
@@ -35,8 +36,7 @@ Build in terminal with `./gradlew assembleRelease` or import into Android Studio
 
 ## App signature
 
-Currently, the app is configured to be signed with my personal keys on my computer, but it will use debug keys if the signing config isn't found.
-Depending on future maintainance, there will be different keys used for this.
+The official releases are signed with my personal keys, but gradle will use debug keys if the signing config/keys aren't found.
 
 ## Contributing
 
