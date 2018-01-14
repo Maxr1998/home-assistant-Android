@@ -16,6 +16,10 @@ public final class Attribute {
     public static final String TEMPERATURE = "temperature";
     public static final String UNIT_OF_MEASUREMENT = "unit_of_measurement";
 
+    // MEDIA
+    public static final String MEDIA_TITLE = "media_title";
+    public static final String MEDIA_ARTIST = "media_artist";
+
     private Attribute() {
     }
 }

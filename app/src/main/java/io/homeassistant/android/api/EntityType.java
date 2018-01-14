@@ -9,6 +9,7 @@ import io.homeassistant.android.view.viewholders.ClimateViewHolder;
 import io.homeassistant.android.view.viewholders.CoverViewHolder;
 import io.homeassistant.android.view.viewholders.GroupViewHolder;
 import io.homeassistant.android.view.viewholders.InputSelectViewHolder;
+import io.homeassistant.android.view.viewholders.MediaPlayerViewHolder;
 import io.homeassistant.android.view.viewholders.SceneViewHolder;
 import io.homeassistant.android.view.viewholders.SensorViewHolder;
 import io.homeassistant.android.view.viewholders.SwitchViewHolder;
@@ -21,6 +22,7 @@ public enum EntityType {
     COVER(R.layout.view_cover, CoverViewHolder.class),
     GROUP(R.layout.view_group, GroupViewHolder.class),
     INPUT_SELECT(R.layout.view_input_select, InputSelectViewHolder.class),
+    MEDIA_PLAYER(R.layout.view_media_player, MediaPlayerViewHolder.class),
     SENSOR(R.layout.view_sensor, SensorViewHolder.class),
     SCENE(R.layout.view_scene, SceneViewHolder.class),
     SWITCH(R.layout.view_switch, SwitchViewHolder.class),

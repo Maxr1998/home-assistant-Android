@@ -28,6 +28,7 @@ import static io.homeassistant.android.api.Domain.INPUT_BOOLEAN;
 import static io.homeassistant.android.api.Domain.INPUT_SELECT;
 import static io.homeassistant.android.api.Domain.LIGHT;
 import static io.homeassistant.android.api.Domain.LOCK;
+import static io.homeassistant.android.api.Domain.MEDIA_PLAYER;
 import static io.homeassistant.android.api.Domain.SCENE;
 import static io.homeassistant.android.api.Domain.SCRIPT;
 import static io.homeassistant.android.api.Domain.SENSOR;
@@ -119,6 +120,20 @@ public final class HassUtils {
             return;
         }
 
+        /*
+        // Create additional group for media players
+        Entity mediaPlayersGroup = new Entity();
+        mediaPlayersGroup.id = GROUP + ".players";
+        mediaPlayersGroup.attributes = new Ason();
+        mediaPlayersGroup.applyType();
+        List<Entity> mediaPlayers = new ArrayList<>();
+        for (Entity entity : entityMap.values()) {
+            System.out.println(entity.id);
+            if (entity.getDomain().equals(MEDIA_PLAYER))
+                mediaPlayers.add(entity);
+        }
+        entities.add(new Pair<>(mediaPlayersGroup, mediaPlayers));*/
+
         // Sort groups according to their order number
         //noinspection Java8ListSort,ComparatorCombinators
         Collections.sort(entities, (o1, o2) -> o1.first.compareTo(o2.first));
@@ -199,7 +214,7 @@ public final class HassUtils {
             case LOCK:
                 icon = e.state != null && e.state.equals("unlocked") ? "mdi:lock-open" : "mdi:lock";
                 break;
-            case "media_player":
+            case MEDIA_PLAYER:
                 icon = e.state != null && !e.state.equals("off") && !e.state.equals("idle") ? "mdi:cast-connected" : "mdi:cast";
                 break;
             case "notify":

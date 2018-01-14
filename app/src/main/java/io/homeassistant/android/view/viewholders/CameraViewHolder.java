@@ -9,11 +9,11 @@ import io.homeassistant.android.api.icons.ImageUtils;
 
 public class CameraViewHolder extends TextViewHolder {
 
-    private final ImageView cameraView;
+    private final ImageView imageView;
 
     public CameraViewHolder(View itemView) {
         super(itemView);
-        cameraView = (ImageView) itemView.findViewById(R.id.camera_view);
+        imageView = itemView.findViewById(R.id.image_view);
     }
 
     @Override
@@ -21,8 +21,8 @@ public class CameraViewHolder extends TextViewHolder {
         super.updateViews();
         try {
             ImageUtils.getInstance(name.getContext()).loadEntityDrawable(name.getContext(), entity, false, (drawable, async) -> {
-                if (async) cameraView.post(() -> cameraView.setImageDrawable(drawable));
-                else cameraView.setImageDrawable(drawable);
+                if (async) imageView.post(() -> imageView.setImageDrawable(drawable));
+                else imageView.setImageDrawable(drawable);
             });
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -31,6 +31,8 @@
 
     <string name="button_scene_activate">activate</string>
     <string name="climate_current_temperature">Currently: %1$.1f %2$s</string>
+    <string name="media_player_byline_format">%1$s • <i>on %2$s</i></string>
+    <string name="media_player_stop_toast">Stopping playback…</string>
 
     <!-- Settings screen -->
     <string name="settings_name">Settings</string>

@@ -28,6 +28,7 @@ import static io.homeassistant.android.api.Domain.INPUT_BOOLEAN;
 import static io.homeassistant.android.api.Domain.INPUT_SELECT;
 import static io.homeassistant.android.api.Domain.LIGHT;
 import static io.homeassistant.android.api.Domain.LOCK;
+import static io.homeassistant.android.api.Domain.MEDIA_PLAYER;
 import static io.homeassistant.android.api.Domain.SCENE;
 import static io.homeassistant.android.api.Domain.SCRIPT;
 import static io.homeassistant.android.api.Domain.SENSOR;
@@ -110,6 +111,9 @@ public class Entity implements Comparable<Entity> {
                 break;
             case INPUT_SELECT:
                 type = EntityType.INPUT_SELECT;
+                break;
+            case MEDIA_PLAYER:
+                type = EntityType.MEDIA_PLAYER;
                 break;
             case SCENE:
             case SCRIPT:

@@ -2,7 +2,7 @@ package io.homeassistant.android.api.requests;
 
 import com.afollestad.ason.AsonName;
 
-public abstract class ServiceRequest extends HassRequest {
+public class ServiceRequest extends HassRequest {
     protected final String domain;
     protected final String service;
     @AsonName(name = "service_data")

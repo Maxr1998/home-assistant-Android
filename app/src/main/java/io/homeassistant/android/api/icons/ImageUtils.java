@@ -60,7 +60,7 @@ public final class ImageUtils {
                 tempIcon = new IconRecord(iconName, iconUrl);
             }
         } else if (pictureUrl != null) {
-            if (pictureUrl.startsWith("/local") || pictureUrl.startsWith("/api/camera_proxy")) {
+            if (pictureUrl.startsWith("/local/") || pictureUrl.startsWith("/api/")) {
                 pictureUrl = Utils.getUrl(context) + pictureUrl;
             }
             String pictureName = new URL(pictureUrl).getFile();

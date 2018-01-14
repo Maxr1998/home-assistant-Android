@@ -15,6 +15,7 @@ public final class Domain {
     public static final String INPUT_SELECT = "input_select";
     public static final String LIGHT = "light";
     public static final String LOCK = "lock";
+    public static final String MEDIA_PLAYER = "media_player";
     public static final String SCENE = "scene";
     public static final String SCRIPT = "script";
     public static final String SENSOR = "sensor";

@@ -10,6 +10,7 @@ import io.homeassistant.android.api.icons.ImageUtils;
 
 import static io.homeassistant.android.api.EntityType.CAMERA;
 import static io.homeassistant.android.api.EntityType.GROUP;
+import static io.homeassistant.android.api.EntityType.MEDIA_PLAYER;
 
 
 public class TextViewHolder extends BaseViewHolder {
@@ -19,7 +20,7 @@ public class TextViewHolder extends BaseViewHolder {
     @SuppressLint("ClickableViewAccessibility")
     public TextViewHolder(View itemView) {
         super(itemView);
-        name = (TextView) itemView.findViewById(R.id.name);
+        name = itemView.findViewById(R.id.name);
     }
 
     @Override
@@ -28,7 +29,7 @@ public class TextViewHolder extends BaseViewHolder {
         name.setText(entity.getFriendlyName());
         name.setCompoundDrawablePadding(name.getResources().getDimensionPixelSize(R.dimen.icon_padding));
         name.setCompoundDrawablesRelative(null, null, null, null);
-        if (entity.type != GROUP && entity.type != CAMERA) {
+        if (entity.type != GROUP && entity.type != CAMERA && entity.type != MEDIA_PLAYER) {
             try {
                 ImageUtils.getInstance(name.getContext()).loadEntityDrawable(name.getContext(), entity, true, (drawable, async) -> {
                     if (drawable != null)
