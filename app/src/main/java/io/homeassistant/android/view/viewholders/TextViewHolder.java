@@ -25,11 +25,11 @@ public class TextViewHolder extends BaseViewHolder {
 
     @Override
     protected void updateViews() {
-        HassUtils.applyDefaultIcon(entity);
+        if (entity.type == MEDIA_PLAYER)
+            return;
         name.setText(entity.getFriendlyName());
-        name.setCompoundDrawablePadding(name.getResources().getDimensionPixelSize(R.dimen.icon_padding));
-        name.setCompoundDrawablesRelative(null, null, null, null);
-        if (entity.type != GROUP && entity.type != CAMERA && entity.type != MEDIA_PLAYER) {
+        if (entity.type != GROUP && entity.type != CAMERA) {
+            HassUtils.applyDefaultIcon(entity);
             try {
                 ImageUtils.getInstance(name.getContext()).loadEntityDrawable(name.getContext(), entity, true, (drawable, async) -> {
                     if (drawable != null)

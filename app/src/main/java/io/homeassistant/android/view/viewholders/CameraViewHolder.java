@@ -20,12 +20,16 @@ public class CameraViewHolder extends TextViewHolder {
     protected void updateViews() {
         super.updateViews();
         try {
-            ImageUtils.getInstance(name.getContext()).loadEntityDrawable(name.getContext(), entity, false, (drawable, async) -> {
+            ImageUtils.getInstance(name.getContext()).loadEntityDrawable(name.getContext(), entity, allowCache(), (drawable, async) -> {
                 if (async) imageView.post(() -> imageView.setImageDrawable(drawable));
                 else imageView.setImageDrawable(drawable);
             });
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    protected boolean allowCache() {
+        return false;
     }
 }

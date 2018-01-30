@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,9 +64,7 @@ public final class ImageUtils {
             if (pictureUrl.startsWith("/local/") || pictureUrl.startsWith("/api/")) {
                 pictureUrl = Utils.getUrl(context) + pictureUrl;
             }
-            String pictureName = new URL(pictureUrl).getFile();
-            int extIndex = pictureName.lastIndexOf(".");
-            pictureName = pictureName.substring(pictureName.lastIndexOf("/") + 1, extIndex != -1 ? extIndex : pictureName.length());
+            String pictureName = "image_" + entity.getName();
             if (!pictureName.isEmpty()) {
                 tempIcon = new IconRecord(pictureName, pictureUrl);
             }
@@ -83,7 +80,7 @@ public final class ImageUtils {
             // Try to read from cache
             final Drawable cached = drawableCache.get(icon.name) != null ? drawableCache.get(icon.name).get() : null;
             if (cached != null) {
-                Log.d(TAG, "Cached " + tempIcon.name);
+                Log.d(TAG, "Loading " + icon.name + " from cache");
                 listener.onDrawableLoaded(cached, false);
                 return;
             }
@@ -92,7 +89,7 @@ public final class ImageUtils {
             if (iconFile.exists()) {
                 final Drawable drawable = Drawable.createFromPath(iconFile.getAbsolutePath());
                 if (drawable != null) {
-                    Log.d(TAG, "Stored " + tempIcon.name);
+                    Log.d(TAG, "Loading " + icon.name + " from file");
                     drawableCache.put(icon.name, new WeakReference<>(drawable));
                     listener.onDrawableLoaded(drawable, false);
                     return;
@@ -103,8 +100,8 @@ public final class ImageUtils {
         }
 
         // Download from server
-        Log.d(TAG, "Loading " + tempIcon.name + " from " + tempIcon.url);
-        Request request = new Request.Builder().url(tempIcon.url).build();
+        Log.d(TAG, "Loading " + icon.name + " from " + icon.url);
+        Request request = new Request.Builder().url(icon.url).build();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -120,9 +117,7 @@ public final class ImageUtils {
 
                 // Return drawable
                 Drawable drawable = Drawable.createFromPath(iconFile.getAbsolutePath());
-                if (useCache)
-                    drawableCache.put(icon.name, new WeakReference<>(drawable));
-
+                drawableCache.put(icon.name, new WeakReference<>(drawable));
                 listener.onDrawableLoaded(drawable, true);
             }
 

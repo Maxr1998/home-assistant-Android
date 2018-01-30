@@ -24,6 +24,7 @@
         <item name="android:paddingEnd">@dimen/item_padding</item>
         <item name="android:paddingStart">@dimen/activity_horizontal_margin</item>
         <item name="android:paddingTop">@dimen/item_padding</item>
+        <item name="android:drawablePadding">@dimen/icon_padding</item>
         <item name="android:textAppearance">@style/ListItemTextAppearance</item>
     </style>
 
