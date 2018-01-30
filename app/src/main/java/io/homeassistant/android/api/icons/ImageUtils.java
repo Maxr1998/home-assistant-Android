@@ -37,7 +37,9 @@ public final class ImageUtils {
     private final Map<String, WeakReference<Drawable>> drawableCache = new HashMap<>();
 
     private ImageUtils(Context c) {
-        iconDirectory = c.getFilesDir();
+        iconDirectory = new File(c.getCacheDir(), "icons");
+        //noinspection ResultOfMethodCallIgnored
+        iconDirectory.mkdir();
         materialDesignIcons = new MaterialDesignIconsUtils(iconDirectory, httpClient);
     }
 
