@@ -105,10 +105,10 @@ public final class HassUtils {
                 List<Entity> children = new ArrayList<>();
                 for (String childrenKey : entityIds) {
                     Entity child = entityMap.get(childrenKey);
-                    if (child == null) continue;
-                    if (!child.isHidden()) {
-                        children.add(child);
-                    }
+                    if (child == null || child.isHidden()) continue;
+                    if (child.type == EntityType.GROUP)
+                        child.type = child.attributes.getString(Attribute.CONTROL) == null ? EntityType.SWITCH : EntityType.TEXT;
+                    children.add(child);
                 }
                 entities.add(new Pair<>(entity, children));
             }

@@ -3,6 +3,7 @@ package io.homeassistant.android.api;
 public final class Attribute {
 
     public static final String BRIGHTNESS = "brightness";
+    public static final String CONTROL = "control";
     public static final String CURRENT_TEMPERATURE = "current_temperature";
     public static final String ENTITY_ID = "entity_id";
     public static final String ENTITY_PICTURE = "entity_picture";
