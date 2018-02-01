@@ -16,6 +16,7 @@ import java.util.Map;
 
 import io.homeassistant.android.Utils;
 import io.homeassistant.android.api.Attribute;
+import io.homeassistant.android.api.EntityType;
 import io.homeassistant.android.api.results.Entity;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -33,7 +34,8 @@ public final class ImageUtils {
     private final OkHttpClient httpClient = new OkHttpClient();
     private final MaterialDesignIconsUtils materialDesignIcons;
 
-    private final Map<String, WeakReference<Drawable>> drawableCache = new HashMap<>();
+    private final Map<String, WeakReference<Drawable>> drawableCache = new HashMap<>(20);
+    private final Map<String, String> urlCache = new HashMap<>(3);
 
     private ImageUtils(Context c) {
         iconDirectory = new File(c.getCacheDir(), "icons");
@@ -49,48 +51,46 @@ public final class ImageUtils {
         return sInstance;
     }
 
-    public void loadEntityDrawable(Context context, Entity entity, boolean useCache, DrawableLoadListener listener) throws Exception {
-        IconRecord tempIcon = null;
+    public void getEntityDrawable(Context context, Entity entity, DrawableLoadListener listener) throws Exception {
+        boolean useCache = true;
+        String imageName = null;
+        String imageUrl = null;
 
-        String iconName = entity.attributes.getString(Attribute.ICON);
-        String pictureUrl = entity.attributes.getString(Attribute.ENTITY_PICTURE);
-        if (iconName != null) {
-            iconName = iconName.substring(4);
-            String iconUrl = materialDesignIcons.getUrlFromName(iconName);
-            if (iconUrl != null) {
-                tempIcon = new IconRecord(iconName, iconUrl);
-            }
-        } else if (pictureUrl != null) {
-            if (pictureUrl.startsWith("/local/") || pictureUrl.startsWith("/api/")) {
-                pictureUrl = Utils.getUrl(context) + pictureUrl;
-            }
-            String pictureName = "image_" + entity.getName();
-            if (!pictureName.isEmpty()) {
-                tempIcon = new IconRecord(pictureName, pictureUrl);
+        final String entityIcon = entity.attributes.getString(Attribute.ICON);
+        final String entityPicture = entity.attributes.getString(Attribute.ENTITY_PICTURE);
+        if (entityIcon != null) {
+            imageName = entityIcon.substring(4);
+            imageUrl = materialDesignIcons.getUrlFromName(imageName);
+        }
+        if (entityPicture != null && (entity.type == EntityType.CAMERA || entity.type == EntityType.MEDIA_PLAYER)) {
+            imageName = "image_" + entity.getName();
+            imageUrl = (entityPicture.startsWith("/local/") || entityPicture.startsWith("/api/") ? Utils.getUrl(context) : "") + entityPicture;
+            if (!imageUrl.equals(urlCache.get(entity.id)) || entity.type == EntityType.CAMERA) {
+                useCache = false;
             }
         }
 
-        if (tempIcon == null) {
-            return;
+        if (imageName != null && imageUrl != null) {
+            loadEntityDrawable(entity, imageName, imageUrl, useCache, listener);
         }
-        final IconRecord icon = tempIcon;
+    }
 
-        final File iconFile = new File(iconDirectory, icon.name.concat(".png"));
+    private void loadEntityDrawable(Entity entity, String imageName, String imageUrl, boolean useCache, DrawableLoadListener listener) {
+        final File iconFile = new File(iconDirectory, imageName.concat(".png"));
         if (useCache) {
             // Try to read from cache
-            final Drawable cached = drawableCache.get(icon.name) != null ? drawableCache.get(icon.name).get() : null;
+            final Drawable cached = drawableCache.get(imageName) != null ? drawableCache.get(imageName).get() : null;
             if (cached != null) {
-                Log.d(TAG, "Loading " + icon.name + " from cache");
+                Log.d(TAG, "Loading " + imageName + " from cache");
                 listener.onDrawableLoaded(cached, false);
                 return;
             }
-
             // Check whether icon file is available
             if (iconFile.exists()) {
                 final Drawable drawable = Drawable.createFromPath(iconFile.getAbsolutePath());
                 if (drawable != null) {
-                    Log.d(TAG, "Loading " + icon.name + " from file");
-                    drawableCache.put(icon.name, new WeakReference<>(drawable));
+                    Log.d(TAG, "Loading " + imageName + " from file");
+                    drawableCache.put(imageName, new WeakReference<>(drawable));
                     listener.onDrawableLoaded(drawable, false);
                     return;
                 }
@@ -100,8 +100,8 @@ public final class ImageUtils {
         }
 
         // Download from server
-        Log.d(TAG, "Loading " + icon.name + " from " + icon.url);
-        Request request = new Request.Builder().url(icon.url).build();
+        Log.d(TAG, "Loading " + imageName + " from " + imageUrl);
+        Request request = new Request.Builder().url(imageUrl).build();
         httpClient.newCall(request).enqueue(new Callback() {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
@@ -117,7 +117,8 @@ public final class ImageUtils {
 
                 // Return drawable
                 Drawable drawable = Drawable.createFromPath(iconFile.getAbsolutePath());
-                drawableCache.put(icon.name, new WeakReference<>(drawable));
+                drawableCache.put(imageName, new WeakReference<>(drawable));
+                urlCache.put(entity.id, imageUrl);
                 listener.onDrawableLoaded(drawable, true);
             }
 

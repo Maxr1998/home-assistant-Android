@@ -15,7 +15,6 @@ public class MediaPlayerViewHolder extends CameraViewHolder implements View.OnCl
 
     private TextView artist;
     private ImageButton playPause;
-    private String lastTrack;
 
     public MediaPlayerViewHolder(View itemView) {
         super(itemView);
@@ -32,17 +31,11 @@ public class MediaPlayerViewHolder extends CameraViewHolder implements View.OnCl
 
     @Override
     protected void updateViews() {
-        lastTrack = name.getText().toString() + artist.getText().toString();
+        super.updateViews();
         name.setText(entity.attributes.getString(Attribute.MEDIA_TITLE));
         artist.setText(artist.getResources().getString(R.string.media_player_byline_format,
                 entity.attributes.getString(Attribute.MEDIA_ARTIST), entity.getFriendlyName()));
         playPause.setImageResource(entity.state.equals("playing") ? R.drawable.ic_pause_24dp : R.drawable.ic_play_24dp);
-        super.updateViews();
-    }
-
-    @Override
-    protected boolean allowCache() {
-        return lastTrack.equals(name.getText().toString() + artist.getText().toString());
     }
 
     @Override

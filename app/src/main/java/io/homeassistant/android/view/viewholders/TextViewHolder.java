@@ -31,7 +31,7 @@ public class TextViewHolder extends BaseViewHolder {
         if (entity.type != GROUP && entity.type != CAMERA) {
             HassUtils.applyDefaultIcon(entity);
             try {
-                ImageUtils.getInstance(name.getContext()).loadEntityDrawable(name.getContext(), entity, true, (drawable, async) -> {
+                ImageUtils.getInstance(name.getContext()).getEntityDrawable(name.getContext(), entity, (drawable, async) -> {
                     if (drawable != null)
                         drawable.setBounds(0, 0, name.getResources().getDimensionPixelSize(R.dimen.icon_size), name.getResources().getDimensionPixelSize(R.dimen.icon_size));
 
