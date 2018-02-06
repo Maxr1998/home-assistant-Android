@@ -15,17 +15,16 @@ import io.homeassistant.android.api.results.Entity
 import io.homeassistant.android.api.results.EventResult
 import io.homeassistant.android.api.results.RequestResult
 import okhttp3.*
-import okhttp3.internal.tls.OkHostnameVerifier
 import java.lang.ref.SoftReference
 import java.net.HttpURLConnection
 import java.net.ProtocolException
 import java.net.SocketException
 import java.net.UnknownHostException
 import java.util.*
-import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import javax.net.ssl.SSLException
+import javax.net.ssl.SSLHandshakeException
 import javax.net.ssl.SSLPeerUnverifiedException
 
 class HassService : Service() {
@@ -97,23 +96,7 @@ class HassService : Service() {
         if (!url.isEmpty() && !Utils.getPassword(this).isEmpty()) {
             url += "/api/websocket"
             Log.d("Home Assistant URL", url)
-            val client = OkHttpClient.Builder()
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .hostnameVerifier { hostname, session ->
-                        if (OkHostnameVerifier.INSTANCE.verify(hostname, session) || Utils.getAllowedHostMismatches(this@HassService).contains(hostname)) {
-                            return@hostnameVerifier true
-                        }
-                        loginMessage(false, FAILURE_REASON_SSL_MISMATCH)
-                        false
-                    }
-                    .authenticator { _, response ->
-                        println("Authenticator running..")
-                        if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                            loginMessage(false, FAILURE_REASON_BASIC_AUTH)
-                        }
-                        null
-                    }
-                    .build()
+            val client = ApiClient.get(this, ::loginMessage)
             val requestBuilder = Request.Builder().url(HttpUrl.parse(url))
             val basicAuth = Utils.getBasicAuth(this)
             if (!basicAuth.isEmpty()) {
@@ -134,9 +117,9 @@ class HassService : Service() {
             send(AuthRequest(password), null)
     }
 
-    private fun loginMessage(success: Boolean, reason: Int) {
+    private fun loginMessage(success: Boolean, reason: Int, data: String? = null) {
         authenticationState.set(if (success) AUTH_STATE_AUTHENTICATED else AUTH_STATE_NOT_AUTHENTICATED)
-        activityHandler?.obtainMessage(if (success) MESSAGE_LOGIN_SUCCESS else MESSAGE_LOGIN_FAILED, reason, 0)?.sendToTarget()
+        activityHandler?.obtainMessage(if (success) MESSAGE_LOGIN_SUCCESS else MESSAGE_LOGIN_FAILED, reason, 0, data)?.sendToTarget()
     }
 
     fun subscribeEvents() {
@@ -161,7 +144,7 @@ class HassService : Service() {
         if (hassRequest !is AuthRequest) {
             val rId = lastId.incrementAndGet()
             message.put("id", rId)
-            resultListener?.let { requests.append(rId, SoftReference<RequestResult.OnRequestResultListener>(resultListener)) }
+            resultListener?.let { requests.append(rId, SoftReference(resultListener)) }
         }
         return hassSocket?.send(message.toString()) ?: false
     }
@@ -261,7 +244,9 @@ class HassService : Service() {
             if (t is SocketException || t is ProtocolException || t is SSLException || t is UnknownHostException) {
                 Log.e(TAG, String.format("%1\$s while connecting to Socket, going to try again - Code %2\$d", t.javaClass.simpleName, response?.code()))
                 disconnect()
-                if (t !is SSLPeerUnverifiedException && response?.code() != HttpURLConnection.HTTP_UNAUTHORIZED)
+                if (t is SSLHandshakeException) {
+                    loginMessage(false, FAILURE_REASON_SSL_INVALID_CERT, t.message)
+                } else if (t !is SSLPeerUnverifiedException && response?.code() != HttpURLConnection.HTTP_UNAUTHORIZED)
                     loginMessage(false, FAILURE_REASON_GENERIC)
                 return
             }
@@ -276,6 +261,6 @@ class HassService : Service() {
         @JvmField val AUTH_STATE_AUTHENTICATING = 1
         @JvmField val AUTH_STATE_AUTHENTICATED = 2
 
-        private val TAG = HassService::class.java.simpleName
+        val TAG = HassService::class.java.simpleName
     }
 }

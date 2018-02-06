@@ -163,7 +163,7 @@ public class HassActivity extends BaseActivity {
     }
 
     @Override
-    public void loginFailed(int reason) {
+    public void loginFailed(int reason, String data) {
         if (reason == FAILURE_REASON_BASIC_AUTH) {
             LayoutInflater inflater = LayoutInflater.from(this);
             @SuppressLint("InflateParams") View dialogView = inflater.inflate(R.layout.dialog_basic_auth, null);
@@ -173,7 +173,7 @@ public class HassActivity extends BaseActivity {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.dialog_basic_auth_title)
                     .setView(dialogView)
-                    .setNegativeButton(android.R.string.cancel, ((dialogInterface, i) -> loginFailed(FAILURE_REASON_GENERIC)))
+                    .setNegativeButton(android.R.string.cancel, ((dialogInterface, i) -> loginFailed(FAILURE_REASON_GENERIC, null)))
                     .setPositiveButton(R.string.dialog_basic_auth_button_login, (dialogInterface, i) -> {
                         TextInputEditText dialogUsername = dialogView.findViewById(R.id.dialog_basic_auth_username);
                         TextInputEditText dialogPassword = dialogView.findViewById(R.id.dialog_basic_auth_password);
@@ -188,7 +188,7 @@ public class HassActivity extends BaseActivity {
         if (loginLayout == null) {
             addLoginLayout();
         }
-        loginLayout.showLoginError(reason);
+        loginLayout.showLoginError(reason, data);
     }
 
     @Override

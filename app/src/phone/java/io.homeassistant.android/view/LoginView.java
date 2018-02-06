@@ -26,9 +26,11 @@ import io.homeassistant.android.BaseActivity;
 import io.homeassistant.android.Common;
 import io.homeassistant.android.R;
 import io.homeassistant.android.Utils;
+import io.homeassistant.android.UtilsKt;
 import okhttp3.HttpUrl;
 
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_GENERIC;
+import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_SSL_INVALID_CERT;
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_SSL_MISMATCH;
 import static io.homeassistant.android.CommunicationHandler.FAILURE_REASON_WRONG_PASSWORD;
 
@@ -176,7 +178,7 @@ public class LoginView extends ConstraintLayout {
         connectButton.setText(isConnected() ? R.string.button_connect : R.string.button_connect_no_network);
     }
 
-    public void showLoginError(int reason) {
+    public void showLoginError(int reason, String data) {
         progress.setVisibility(INVISIBLE);
         connectButton.setVisibility(VISIBLE);
 
@@ -194,8 +196,21 @@ public class LoginView extends ConstraintLayout {
                         .setTitle(R.string.dialog_login_error_ssl_mismatch_title)
                         .setMessage(R.string.dialog_login_error_ssl_mismatch_message)
                         .setPositiveButton(android.R.string.cancel, null)
-                        .setNeutralButton(R.string.dialog_login_error_ssl_mismatch_ignore, (dialog, which) -> {
+                        .setNeutralButton(R.string.dialog_login_error_ignore, (dialog, which) -> {
                             Utils.addAllowedHostMismatch(getContext(), HttpUrl.parse(Utils.getUrl(getContext())).host());
+                            connectButton.callOnClick();
+                        })
+                        .setCancelable(false)
+                        .create().show();
+                return;
+            case FAILURE_REASON_SSL_INVALID_CERT:
+                String[] certInfo = data.replace(", ", "\n").split("\\|");
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.dialog_login_error_invalid_cert_title)
+                        .setMessage(getResources().getString(R.string.dialog_login_error_invalid_cert_message, certInfo[0], certInfo[1]))
+                        .setPositiveButton(android.R.string.cancel, null)
+                        .setNeutralButton(R.string.dialog_login_error_ignore, (dialog, which) -> {
+                            UtilsKt.addAllowedSSLCert(Utils.getPrefs(getContext()), certInfo[2]);
                             connectButton.callOnClick();
                         })
                         .setCancelable(false)

@@ -22,7 +22,11 @@
     <string name="dialog_login_error_ssl_mismatch_message">The current IP doesn\'t match the hostname specified in the SSL certificate.
         That means that you either typed in an alias to your hostname or an attacker may have tried to intercept your connection.
         Only tap ignore if you really know what you do!</string>
-    <string name="dialog_login_error_ssl_mismatch_ignore">Ignore</string>
+    <string name="dialog_login_error_invalid_cert_title">Invalid SSL Certificate!</string>
+    <string name="dialog_login_error_invalid_cert_message">The following SSL certificate is invalid:\n%1$s\nIssued by:\n%2$s\n
+        \nThat means that either you\'re using a self-signed or expired certificate, or an attacker may have tried to intercept your connection.
+        \nOnly proceed if you 100%%-ly know what you\'re doing!</string>
+    <string name="dialog_login_error_ignore">Ignore</string>
 
     <!-- Main screen -->
     <string name="menu_custom_tab">Show Web UI</string>

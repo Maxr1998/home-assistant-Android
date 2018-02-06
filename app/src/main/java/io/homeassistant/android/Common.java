@@ -6,6 +6,7 @@ public final class Common {
     public static final String PREF_HASS_PASSWORD_KEY = "hass_password";
     public static final String PREF_BASIC_AUTH_KEY = "basic_auth";
     public static final String PREF_ALLOWED_HOST_MISMATCHES_KEY = "allowed_ssl_mismatches";
+    public static final String PREF_ALLOWED_INVALID_SSL_CERTS_KEY = "allowed_invalid_ssl_certs";
 
     public static final String PREF_ENABLE_LOCATION_TRACKING = "enable_location_tracking";
     public static final String PREF_LOCATION_DEVICE_NAME = "location_device_name";

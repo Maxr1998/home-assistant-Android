@@ -11,6 +11,16 @@ import android.widget.ImageButton
 import okhttp3.Credentials
 import java.lang.ref.WeakReference
 
+fun SharedPreferences.getAllowedSSLCerts(): Set<String> {
+    return getStringSet(Common.PREF_ALLOWED_INVALID_SSL_CERTS_KEY, emptySet<String>())
+}
+
+fun SharedPreferences.addAllowedSSLCert(allowed: String) {
+    edit().putStringSet(Common.PREF_ALLOWED_INVALID_SSL_CERTS_KEY, HashSet(getAllowedSSLCerts()).apply {
+        add(allowed)
+    }).apply()
+}
+
 object Utils {
 
     private var PREFS = WeakReference<SharedPreferences>(null)

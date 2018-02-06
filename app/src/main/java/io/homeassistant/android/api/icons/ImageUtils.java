@@ -14,6 +14,7 @@ import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.homeassistant.android.ApiClient;
 import io.homeassistant.android.Utils;
 import io.homeassistant.android.api.Attribute;
 import io.homeassistant.android.api.EntityType;
@@ -31,7 +32,7 @@ public final class ImageUtils {
     private static ImageUtils sInstance;
 
     private final File iconDirectory;
-    private final OkHttpClient httpClient = new OkHttpClient();
+    private final OkHttpClient httpClient;
     private final MaterialDesignIconsUtils materialDesignIcons;
 
     private final Map<String, WeakReference<Drawable>> drawableCache = new HashMap<>(20);
@@ -41,6 +42,7 @@ public final class ImageUtils {
         iconDirectory = new File(c.getCacheDir(), "icons");
         //noinspection ResultOfMethodCallIgnored
         iconDirectory.mkdir();
+        httpClient = ApiClient.get(c, (success, code, data) -> null);
         materialDesignIcons = new MaterialDesignIconsUtils(iconDirectory, httpClient);
     }
 

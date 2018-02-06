@@ -42,15 +42,15 @@ public class SelectEntityActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         if (getIntent().getAction().equals(Intent.ACTION_CREATE_SHORTCUT)) {
             setContentView(R.layout.activity_create_shortcut);
-            Toolbar t = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar t = findViewById(R.id.toolbar);
             setSupportActionBar(t);
 
-            selectShortcutItemRecycler = (RecyclerView) findViewById(R.id.recycler_select_shortcut_item);
+            selectShortcutItemRecycler = findViewById(R.id.recycler_select_shortcut_item);
             selectShortcutItemRecycler.setLayoutManager(new LinearLayoutManager(this));
             selectShortcutItemRecycler.setItemAnimator(new DefaultItemAnimator());
             selectShortcutItemRecycler.setAdapter(viewAdapter);
 
-            selectActionSpinner = (Spinner) findViewById(R.id.spinner_set_shortcut_type);
+            selectActionSpinner = findViewById(R.id.spinner_set_shortcut_type);
             ArrayAdapter adapter = new ArrayAdapter<>(this, android.support.design.R.layout.support_simple_spinner_dropdown_item, new String[]{"On", "Off"});
             selectActionSpinner.setAdapter(adapter);
 
@@ -84,7 +84,7 @@ public class SelectEntityActivity extends BaseActivity {
     }
 
     @Override
-    public void loginFailed(int reason) {
+    public void loginFailed(int reason, String data) {
         finish();
         Toast.makeText(this, R.string.login_error, Toast.LENGTH_LONG).show();
     }
