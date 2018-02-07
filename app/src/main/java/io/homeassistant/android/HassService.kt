@@ -210,7 +210,7 @@ class HassService : Service() {
                         val eventRequest = Ason.deserialize(message, EventResult::class.java)
                         val updated = HassUtils.updateEntityFromEventResult(eventRequest.event.data, entityMap)
                         updated?.let {
-                            Log.d(TAG, "Updated " + updated.id)
+                            Log.d(TAG, "Updated " + updated.toString())
                             activityHandler!!.post { updated.notifyObservers() }
                         }
                     }

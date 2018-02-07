@@ -51,7 +51,7 @@ public class Entity implements Comparable<Entity> {
 
     @Override
     public String toString() {
-        return String.format("[%1$s] %2$s %3$s", type, id, getFriendlyName());
+        return String.format("[%1$s] %2$s: %3$s", type, id, state);
     }
 
     public boolean isHidden() {
