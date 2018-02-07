@@ -87,7 +87,7 @@ class WearActivity : BaseActivity() {
     override fun loginSuccess() {
     }
 
-    override fun loginFailed(reason: Int) {
+    override fun loginFailed(reason: Int, data: String) {
         if (retryCount++ == 0) {
             retrieveCredentials()
         } else {
