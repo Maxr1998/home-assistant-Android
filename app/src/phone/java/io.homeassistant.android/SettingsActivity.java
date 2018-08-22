@@ -60,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         //noinspection ConstantConditions
@@ -132,7 +132,7 @@ public class SettingsActivity extends AppCompatActivity {
                     listPopupWindow.show();
                     return true;
                 case Common.PREF_RESET_HOST_MISMATCHES:
-                    prefs.edit().remove(Common.PREF_ALLOWED_HOST_MISMATCHES_KEY).apply();
+                    prefs.edit().remove(Common.PREF_ALLOWED_HOST_MISMATCHES_KEY).remove(Common.PREF_ALLOWED_INVALID_SSL_CERTS_KEY).apply();
                     Toast.makeText(getActivity(), R.string.toast_ignored_ssl_mismatches_cleared, Toast.LENGTH_SHORT).show();
                     updatePreferenceSummaries();
                     return true;
