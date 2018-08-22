@@ -22,11 +22,8 @@ class WearActivity : BaseActivity() {
     private lateinit var viewRecycler: WearableRecyclerView
     private lateinit var wearableProgress: ProgressBar
 
-    private val googleApiClient: GoogleApiClient by lazy {
-        GoogleApiClient.Builder(this)
-                .addApi(Wearable.API)
-                .build()
-                .apply { connect() }
+    private val dataClient by lazy {
+        Wearable.getDataClient(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +44,7 @@ class WearActivity : BaseActivity() {
     }
 
     fun retrieveCredentials() {
-        Wearable.DataApi.getDataItems(googleApiClient, Uri.parse("wear://*/credentials"))
+        dataClient.getDataItems(Uri.parse("wear://*/credentials")
                 .setResultCallback { dataItemBuffer ->
                     dataItemBuffer.apply {
                         firstOrNull()?.apply {
