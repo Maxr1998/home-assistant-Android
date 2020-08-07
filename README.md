@@ -7,6 +7,9 @@ HassDroid - a Home Assistant Client for Android
 [![Crowdin](https://d322cqt584bo4o.cloudfront.net/home-assistant-android/localized.svg)](https://crowdin.com/project/home-assistant-android)
 [![License GPLv3](https://img.shields.io/badge/license-GPLv3-red.svg?style=flat)](https://github.com/Maxr1998/home-assistant-Android/blob/master/LICENSE)
 
+## PROJECT STATUS
+This project has been inactive for quite some time now, and was de-facto already abandoned for a few months. Too many changes to the Home Assistant software, the API and finally the introduction of the custom "Lovelace" UI made supporting this app again more and more unlikely. Since there's an official Android app now, which wraps the web client, there's also no real need for this project anymore.
+
 ## Downloads
 [<img src="https://f-droid.org/badge/get-it-on.png"
       alt="Get it on F-Droid"
