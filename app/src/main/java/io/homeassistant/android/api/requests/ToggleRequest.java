@@ -23,8 +23,9 @@ public class ToggleRequest extends ServiceRequest {
      * For use with lights supporting brightness
      */
     public ToggleRequest(Entity entity, int brightness) {
-        this(entity);
-        data.put("brightness", brightness);
+        this(entity, brightness > 0);
+        if (brightness > 0)
+            data.put("brightness", brightness);
     }
 
     /**

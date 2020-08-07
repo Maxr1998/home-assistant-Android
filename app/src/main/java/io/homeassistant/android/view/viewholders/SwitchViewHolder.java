@@ -5,12 +5,16 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LevelListDrawable;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.widget.SeekBar;
+import android.view.ViewConfiguration;
+
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import io.homeassistant.android.BaseActivity;
 import io.homeassistant.android.Common;
@@ -25,11 +29,13 @@ import static io.homeassistant.android.api.Domain.SWITCH;
 public class SwitchViewHolder extends TextViewHolder implements View.OnTouchListener, View.OnClickListener {
 
     private final SwitchCompat stateSwitch;
-    private final SeekBar brightnessSlider;
+    private final DiscreteSeekBar brightnessSlider;
 
     private final Handler handler = new Handler();
     private final Runnable touchDisallowRunnable = () -> itemView.getParent().requestDisallowInterceptTouchEvent(true);
     private final SliderRunnable sliderRunnable = new SliderRunnable();
+
+    private boolean sliderVisible = false;
 
     public SwitchViewHolder(View itemView) {
         super(itemView);
@@ -48,6 +54,7 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
         if ((entity.attributes.getInt(Attribute.SUPPORTED_FEATURES) & Common.LIGHT_SUPPORTS_BRIGHTNESS) == Common.LIGHT_SUPPORTS_BRIGHTNESS) {
             brightnessSlider.setProgress(entity.attributes.get(Attribute.BRIGHTNESS, (Number) 0).intValue());
             name.setOnTouchListener(this);
+            name.getViewTreeObserver().addOnGlobalLayoutListener(() -> brightnessSlider.getLayoutParams().height = name.getHeight());
         }
         updateColor();
     }
@@ -89,8 +96,6 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        brightnessSlider.getLayoutParams().height = name.getHeight();
-
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 sliderRunnable.previousProgress = brightnessSlider.getProgress();
@@ -106,23 +111,21 @@ public class SwitchViewHolder extends TextViewHolder implements View.OnTouchList
                 }
                 return true;
             case MotionEvent.ACTION_UP:
+                System.out.println(event.getDownTime());
+                System.out.println(System.currentTimeMillis());
+                if (event.getDownTime() - SystemClock.uptimeMillis() < ViewConfiguration.getTapTimeout()) {
+                    Log.d("", "Clicked");
+                    v.performClick();
+                }
             case MotionEvent.ACTION_CANCEL:
                 handler.removeCallbacks(touchDisallowRunnable);
                 handler.removeCallbacks(sliderRunnable);
 
                 if (brightnessSlider.getProgress() != sliderRunnable.previousProgress) { // Changed
                     BaseActivity activity = (BaseActivity) brightnessSlider.getContext();
-                    activity.send(new ToggleRequest(entity, brightnessSlider.getProgress()), (success, result) -> activity.runOnUiThread(() -> {
-                        if (success) {
-                            stateSwitch.setChecked(brightnessSlider.getProgress() > 0);
-                            entity.state = HassUtils.getOnState(entity, brightnessSlider.getProgress() > 0);
-                            updateColor();
-                        } else {
-                            brightnessSlider.setProgress(sliderRunnable.previousProgress);
-                        }
-                    }));
+                    activity.send(new ToggleRequest(entity, brightnessSlider.getProgress()), null);
                 }
-
+                brightnessSlider.dispatchTouchEvent(event);
                 brightnessSlider.setVisibility(View.GONE);
                 name.setVisibility(View.VISIBLE);
                 return true;

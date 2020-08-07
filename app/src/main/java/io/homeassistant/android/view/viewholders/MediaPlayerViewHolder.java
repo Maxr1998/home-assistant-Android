@@ -1,6 +1,8 @@
 package io.homeassistant.android.view.viewholders;
 
+import android.animation.ValueAnimator;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,7 +34,16 @@ public class MediaPlayerViewHolder extends CameraViewHolder implements View.OnCl
     @Override
     protected void updateViews() {
         super.updateViews();
-        name.setText(entity.attributes.getString(Attribute.MEDIA_TITLE));
+
+        String title = entity.attributes.getString(Attribute.MEDIA_TITLE);
+        if (title == null) {
+            if (itemView.getLayoutParams().height > 0)
+                createHeightAnimator().reverse();
+            return;
+        }
+        if (itemView.getLayoutParams().height == 0)
+            createHeightAnimator().start();
+        name.setText(title);
         artist.setText(artist.getResources().getString(R.string.media_player_byline_format,
                 entity.attributes.getString(Attribute.MEDIA_ARTIST), entity.getFriendlyName()));
         playPause.setImageResource(entity.state.equals("playing") ? R.drawable.ic_pause_24dp : R.drawable.ic_play_24dp);
@@ -55,6 +66,16 @@ public class MediaPlayerViewHolder extends CameraViewHolder implements View.OnCl
                 return;
         }
         ((BaseActivity) v.getContext()).send(new ServiceRequest(Domain.MEDIA_PLAYER, action, entity.id), null);
+    }
+
+    private ValueAnimator createHeightAnimator() {
+        itemView.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ValueAnimator heightAnimator = ValueAnimator.ofInt(0, itemView.getMeasuredHeight());
+        heightAnimator.addUpdateListener(animation -> {
+            itemView.getLayoutParams().height = (int) animation.getAnimatedValue();
+            itemView.requestLayout();
+        });
+        return heightAnimator;
     }
 
     @Override

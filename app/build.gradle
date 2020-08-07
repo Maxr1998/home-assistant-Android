@@ -94,9 +94,12 @@ if (propFile.exists()) {
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
+    //implementation "com.android.support:support-v4:$supportLibraryVersion"
     implementation "com.android.support.constraint:constraint-layout:1.1.2"
     phoneImplementation "com.android.support:customtabs:$supportLibraryVersion"
     implementation "com.android.support:design:$supportLibraryVersion"
+    implementation "com.android.support:support-media-compat:$supportLibraryVersion"
+    implementation 'org.adw.library:discrete-seekbar:1.0.1'
     phoneImplementation "com.android.support:preference-v14:$supportLibraryVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibraryVersion"
     wearImplementation "com.android.support:wear:$supportLibraryVersion"
